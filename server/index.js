@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 
 import {
   LISTINGS, bookings, isFree, createHold,
-  consumeHold, confirmBooking
+  consumeHold, confirmBooking, getBlockedDates
 } from './store.js';
 
 // Load server/.env
@@ -130,6 +130,15 @@ app.get('/api/calendar/:listing.ics', (req, res) => {
   res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="calendar.ics"');
   res.send(lines.join('\r\n'));
+});
+
+app.get('/api/blocked', (req,res)=>{
+  const listing = (req.query.listing || LISTINGS[0].id);
+  const from = String(req.query.from); // inclusive YYYY-MM-DD
+  const to   = String(req.query.to);   // exclusive YYYY-MM-DD
+  if (!from || !to) return res.status(400).json({ error: 'from and to (YYYY-MM-DD) required' });
+  const blocked = getBlockedDates(listing, from, to);
+  res.json({ listing, from, to, blocked });
 });
 
 const PORT = process.env.PORT || 3001;
