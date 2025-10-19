@@ -329,7 +329,7 @@ function Footer() {
           © {year} {SITE.brand.name}. {SITE.location.city}, {SITE.location.region}.
         </div>
         <div className="opacity-80">
-          Powered by <a className="underline hover:text-zinc-900 dark:hover:text-zinc-100">Still House Media</a>
+          Powered by <a className="underline hover:text-zinc-900 dark:hover:text-zinc-100" href="https://templateairbnb.com">templateairbnb.com</a>
         </div>
       </div>
     </footer>
@@ -360,7 +360,7 @@ export default function VacationRentalTemplate() {
       <Hero />
       <Highlights />
       <Gallery />
-      <DirectBooking />  
+      <DirectBooking />   {/* <-- inserted */}
       <Amenities />
       <LocationMap />
       <Reviews />

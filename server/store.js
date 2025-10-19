@@ -61,5 +61,57 @@ export function confirmBooking(listingId,start,end){
   bookings.push(b); return b;
 }
 
+function toDate(d){ return new Date(d + 'T00:00:00'); }
+function fmt(d){ return d.toISOString().slice(0,10); }
+
+// Expand [start, end) into YYYY-MM-DD list (nights)
+export function expandRangeToDates(start, end){
+  const out = [];
+  let cur = toDate(start);
+  const stop = toDate(end);
+  while (cur < stop) { out.push(fmt(cur)); cur.setDate(cur.getDate()+1); }
+  return out;
+}
+
+// Collect blocked dates (confirmed bookings, active holds, externalBlocks)
+export function getBlockedDates(listingId, from, to){
+  const blockedSet = new Set();
+
+  const now = Date.now();
+  const inWindow = (s,e) => !(e <= from || s >= to); // ranges that touch [from,to)
+
+  // confirmed bookings
+  for (const b of bookings) {
+    if (b.listingId!==listingId || b.status!=='confirmed') continue;
+    if (!inWindow(b.start, b.end)) continue;
+    for (const d of expandRangeToDates(
+      b.start < from ? from : b.start,
+      b.end   > to   ? to   : b.end
+    )) blockedSet.add(d);
+  }
+
+  // active holds
+  for (const h of holds) {
+    if (h.listingId!==listingId || h.expiresAt<=now) continue;
+    if (!inWindow(h.start, h.end)) continue;
+    for (const d of expandRangeToDates(
+      h.start < from ? from : h.start,
+      h.end   > to   ? to   : h.end
+    )) blockedSet.add(d);
+  }
+
+  // external blocks (mock Airbnb)
+  for (const x of externalBlocks) {
+    if (x.listingId!==listingId) continue;
+    if (!inWindow(x.start, x.end)) continue;
+    for (const d of expandRangeToDates(
+      x.start < from ? from : x.start,
+      x.end   > to   ? to   : x.end
+    )) blockedSet.add(d);
+  }
+
+  return Array.from(blockedSet).sort();
+}
+
 // cleanup expired holds
 setInterval(()=>{ const now=Date.now(); for(let i=holds.length-1;i>=0;i--) if(holds[i].expiresAt<=now) holds.splice(i,1); }, 60*1000);
