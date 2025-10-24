@@ -203,7 +203,7 @@ function Gallery() {
   );
 }
 
-/** NEW: Direct booking section with the widget */
+/** Booking Calendar */
 function DirectBooking() {
   return (
     <Section id="book" title="Direct Booking (Demo)">
@@ -292,20 +292,7 @@ function Reviews() {
 function Contact() {
   return (
     <Section id="contact" title="Contact the Host">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <form className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 px-4 py-3" placeholder="Your name" />
-              <input className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 px-4 py-3" type="email" placeholder="Your email" />
-            </div>
-            <input className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 px-4 py-3 mt-4 w-full" placeholder="Dates (e.g., Nov 10–12)" />
-            <textarea className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 px-4 py-3 mt-4 w-full" rows={4} placeholder="Message" />
-            <button type="button" className="mt-4 rounded-2xl px-5 py-3 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white transition">
-              Send inquiry
-            </button>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3">This is a demo form. Connect to Formspree, Formspark, or your own API in production.</p>
-          </form>
         </div>
         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow-sm h-max">
           <div className="flex items-center gap-2 text-zinc-800 dark:text-zinc-200"><Phone size={18}/> {SITE.contact.phone}</div>
@@ -313,9 +300,7 @@ function Contact() {
           <a href="#book" className="mt-4 inline-flex items-center gap-2 rounded-2xl px-4 py-2 bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white">
             Book Now <ExternalLink size={16}/>
           </a>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3">Prefer direct booking? Use the widget above (Stripe test mode).</p>
         </div>
-      </div>
     </Section>
   );
 }
@@ -329,7 +314,7 @@ function Footer() {
           © {year} {SITE.brand.name}. {SITE.location.city}, {SITE.location.region}.
         </div>
         <div className="opacity-80">
-          Powered by <a className="underline hover:text-zinc-900 dark:hover:text-zinc-100" href="https://templateairbnb.com">templateairbnb.com</a>
+          Powered by Still House Media
         </div>
       </div>
     </footer>

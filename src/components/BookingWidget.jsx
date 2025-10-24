@@ -6,7 +6,6 @@ function startOfMonth(date){ return new Date(date.getFullYear(), date.getMonth()
 function endOfMonth(date){ return new Date(date.getFullYear(), date.getMonth()+1, 0) }
 function addMonths(date, n){ return new Date(date.getFullYear(), date.getMonth()+n, 1) }
 function ymd(d){ return d.toISOString().slice(0,10) }
-function fromYMD(s){ return new Date(s + 'T00:00:00') }
 function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate() }
 function isBefore(a,b){ return +new Date(a.getFullYear(),a.getMonth(),a.getDate()) < +new Date(b.getFullYear(),b.getMonth(),b.getDate()) }
 function isAfter(a,b){ return +new Date(a.getFullYear(),a.getMonth(),a.getDate()) > +new Date(b.getFullYear(),b.getMonth(),b.getDate()) }

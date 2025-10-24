@@ -1,12 +1,72 @@
-import VacationRentalTemplate from "./VacationRentalTemplate";
+import { Link, Route, Routes, NavLink, useLocation } from 'react-router-dom'
+import Home from './pages/Home.jsx'
+import DemoTemplate from './pages/DemoTemplate.jsx'
 
-function App() {
+function SiteNav() {
+  const linkCls = ({ isActive }) =>
+    "px-3 py-2 rounded-lg " +
+    (isActive
+      ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+      : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50")
 
   return (
-    <>
-      <VacationRentalTemplate />
-    </>
+    <header className="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-zinc-950/70 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="h-10 w-10 rounded-xl bg-zinc-900 text-white dark:bg-zinc-200 dark:text-zinc-900 grid place-items-center font-semibold">SHM</div>
+          <span className="font-semibold text-zinc-900 dark:text-zinc-100">Still House Media</span>
+        </Link>
+        <nav className="flex items-center gap-2 text-sm">
+          <NavLink to="/" className={linkCls} end>Home</NavLink>
+
+          {/* OPEN DEMO IN NEW TAB */}
+          <a
+            href="/demo-template"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-2 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50"
+          >
+            Demo
+          </a>
+
+          <NavLink to="/login" className={linkCls}>Login</NavLink>
+        </nav>
+      </div>
+    </header>
   )
 }
 
-export default App
+export default function App() {
+  const location = useLocation()
+  const isDemo = location.pathname.startsWith('/demo-template')
+
+  return (
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+
+      {/* Hide global navbar on demo route */}
+      {!isDemo && <SiteNav />}
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/demo-template" element={<DemoTemplate />} />
+        <Route path="/login" element={
+          <div className="mx-auto max-w-3xl px-4 py-24">
+            <h1 className="text-3xl font-semibold mb-3">Login (coming soon)</h1>
+            <p className="opacity-80">You’ll be able to sign in to view guests, bookings, and messages.</p>
+          </div>
+        } />
+        <Route path="*" element={<Home />} />
+      </Routes>
+
+      {/* Hide global footer on demo route */}
+      {!isDemo && (
+        <footer className="border-t border-zinc-200 dark:border-zinc-800">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 text-sm text-zinc-600 dark:text-zinc-400 flex items-center justify-between">
+            <span>© {new Date().getFullYear()} Stillhouse Media</span>
+            <span className="opacity-80">Built for direct-booking hosts</span>
+          </div>
+        </footer>
+      )}
+    </div>
+  )
+}

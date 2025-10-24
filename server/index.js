@@ -82,31 +82,116 @@ app.post('/api/hold', (req, res) => {
 app.post('/api/checkout', async (req, res) => {
   const listing = req.body.listing || LISTINGS[0].id;
   const { start, end, holdId } = req.body;
-  if (!start || !end || !holdId) return res.status(400).json({ error: 'start, end, holdId required' });
+  if (!start || !end || !holdId) {
+    return res.status(400).json({ error: 'start, end, holdId required' });
+  }
 
   const L = LISTINGS.find(l => l.id === listing);
-  const nights = Math.max(1, Math.round((Date.parse(end + 'T00:00:00') - Date.parse(start + 'T00:00:00')) / (24 * 3600 * 1000)));
-  const amount = L.nightlyPrice * nights + L.cleaningFee;
+  const nights = Math.max(
+    1,
+    Math.round((Date.parse(end + 'T00:00:00') - Date.parse(start + 'T00:00:00')) / (24 * 3600 * 1000))
+  );
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      success_url: `${process.env.SITE_URL}/?success=1`,
+      // If you add a dedicated Success page later, send session_id so you can fetch its details.
+      success_url: `${process.env.SITE_URL}/?success=1&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.SITE_URL}/?canceled=1`,
-      line_items: [{
-        quantity: 1,
-        price_data: {
-          currency: 'usd',
-          unit_amount: amount,
-          product_data: { name: `${L.title} — ${start} to ${end}`, description: `${nights} night(s) + cleaning` }
+
+      // 🧾 Itemized line items (looks more professional than one lump sum)
+      line_items: [
+        {
+          quantity: nights,
+          price_data: {
+            currency: 'usd',
+            unit_amount: L.nightlyPrice, // per-night
+            product_data: {
+              name: `${L.title} — Nightly rate`,
+              description: `${start} → ${end} (${nights} night${nights > 1 ? 's' : ''})`
+              // images: ['https://yourdomain.com/photos/cabin1.jpg'], // optional, looks nice
+            }
+          }
+        },
+        {
+          quantity: 1,
+          price_data: {
+            currency: 'usd',
+            unit_amount: L.cleaningFee,
+            product_data: {
+              name: 'Cleaning fee',
+              description: 'One-time'
+            }
+          }
         }
-      }],
+      ],
+
+      // 📣 Looks/UX
+      allow_promotion_codes: true,                // let guests apply coupons
+      locale: 'auto',                              // Stripe auto-picks locale
+      customer_creation: 'always',                 // creates a Customer (useful for receipts & future bookings)
+      billing_address_collection: 'auto',          // collect billing address when needed
+      phone_number_collection: { enabled: true },  // ask for phone (handy for hosts)
+
+      // 🧾 Tax (turn on if you want Stripe to estimate/collect)
+      // automatic_tax: { enabled: true },
+
+      // ✅ ToS consent (set your policy URLs in Stripe Dashboard → Branding → Policies)
+      consent_collection: { terms_of_service: 'required' },
+
+      // 💌 After submit note (small text under the button)
+      custom_text: {
+        submit: {
+          message: 'By confirming, you agree to our House Rules and Cancellation Policy.'
+        }
+      },
+
+      // 🔁 If they abandon checkout, send them a recovery link email
+      after_expiration: {
+        recovery: { enabled: true }
+      },
+
+      // 🔗 Helpful to reconcile on your side / in Stripe
+      client_reference_id: holdId,
+
+      // Keep your original metadata for the webhook & DB
       metadata: { listingId: listing, start, end, holdId }
     });
+
     return res.json({ url: session.url });
   } catch (e) {
     console.error('Stripe checkout error:', e);
     return res.status(500).json({ error: String(e.message || e) });
+  }
+});
+
+// After checkout screen
+app.get('/api/checkout-session', async (req, res) => {
+  try {
+    const { session_id } = req.query;
+    if (!session_id) return res.status(400).json({ error: 'session_id required' });
+
+    const session = await stripe.checkout.sessions.retrieve(String(session_id), {
+      expand: ['line_items.data.price.product', 'customer']
+    });
+
+    return res.json({
+      id: session.id,
+      amount_total: session.amount_total,
+      currency: session.currency,
+      email: session.customer_details?.email,
+      phone: session.customer_details?.phone,
+      line_items: session.line_items?.data?.map(li => ({
+        description: li.description,
+        quantity: li.quantity,
+        amount_subtotal: li.amount_subtotal,
+        amount_total: li.amount_total
+      })) || [],
+      metadata: session.metadata
+    });
+  } catch (e) {
+    console.error('get session error', e);
+    res.status(500).json({ error: 'Failed to retrieve session' });
   }
 });
 
