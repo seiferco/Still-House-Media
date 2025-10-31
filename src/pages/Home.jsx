@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShieldCheck, CreditCard, CalendarDays, Clock, CheckCircle2 } from 'lucide-react'
+import { ShieldCheck, CreditCard, CalendarDays, Clock, CheckCircle2, Phone, Mail } from 'lucide-react'
 
 const fade = { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 
@@ -94,20 +94,13 @@ export default function Home() {
 
       {/* Contact (simple) */}
       <Section id="contact" title="Get a quote">
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow-sm max-w-2xl">
-          <form action="mailto:hello@stillhousemedia.com" method="POST">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3" placeholder="Your name" required />
-              <input className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3" type="email" placeholder="Your email" required />
-            </div>
-            <textarea className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 mt-4 w-full" rows={4} placeholder="Tell me about your listing" />
-            <div className="flex gap-3 mt-4">
-              <Link to="/demo-template" className="rounded-2xl px-5 py-3 bg-zinc-900 text-white hover:bg-zinc-800 transition">Try the demo</Link>
-              <button className="rounded-2xl px-5 py-3 bg-white border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900" type="submit">Email me</button>
-            </div>
-          </form>
+        <div className="md:col-span-2">
         </div>
-      </Section>
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow-sm h-max">
+          <div className="flex items-center gap-2 text-zinc-800 dark:text-zinc-200"><Phone size={18}/> 541-294-3114 </div>
+          <div className="flex items-center gap-2 mt-2 text-zinc-800 dark:text-zinc-200"><Mail size={18}/> stillhousemedia@outlook.com </div>
+        </div>
+    </Section>
     </>
   )
 }

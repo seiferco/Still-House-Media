@@ -32,7 +32,7 @@ export default function BookingWidget(){
   const [anchorMonth, setAnchorMonth] = useState(()=>{ const d=new Date(); d.setDate(1); return d })
   const [blocked, setBlocked] = useState(()=>new Set())
   const [status,setStatus] = useState('')
-  const [selStart,setSelStart] = useState(null)
+  const [selStart,setSelStart] = useState(null) 
   const [selEnd,setSelEnd]     = useState(null)
 
   // fetch blocked dates for two months (anchor + next)
@@ -53,8 +53,6 @@ export default function BookingWidget(){
 
   function blockedBetween(a,b){
     if (!a || !b) return false
-    const start = ymd(isBefore(a,b)?a:b)
-    const end   = ymd(isAfter(a,b)?a:b)
     // iterate inclusive of start up to exclusive end+1
     let cur = new Date(isBefore(a,b)?a:b)
     const stop = new Date(isAfter(a,b)?b:a); stop.setDate(stop.getDate()+0) // exclusive end overnight
@@ -105,7 +103,7 @@ export default function BookingWidget(){
     window.location.href = j2.url
   }
 
-  function renderMonth({ title, cells, first, last }){
+  function renderMonth({ title, cells, first }){
     return (
       <div className="w-full">
         <div className="flex items-center justify-between mb-3">
