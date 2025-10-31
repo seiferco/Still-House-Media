@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShieldCheck, CreditCard, CalendarDays, Clock, CheckCircle2, Phone, Mail } from 'lucide-react'
+import { ShieldCheck, CreditCard, CalendarDays, Clock, CheckCircle2, Phone, Mail, TrendingUp, Users, DollarSign, Smartphone } from 'lucide-react'
 
 const fade = { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 
@@ -67,14 +66,130 @@ export default function Home() {
       </Section>
 
       {/* About */}
-      <Section id="about" eyebrow="About" title="Hi, I'm Cole — I build direct-booking sites for hosts">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            I create clean, fast websites that help hosts keep more of each booking. You’ll get a branded site,
-            a secure checkout, and a calendar that syncs with Airbnb. Start simple and scale later with a login to view guests and bookings.
-          </p>
-          <div className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900">
-            <img src="/photos/cabin3.jpg" className="w-full h-64 object-cover" alt="Portfolio example" />
+      <Section id="about" eyebrow="What I Build" title="Direct-booking sites that turn your Airbnb property into a revenue machine">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Left: Story & Value Prop */}
+          <div className="space-y-6">
+            <div className="prose prose-zinc dark:prose-invert max-w-none">
+              <h3 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Hi, I'm Cole — and I help hosts escape platform fees</h3>
+              <p className="text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed mb-4">
+                While you're losing 15–20% to Airbnb on every booking, your guests are ready to book directly with you. 
+                I build <strong className="text-zinc-900 dark:text-zinc-100">fast, beautiful websites</strong> that let you capture those direct bookings 
+                and keep 100% of your revenue (minus Stripe's 2.9%).
+              </p>
+              <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                Every site includes a secure Stripe checkout, automatic calendar sync with Airbnb, customer management, 
+                and everything else you need to run a professional direct-booking operation—no coding required on your end.
+              </p>
+            </div>
+
+            {/* Stats/Highlights */}
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">~15%</div>
+                <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Extra Revenue</div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">2.9%</div>
+                <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Processing Fee</div>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">&lt;1wk</div>
+                <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">Launch Time</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Feature Grid */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">What Every Site Includes</h3>
+            <div className="grid grid-cols-1 gap-4">
+              {[
+                { 
+                  icon: DollarSign, 
+                  title: "Keep 100% of revenue", 
+                  text: "No platform fees. Only Stripe's standard 2.9% processing fee—you keep everything else." 
+                },
+                { 
+                  icon: Users, 
+                  title: "Own your guest list", 
+                  text: "Direct access to customer emails and phone numbers. Build repeat bookings and market to past guests." 
+                },
+                { 
+                  icon: CalendarDays, 
+                  title: "Automatic calendar sync", 
+                  text: "Two-way iCal sync keeps Airbnb and your direct site perfectly aligned. No double bookings, ever." 
+                },
+                { 
+                  icon: ShieldCheck, 
+                  title: "Enterprise-grade security", 
+                  text: "Stripe handles all payments. PCI compliant, fraud protection, and secure checkout included." 
+                },
+                { 
+                  icon: Smartphone, 
+                  title: "Mobile-optimized", 
+                  text: "Your site looks perfect on every device. Guests can browse and book seamlessly from phones, tablets, or desktops." 
+                },
+                { 
+                  icon: TrendingUp, 
+                  title: "Host dashboard", 
+                  text: "Login to view all bookings, manage customers, block dates, and track your direct booking revenue." 
+                }
+              ].map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex gap-4 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                      <feature.icon className="text-zinc-700 dark:text-zinc-300" size={20} />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">{feature.title}</h4>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">{feature.text}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom: Image & CTA */}
+        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="relative rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 shadow-lg">
+            <img src="/photos/cabin3.jpg" className="w-full h-80 object-cover" alt="Example direct-booking site" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-white text-sm font-medium">Real site built for a host</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h3 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">Ready to stop paying platform fees?</h3>
+            <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              Get a custom direct-booking site tailored to your property. Launch in days, not months. 
+              No technical knowledge required—I handle everything from design to deployment.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a 
+                href="#contact" 
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+              >
+                Get a quote
+              </a>
+              <a 
+                href="/demo-template" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+              >
+                View live demo
+              </a>
+            </div>
           </div>
         </div>
       </Section>

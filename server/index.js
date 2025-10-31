@@ -2,14 +2,20 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import Stripe from 'stripe';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 import {
   LISTINGS, bookings, isFree, createHold,
-  consumeHold, confirmBooking, getBlockedDates
+  consumeHold, confirmBooking, getBlockedDates,
+  findHostByEmail, findHostById, createHost,
+  getBookingsForListing, addBlockedDate, removeBlockedDate,
+  externalBlocks, updateBookingWithCustomer
 } from './store.js';
 
 // Load server/.env
@@ -45,7 +51,14 @@ if (process.env.STRIPE_WEBHOOK_SECRET) {
         const { listingId, start, end, holdId } = s.metadata || {};
         const hold = consumeHold(String(holdId));
         if (hold && isFree(String(listingId), String(start), String(end))) {
-          confirmBooking(String(listingId), String(start), String(end));
+          confirmBooking(
+            String(listingId), 
+            String(start), 
+            String(end),
+            s.customer_details?.email,
+            s.customer_details?.phone,
+            s.id
+          );
         } else {
           console.warn('Conflict detected after payment (test env).');
           // Optionally issue a refund in test mode here
@@ -57,8 +70,23 @@ if (process.env.STRIPE_WEBHOOK_SECRET) {
 }
 
 /** other middleware AFTER webhook */
-app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
 app.use(express.json());
+app.use(cookieParser());
+
+// Auth middleware
+function authenticateToken(req, res, next) {
+  const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Authentication required' });
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
+    req.user = decoded;
+    next();
+  } catch (e) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+}
 
 /** Availability */
 app.get('/api/availability', (req, res) => {
@@ -225,6 +253,170 @@ app.get('/api/blocked', (req,res)=>{
   const blocked = getBlockedDates(listing, from, to);
   res.json({ listing, from, to, blocked });
 });
+
+/** Authentication endpoints */
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password required' });
+  }
+
+  const host = findHostByEmail(email);
+  if (!host) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  const valid = await bcrypt.compare(password, host.passwordHash);
+  if (!valid) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  const token = jwt.sign(
+    { id: host.id, email: host.email },
+    process.env.JWT_SECRET || 'your-secret-key-change-in-production',
+    { expiresIn: '7d' }
+  );
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
+
+  res.json({ 
+    token, 
+    host: { id: host.id, email: host.email, listingIds: host.listingIds } 
+  });
+});
+
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ success: true });
+});
+
+app.get('/api/me', authenticateToken, (req, res) => {
+  const host = findHostById(req.user.id);
+  if (!host) {
+    return res.status(404).json({ error: 'Host not found' });
+  }
+  res.json({ host: { id: host.id, email: host.email, listingIds: host.listingIds } });
+});
+
+/** Dashboard endpoints (protected) */
+app.get('/api/dashboard/bookings', authenticateToken, (req, res) => {
+  const host = findHostById(req.user.id);
+  if (!host) return res.status(404).json({ error: 'Host not found' });
+
+  const allBookings = [];
+  for (const listingId of host.listingIds) {
+    const listingBookings = getBookingsForListing(listingId);
+    allBookings.push(...listingBookings.map(b => ({
+      ...b,
+      listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
+    })));
+  }
+
+  res.json({ bookings: allBookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt)) });
+});
+
+app.get('/api/dashboard/customers', authenticateToken, (req, res) => {
+  const host = findHostById(req.user.id);
+  if (!host) return res.status(404).json({ error: 'Host not found' });
+
+  const customersMap = new Map();
+  
+  for (const listingId of host.listingIds) {
+    const listingBookings = getBookingsForListing(listingId);
+    for (const booking of listingBookings) {
+      if (booking.customerEmail) {
+        const key = booking.customerEmail.toLowerCase();
+        if (!customersMap.has(key)) {
+          customersMap.set(key, {
+            email: booking.customerEmail,
+            phone: booking.customerPhone,
+            bookings: [],
+            totalSpent: 0
+          });
+        }
+        const customer = customersMap.get(key);
+        customer.bookings.push({
+          id: booking.id,
+          listingId: booking.listingId,
+          listingTitle: LISTINGS.find(l => l.id === booking.listingId)?.title || booking.listingId,
+          start: booking.start,
+          end: booking.end,
+          createdAt: booking.createdAt
+        });
+      }
+    }
+  }
+
+  const customers = Array.from(customersMap.values());
+  res.json({ customers });
+});
+
+app.get('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
+  const host = findHostById(req.user.id);
+  if (!host) return res.status(404).json({ error: 'Host not found' });
+
+  const manualBlocks = externalBlocks
+    .filter(b => b.type === 'manual' && host.listingIds.includes(b.listingId))
+    .map(b => ({
+      ...b,
+      listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
+    }));
+
+  res.json({ blockedDates: manualBlocks });
+});
+
+app.post('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
+  const host = findHostById(req.user.id);
+  if (!host) return res.status(404).json({ error: 'Host not found' });
+
+  const { listingId, start, end, note } = req.body;
+  if (!listingId || !start || !end) {
+    return res.status(400).json({ error: 'listingId, start, and end required' });
+  }
+
+  if (!host.listingIds.includes(listingId)) {
+    return res.status(403).json({ error: 'You do not have access to this listing' });
+  }
+
+  const block = addBlockedDate(listingId, start, end, note || '');
+  res.json({ blockedDate: block });
+});
+
+app.delete('/api/dashboard/blocked-dates/:blockId', authenticateToken, (req, res) => {
+  const host = findHostById(req.user.id);
+  if (!host) return res.status(404).json({ error: 'Host not found' });
+
+  const { blockId } = req.params;
+  const block = externalBlocks.find(b => b.id === blockId && b.type === 'manual');
+  
+  if (!block) {
+    return res.status(404).json({ error: 'Blocked date not found' });
+  }
+
+  if (!host.listingIds.includes(block.listingId)) {
+    return res.status(403).json({ error: 'You do not have access to this listing' });
+  }
+
+  const removed = removeBlockedDate(blockId);
+  res.json({ success: true, blockedDate: removed });
+});
+
+// Initialize a default host for demo (password: 'password')
+if (process.env.NODE_ENV !== 'production') {
+  (async () => {
+    const defaultEmail = 'host@example.com';
+    if (!findHostByEmail(defaultEmail)) {
+      const passwordHash = await bcrypt.hash('password', 10);
+      createHost(defaultEmail, passwordHash, [LISTINGS[0].id]);
+      console.log(`Default host created: ${defaultEmail} / password`);
+    }
+  })();
+}
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

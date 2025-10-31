@@ -9,9 +9,10 @@ export const LISTINGS = [{
   cleaningFee: 9500    // cents
 }];
 
-export const bookings = [];      // {id, listingId, start, end, status, createdAt}
+export const bookings = [];      // {id, listingId, start, end, status, createdAt, customerEmail, customerPhone, stripeSessionId}
 export const holds = [];         // {id, listingId, start, end, expiresAt, createdAt}
 export const externalBlocks = []; // mock external (Airbnb) blocks
+export const hosts = [];         // {id, email, passwordHash, listingIds, createdAt}
 
 function shift(dateStr, days){
   const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate()+days);
@@ -56,8 +57,18 @@ export function consumeHold(holdId){
   return h;
 }
 
-export function confirmBooking(listingId,start,end){
-  const b={ id: uid('bk_'), listingId, start, end, status:'confirmed', createdAt:new Date().toISOString() };
+export function confirmBooking(listingId,start,end, customerEmail, customerPhone, stripeSessionId){
+  const b={ 
+    id: uid('bk_'), 
+    listingId, 
+    start, 
+    end, 
+    status:'confirmed', 
+    createdAt:new Date().toISOString(),
+    customerEmail: customerEmail || null,
+    customerPhone: customerPhone || null,
+    stripeSessionId: stripeSessionId || null
+  };
   bookings.push(b); return b;
 }
 
@@ -111,6 +122,64 @@ export function getBlockedDates(listingId, from, to){
   }
 
   return Array.from(blockedSet).sort();
+}
+
+// Host/user management
+export function findHostByEmail(email) {
+  return hosts.find(h => h.email === email);
+}
+
+export function findHostById(id) {
+  return hosts.find(h => h.id === id);
+}
+
+export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id]) {
+  const host = {
+    id: uid('host_'),
+    email,
+    passwordHash,
+    listingIds,
+    createdAt: new Date().toISOString()
+  };
+  hosts.push(host);
+  return host;
+}
+
+// Blocked dates management (manual blocks)
+export function addBlockedDate(listingId, start, end, note = '') {
+  const block = {
+    id: uid('block_'),
+    listingId,
+    start,
+    end,
+    note,
+    type: 'manual',
+    createdAt: new Date().toISOString()
+  };
+  externalBlocks.push(block);
+  return block;
+}
+
+export function removeBlockedDate(blockId) {
+  const i = externalBlocks.findIndex(b => b.id === blockId && b.type === 'manual');
+  if (i === -1) return null;
+  return externalBlocks.splice(i, 1)[0];
+}
+
+// Get bookings for a listing
+export function getBookingsForListing(listingId) {
+  return bookings.filter(b => b.listingId === listingId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+// Update booking to include customer info from Stripe
+export function updateBookingWithCustomer(bookingId, customerEmail, customerPhone, stripeSessionId) {
+  const booking = bookings.find(b => b.id === bookingId);
+  if (booking) {
+    booking.customerEmail = customerEmail;
+    booking.customerPhone = customerPhone;
+    booking.stripeSessionId = stripeSessionId;
+  }
+  return booking;
 }
 
 // cleanup expired holds

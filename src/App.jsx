@@ -1,6 +1,8 @@
-import { Link, Route, Routes, NavLink, useLocation } from 'react-router-dom'
+import { Link, Route, Routes, NavLink, useLocation, Navigate } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import DemoTemplate from './pages/DemoTemplate.jsx'
+import Login from './pages/Login.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 
 function SiteNav() {
   const linkCls = ({ isActive }) =>
@@ -29,7 +31,14 @@ function SiteNav() {
             Demo
           </a>
 
-          <NavLink to="/login" className={linkCls}>Login</NavLink>
+          {(() => {
+            const token = localStorage.getItem('token')
+            return token ? (
+              <NavLink to="/dashboard" className={linkCls}>Dashboard</NavLink>
+            ) : (
+              <NavLink to="/login" className={linkCls}>Login</NavLink>
+            )
+          })()}
         </nav>
       </div>
     </header>
@@ -50,10 +59,10 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/demo-template" element={<DemoTemplate />} />
         <Route path="/login" element={
-          <div className="mx-auto max-w-3xl px-4 py-24">
-            <h1 className="text-3xl font-semibold mb-3">Login (coming soon)</h1>
-            <p className="opacity-80">You’ll be able to sign in to view guests, bookings, and messages.</p>
-          </div>
+          localStorage.getItem('token') ? <Navigate to="/dashboard" replace /> : <Login />
+        } />
+        <Route path="/dashboard" element={
+          localStorage.getItem('token') ? <Dashboard /> : <Navigate to="/login" replace />
         } />
         <Route path="*" element={<Home />} />
       </Routes>
