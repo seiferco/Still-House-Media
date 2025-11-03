@@ -13,9 +13,9 @@ import jwt from 'jsonwebtoken';
 import {
   LISTINGS, bookings, isFree, createHold,
   consumeHold, confirmBooking, getBlockedDates,
-  findHostByEmail, findHostById, createHost,
-  getBookingsForListing, addBlockedDate, removeBlockedDate,
-  externalBlocks, updateBookingWithCustomer
+  findHostByEmail, findHostById, createHost, findHostByListingId,
+  getBookingsForHost, addBlockedDate, removeBlockedDateByHost,
+  getBlockedDatesForHost
 } from './store.js';
 
 // Load server/.env
@@ -49,10 +49,20 @@ if (process.env.STRIPE_WEBHOOK_SECRET) {
       if (event.type === 'checkout.session.completed') {
         const s = event.data.object;
         const { listingId, start, end, holdId } = s.metadata || {};
+        const listingIdStr = String(listingId);
+        
+        // Find which host owns this listing
+        const host = findHostByListingId(listingIdStr);
+        if (!host) {
+          console.error(`No host found for listing ${listingIdStr}`);
+          return res.json({ received: true, error: 'Host not found for listing' });
+        }
+        
         const hold = consumeHold(String(holdId));
-        if (hold && isFree(String(listingId), String(start), String(end))) {
+        if (hold && isFree(listingIdStr, String(start), String(end))) {
           confirmBooking(
-            String(listingId), 
+            host.id, // hostId - links booking to specific host
+            listingIdStr, 
             String(start), 
             String(end),
             s.customer_details?.email,
@@ -83,7 +93,7 @@ function authenticateToken(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
     req.user = decoded;
     next();
-  } catch (e) {
+  } catch {
     return res.status(401).json({ error: 'Invalid token' });
   }
 }
@@ -272,7 +282,13 @@ app.post('/api/login', async (req, res) => {
   }
 
   const token = jwt.sign(
-    { id: host.id, email: host.email },
+    { 
+      id: host.id, 
+      email: host.email,
+      hostId: host.id, // For clarity in middleware
+      websiteId: host.websiteId,
+      listingIds: host.listingIds
+    },
     process.env.JWT_SECRET || 'your-secret-key-change-in-production',
     { expiresIn: '7d' }
   );
@@ -286,7 +302,13 @@ app.post('/api/login', async (req, res) => {
 
   res.json({ 
     token, 
-    host: { id: host.id, email: host.email, listingIds: host.listingIds } 
+    host: { 
+      id: host.id, 
+      email: host.email, 
+      listingIds: host.listingIds,
+      websiteId: host.websiteId,
+      sitePath: host.sitePath
+    } 
   });
 });
 
@@ -300,55 +322,65 @@ app.get('/api/me', authenticateToken, (req, res) => {
   if (!host) {
     return res.status(404).json({ error: 'Host not found' });
   }
-  res.json({ host: { id: host.id, email: host.email, listingIds: host.listingIds } });
+  res.json({ 
+    host: { 
+      id: host.id, 
+      email: host.email, 
+      listingIds: host.listingIds,
+      websiteId: host.websiteId,
+      sitePath: host.sitePath
+    } 
+  });
 });
 
 /** Dashboard endpoints (protected) */
 app.get('/api/dashboard/bookings', authenticateToken, (req, res) => {
-  const host = findHostById(req.user.id);
+  const hostId = req.user.hostId || req.user.id; // Support both token formats
+  const host = findHostById(hostId);
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
-  const allBookings = [];
-  for (const listingId of host.listingIds) {
-    const listingBookings = getBookingsForListing(listingId);
-    allBookings.push(...listingBookings.map(b => ({
-      ...b,
-      listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
-    })));
-  }
+  // Get bookings filtered by hostId - only this host's bookings
+  const allBookings = getBookingsForHost(hostId);
+  
+  // Enrich with listing titles
+  const enrichedBookings = allBookings.map(b => ({
+    ...b,
+    listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
+  }));
 
-  res.json({ bookings: allBookings.sort((a, b) => b.createdAt.localeCompare(a.createdAt)) });
+  res.json({ bookings: enrichedBookings });
 });
 
 app.get('/api/dashboard/customers', authenticateToken, (req, res) => {
-  const host = findHostById(req.user.id);
+  const hostId = req.user.hostId || req.user.id;
+  const host = findHostById(hostId);
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
+  // Get bookings filtered by hostId - only this host's bookings
+  const allBookings = getBookingsForHost(hostId);
+  
   const customersMap = new Map();
   
-  for (const listingId of host.listingIds) {
-    const listingBookings = getBookingsForListing(listingId);
-    for (const booking of listingBookings) {
-      if (booking.customerEmail) {
-        const key = booking.customerEmail.toLowerCase();
-        if (!customersMap.has(key)) {
-          customersMap.set(key, {
-            email: booking.customerEmail,
-            phone: booking.customerPhone,
-            bookings: [],
-            totalSpent: 0
-          });
-        }
-        const customer = customersMap.get(key);
-        customer.bookings.push({
-          id: booking.id,
-          listingId: booking.listingId,
-          listingTitle: LISTINGS.find(l => l.id === booking.listingId)?.title || booking.listingId,
-          start: booking.start,
-          end: booking.end,
-          createdAt: booking.createdAt
+  for (const booking of allBookings) {
+    if (booking.customerEmail) {
+      const key = booking.customerEmail.toLowerCase();
+      if (!customersMap.has(key)) {
+        customersMap.set(key, {
+          email: booking.customerEmail,
+          phone: booking.customerPhone,
+          bookings: [],
+          totalSpent: 0
         });
       }
+      const customer = customersMap.get(key);
+      customer.bookings.push({
+        id: booking.id,
+        listingId: booking.listingId,
+        listingTitle: LISTINGS.find(l => l.id === booking.listingId)?.title || booking.listingId,
+        start: booking.start,
+        end: booking.end,
+        createdAt: booking.createdAt
+      });
     }
   }
 
@@ -357,21 +389,22 @@ app.get('/api/dashboard/customers', authenticateToken, (req, res) => {
 });
 
 app.get('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
-  const host = findHostById(req.user.id);
+  const hostId = req.user.hostId || req.user.id;
+  const host = findHostById(hostId);
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
-  const manualBlocks = externalBlocks
-    .filter(b => b.type === 'manual' && host.listingIds.includes(b.listingId))
-    .map(b => ({
-      ...b,
-      listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
-    }));
+  // Get blocked dates filtered by hostId - only this host's manual blocks
+  const manualBlocks = getBlockedDatesForHost(hostId).map(b => ({
+    ...b,
+    listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
+  }));
 
   res.json({ blockedDates: manualBlocks });
 });
 
 app.post('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
-  const host = findHostById(req.user.id);
+  const hostId = req.user.hostId || req.user.id;
+  const host = findHostById(hostId);
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
   const { listingId, start, end, note } = req.body;
@@ -379,30 +412,30 @@ app.post('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
     return res.status(400).json({ error: 'listingId, start, and end required' });
   }
 
+  // Security: ensure host owns this listing
   if (!host.listingIds.includes(listingId)) {
     return res.status(403).json({ error: 'You do not have access to this listing' });
   }
 
-  const block = addBlockedDate(listingId, start, end, note || '');
+  // Add blocked date with hostId scoping
+  const block = addBlockedDate(hostId, listingId, start, end, note || '');
   res.json({ blockedDate: block });
 });
 
 app.delete('/api/dashboard/blocked-dates/:blockId', authenticateToken, (req, res) => {
-  const host = findHostById(req.user.id);
+  const hostId = req.user.hostId || req.user.id;
+  const host = findHostById(hostId);
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
   const { blockId } = req.params;
-  const block = externalBlocks.find(b => b.id === blockId && b.type === 'manual');
   
-  if (!block) {
-    return res.status(404).json({ error: 'Blocked date not found' });
+  // Remove blocked date with hostId validation (ensures host owns the block)
+  const removed = removeBlockedDateByHost(blockId, hostId);
+  
+  if (!removed) {
+    return res.status(404).json({ error: 'Blocked date not found or access denied' });
   }
 
-  if (!host.listingIds.includes(block.listingId)) {
-    return res.status(403).json({ error: 'You do not have access to this listing' });
-  }
-
-  const removed = removeBlockedDate(blockId);
   res.json({ success: true, blockedDate: removed });
 });
 
@@ -412,7 +445,14 @@ if (process.env.NODE_ENV !== 'production') {
     const defaultEmail = 'host@example.com';
     if (!findHostByEmail(defaultEmail)) {
       const passwordHash = await bcrypt.hash('password', 10);
-      createHost(defaultEmail, passwordHash, [LISTINGS[0].id]);
+      createHost(
+        defaultEmail, 
+        passwordHash, 
+        [LISTINGS[0].id],
+        LISTINGS[0].id, // websiteId defaults to first listing ID
+        null, // sitePath (can be set when creating actual host sites)
+        null  // stripeAccountId (can be set when setting up Stripe)
+      );
       console.log(`Default host created: ${defaultEmail} / password`);
     }
   })();

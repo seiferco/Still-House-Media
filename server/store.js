@@ -9,10 +9,10 @@ export const LISTINGS = [{
   cleaningFee: 9500    // cents
 }];
 
-export const bookings = [];      // {id, listingId, start, end, status, createdAt, customerEmail, customerPhone, stripeSessionId}
+export const bookings = [];      // {id, hostId, listingId, start, end, status, createdAt, customerEmail, customerPhone, stripeSessionId}
 export const holds = [];         // {id, listingId, start, end, expiresAt, createdAt}
 export const externalBlocks = []; // mock external (Airbnb) blocks
-export const hosts = [];         // {id, email, passwordHash, listingIds, createdAt}
+export const hosts = [];         // {id, email, passwordHash, listingIds, websiteId, sitePath, stripeAccountId, createdAt}
 
 function shift(dateStr, days){
   const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate()+days);
@@ -57,9 +57,10 @@ export function consumeHold(holdId){
   return h;
 }
 
-export function confirmBooking(listingId,start,end, customerEmail, customerPhone, stripeSessionId){
+export function confirmBooking(hostId, listingId, start, end, customerEmail, customerPhone, stripeSessionId){
   const b={ 
     id: uid('bk_'), 
+    hostId, // Required: links booking to specific host
     listingId, 
     start, 
     end, 
@@ -133,12 +134,20 @@ export function findHostById(id) {
   return hosts.find(h => h.id === id);
 }
 
-export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id]) {
+// Find which host owns a specific listing
+export function findHostByListingId(listingId) {
+  return hosts.find(h => h.listingIds.includes(listingId));
+}
+
+export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id], websiteId = null, sitePath = null, stripeAccountId = null) {
   const host = {
     id: uid('host_'),
     email,
     passwordHash,
     listingIds,
+    websiteId: websiteId || listingIds[0] || 'default', // Default to first listing ID if not provided
+    sitePath: sitePath || null,
+    stripeAccountId: stripeAccountId || null,
     createdAt: new Date().toISOString()
   };
   hosts.push(host);
@@ -146,9 +155,10 @@ export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id]) {
 }
 
 // Blocked dates management (manual blocks)
-export function addBlockedDate(listingId, start, end, note = '') {
+export function addBlockedDate(hostId, listingId, start, end, note = '') {
   const block = {
     id: uid('block_'),
+    hostId, // Required: links block to specific host
     listingId,
     start,
     end,
@@ -160,15 +170,36 @@ export function addBlockedDate(listingId, start, end, note = '') {
   return block;
 }
 
+// Legacy function - kept for backward compatibility but should use removeBlockedDateByHost
 export function removeBlockedDate(blockId) {
   const i = externalBlocks.findIndex(b => b.id === blockId && b.type === 'manual');
   if (i === -1) return null;
   return externalBlocks.splice(i, 1)[0];
 }
 
-// Get bookings for a listing
+// Get bookings for a listing (public - no host filter)
 export function getBookingsForListing(listingId) {
   return bookings.filter(b => b.listingId === listingId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+// Get bookings for a specific host
+export function getBookingsForHost(hostId) {
+  return bookings.filter(b => b.hostId === hostId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+// Get blocked dates for a specific host (manual blocks only)
+export function getBlockedDatesForHost(hostId) {
+  return externalBlocks.filter(b => b.hostId === hostId && b.type === 'manual');
+}
+
+// Remove blocked date by ID (validates hostId ownership)
+export function removeBlockedDateByHost(blockId, hostId) {
+  const block = externalBlocks.find(b => b.id === blockId && b.type === 'manual');
+  if (!block) return null;
+  if (block.hostId !== hostId) return null; // Security: ensure host owns this block
+  const i = externalBlocks.findIndex(b => b.id === blockId && b.type === 'manual');
+  if (i === -1) return null;
+  return externalBlocks.splice(i, 1)[0];
 }
 
 // Update booking to include customer info from Stripe

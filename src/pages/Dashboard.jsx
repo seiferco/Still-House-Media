@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Calendar, Users, CalendarX, LogOut, Plus, X, Mail, Phone, MapPin } from 'lucide-react'
+import { Calendar, Users, CalendarX, LogOut, Plus, X, Mail, Phone } from 'lucide-react'
 
 const fade = { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 
