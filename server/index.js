@@ -15,8 +15,25 @@ import {
   consumeHold, confirmBooking, getBlockedDates,
   findHostByEmail, findHostById, createHost, findHostByListingId,
   getBookingsForHost, addBlockedDate, removeBlockedDateByHost,
-  getBlockedDatesForHost
+  getAllBlockedDatesForHost
 } from './store.js';
+
+// Helper function to get Stripe instance for a specific host
+function getStripeForHost(host) {
+  // If host has a specific Stripe key ID, use that; otherwise use default
+  if (host.stripeSecretKeyId) {
+    const hostKey = process.env[`STRIPE_SECRET_KEY_${host.stripeSecretKeyId.toUpperCase()}`];
+    if (hostKey) {
+      return new Stripe(hostKey, { apiVersion: '2023-10-16' });
+    }
+    console.warn(`No Stripe key found for host ${host.id} with keyId ${host.stripeSecretKeyId}, using default`);
+  }
+  // Fallback to default Stripe key
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY not set in environment variables');
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
+}
 
 // Load server/.env
 const __filename = fileURLToPath(import.meta.url);
@@ -24,60 +41,112 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' });
+
+// Default Stripe instance (for backwards compatibility and webhook verification)
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' })
+  : null;
 
 /** HEALTH CHECK */
 app.get('/api/health', (_,res)=>res.json({ ok: true }));
 
 /** Stripe webhook FIRST (raw body). Only needed if you test webhooks. */
-if (process.env.STRIPE_WEBHOOK_SECRET) {
-  app.post('/api/stripe-webhook',
-    bodyParser.raw({ type: 'application/json' }),
-    async (req, res) => {
-      let event;
-      try {
-        event = stripe.webhooks.constructEvent(
-          req.body,
-          req.headers['stripe-signature'],
-          process.env.STRIPE_WEBHOOK_SECRET
-        );
-      } catch (err) {
+app.post('/api/stripe-webhook',
+  bodyParser.raw({ type: 'application/json' }),
+  async (req, res) => {
+    // First, try to find which host this webhook is for by checking the event
+    // We'll verify the signature with the appropriate secret after identifying the host
+    let event;
+    let host = null;
+    
+    // Try to parse event to get listing ID (we'll need to verify signature later)
+    try {
+      const rawBody = req.body;
+      const parsed = JSON.parse(rawBody.toString());
+      
+      if (parsed.type === 'checkout.session.completed' && parsed.data?.object?.metadata?.listingId) {
+        const listingIdStr = String(parsed.data.object.metadata.listingId);
+        host = findHostByListingId(listingIdStr);
+      }
+    } catch (e) {
+      // If we can't parse, we'll try default verification
+    }
+    
+    // Get webhook secret for this host (or use default)
+    let webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (host && host.stripeSecretKeyId) {
+      const hostWebhookSecret = process.env[`STRIPE_WEBHOOK_SECRET_${host.stripeSecretKeyId.toUpperCase()}`];
+      if (hostWebhookSecret) {
+        webhookSecret = hostWebhookSecret;
+      }
+    }
+    
+    if (!webhookSecret) {
+      console.error('No webhook secret found');
+      return res.status(400).send('Webhook Error: No webhook secret configured');
+    }
+    
+    // Verify webhook signature
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        req.headers['stripe-signature'],
+        webhookSecret
+      );
+    } catch (err) {
+      // If default failed and we have a host, try with host's Stripe instance
+      if (host && host.stripeSecretKeyId) {
+        try {
+          const hostStripe = getStripeForHost(host);
+          event = hostStripe.webhooks.constructEvent(
+            req.body,
+            req.headers['stripe-signature'],
+            webhookSecret
+          );
+        } catch (err2) {
+          console.error('Webhook signature failed', err2.message);
+          return res.status(400).send(`Webhook Error: ${err2.message}`);
+        }
+      } else {
         console.error('Webhook signature failed', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
       }
-
-      if (event.type === 'checkout.session.completed') {
-        const s = event.data.object;
-        const { listingId, start, end, holdId } = s.metadata || {};
-        const listingIdStr = String(listingId);
-        
-        // Find which host owns this listing
-        const host = findHostByListingId(listingIdStr);
-        if (!host) {
-          console.error(`No host found for listing ${listingIdStr}`);
-          return res.json({ received: true, error: 'Host not found for listing' });
-        }
-        
-        const hold = consumeHold(String(holdId));
-        if (hold && isFree(listingIdStr, String(start), String(end))) {
-          confirmBooking(
-            host.id, // hostId - links booking to specific host
-            listingIdStr, 
-            String(start), 
-            String(end),
-            s.customer_details?.email,
-            s.customer_details?.phone,
-            s.id
-          );
-        } else {
-          console.warn('Conflict detected after payment (test env).');
-          // Optionally issue a refund in test mode here
-        }
-      }
-      res.json({ received: true });
     }
-  );
-}
+
+    if (event.type === 'checkout.session.completed') {
+      const s = event.data.object;
+      const { listingId, start, end, holdId } = s.metadata || {};
+      const listingIdStr = String(listingId);
+      
+      // Find which host owns this listing (if not already found)
+      if (!host) {
+        host = findHostByListingId(listingIdStr);
+      }
+      
+      if (!host) {
+        console.error(`No host found for listing ${listingIdStr}`);
+        return res.json({ received: true, error: 'Host not found for listing' });
+      }
+      
+      const hold = consumeHold(String(holdId));
+      if (hold && isFree(listingIdStr, String(start), String(end))) {
+        confirmBooking(
+          host.id, // hostId - links booking to specific host
+          listingIdStr, 
+          String(start), 
+          String(end),
+          s.customer_details?.email,
+          s.customer_details?.phone,
+          s.id
+        );
+      } else {
+        console.warn('Conflict detected after payment (test env).');
+        // Optionally issue a refund in test mode here
+      }
+    }
+    res.json({ received: true });
+  }
+);
 
 /** other middleware AFTER webhook */
 app.use(cors({ credentials: true, origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
@@ -125,13 +194,25 @@ app.post('/api/checkout', async (req, res) => {
   }
 
   const L = LISTINGS.find(l => l.id === listing);
+  if (!L) {
+    return res.status(404).json({ error: 'Listing not found' });
+  }
+  
+  // Find which host owns this listing to get their Stripe key
+  const host = findHostByListingId(listing);
+  if (!host) {
+    return res.status(404).json({ error: 'Host not found for listing' });
+  }
+  
+  const hostStripe = getStripeForHost(host);
+  
   const nights = Math.max(
     1,
     Math.round((Date.parse(end + 'T00:00:00') - Date.parse(start + 'T00:00:00')) / (24 * 3600 * 1000))
   );
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    const session = await hostStripe.checkout.sessions.create({
       mode: 'payment',
       // If you add a dedicated Success page later, send session_id so you can fetch its details.
       success_url: `${process.env.SITE_URL}/?success=1&session_id={CHECKOUT_SESSION_ID}`,
@@ -206,10 +287,19 @@ app.post('/api/checkout', async (req, res) => {
 // After checkout screen
 app.get('/api/checkout-session', async (req, res) => {
   try {
-    const { session_id } = req.query;
+    const { session_id, listing } = req.query;
     if (!session_id) return res.status(400).json({ error: 'session_id required' });
+    
+    // Find host to get their Stripe instance
+    const listingId = listing || LISTINGS[0].id;
+    const host = findHostByListingId(listingId);
+    const hostStripe = host ? getStripeForHost(host) : stripe;
+    
+    if (!hostStripe) {
+      return res.status(500).json({ error: 'Stripe not configured' });
+    }
 
-    const session = await stripe.checkout.sessions.retrieve(String(session_id), {
+    const session = await hostStripe.checkout.sessions.retrieve(String(session_id), {
       expand: ['line_items.data.price.product', 'customer']
     });
 
@@ -322,13 +412,21 @@ app.get('/api/me', authenticateToken, (req, res) => {
   if (!host) {
     return res.status(404).json({ error: 'Host not found' });
   }
+  // Get property names from listingIds
+  const propertyNames = host.listingIds
+    .map(listingId => LISTINGS.find(l => l.id === listingId)?.title)
+    .filter(Boolean);
+  const primaryPropertyName = propertyNames[0] || null;
+  
   res.json({ 
     host: { 
       id: host.id, 
       email: host.email, 
       listingIds: host.listingIds,
       websiteId: host.websiteId,
-      sitePath: host.sitePath
+      sitePath: host.sitePath,
+      propertyNames: propertyNames,
+      primaryPropertyName: primaryPropertyName
     } 
   });
 });
@@ -393,13 +491,15 @@ app.get('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
   const host = findHostById(hostId);
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
-  // Get blocked dates filtered by hostId - only this host's manual blocks
-  const manualBlocks = getBlockedDatesForHost(hostId).map(b => ({
+  // Get all blocked dates for this host's listings (manual + external blocks)
+  const allBlocks = getAllBlockedDatesForHost(hostId).map(b => ({
     ...b,
-    listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId
+    listingTitle: LISTINGS.find(l => l.id === b.listingId)?.title || b.listingId,
+    isManual: b.type === 'manual', // Indicate if it's a manual block (can be deleted)
+    source: b.source || (b.type === 'manual' ? 'manual' : 'external') // Indicate source
   }));
 
-  res.json({ blockedDates: manualBlocks });
+  res.json({ blockedDates: allBlocks });
 });
 
 app.post('/api/dashboard/blocked-dates', authenticateToken, (req, res) => {
@@ -451,12 +551,41 @@ if (process.env.NODE_ENV !== 'production') {
         [LISTINGS[0].id],
         LISTINGS[0].id, // websiteId defaults to first listing ID
         null, // sitePath (can be set when creating actual host sites)
-        null  // stripeAccountId (can be set when setting up Stripe)
+        null, // stripeAccountId (can be set when setting up Stripe)
+        null  // stripeSecretKeyId (leave null to use default STRIPE_SECRET_KEY)
       );
       console.log(`Default host created: ${defaultEmail} / password`);
     }
   })();
 }
+
+// HOST 1 LOGIN CREDENTIALS
+(async () => {
+  const hostEmail = 'stillhousemedia@outlook.com';
+  const hostPassword = 'OregonSpain2025!!'; // Generate a secure password
+  const listingId = 'coral-breeze-estate'; // Match the listing ID from Step 4
+  
+  // Stripe key identifier - must match the suffix in server/.env
+  // For example, if you used STRIPE_SECRET_KEY_HOST1 in .env, use 'HOST1' here
+  // If you used STRIPE_SECRET_KEY_MOUNTAIN_CABIN, use 'MOUNTAIN_CABIN' here
+  // Leave as null to use the default STRIPE_SECRET_KEY
+  const stripeSecretKeyId = 'CORAL_BREEZE_ESTATE'; // or null, or 'MOUNTAIN_CABIN', etc.
+  
+  if (!findHostByEmail(hostEmail)) {
+    const passwordHash = await bcrypt.hash(hostPassword, 10);
+    createHost(
+      hostEmail,
+      passwordHash,
+      [listingId],                    // Array of listing IDs they manage
+      listingId,                     // websiteId (usually same as listing)
+      'hosts/coral-breeze-estate',   // Path to their frontend folder
+      'acct_stripe_account_id',      // Their Stripe account ID (optional, for reference)
+      stripeSecretKeyId              // Stripe key identifier (matches .env variable suffix)
+    );
+    console.log(`Host created: ${hostEmail} / ${hostPassword}`);
+    console.log(`  Using Stripe key: ${stripeSecretKeyId || 'default (STRIPE_SECRET_KEY)'}`);
+  }
+})();
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

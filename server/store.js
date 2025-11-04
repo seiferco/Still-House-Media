@@ -7,12 +7,20 @@ export const LISTINGS = [{
   timezone: 'America/Los_Angeles',
   nightlyPrice: 25000, // cents
   cleaningFee: 9500    // cents
-}];
+},
+{
+  id: 'coral-breeze-estate',
+  title: 'Coral Breeze Estate',
+  timezone: 'America/Los_Angeles',
+  nightlyPrice: 45000, // cents
+  cleaningFee: 9500    // cents
+}
+];
 
 export const bookings = [];      // {id, hostId, listingId, start, end, status, createdAt, customerEmail, customerPhone, stripeSessionId}
 export const holds = [];         // {id, listingId, start, end, expiresAt, createdAt}
 export const externalBlocks = []; // mock external (Airbnb) blocks
-export const hosts = [];         // {id, email, passwordHash, listingIds, websiteId, sitePath, stripeAccountId, createdAt}
+export const hosts = [];         // {id, email, passwordHash, listingIds, websiteId, sitePath, stripeAccountId, stripeSecretKeyId, createdAt}
 
 function shift(dateStr, days){
   const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate()+days);
@@ -139,7 +147,7 @@ export function findHostByListingId(listingId) {
   return hosts.find(h => h.listingIds.includes(listingId));
 }
 
-export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id], websiteId = null, sitePath = null, stripeAccountId = null) {
+export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id], websiteId = null, sitePath = null, stripeAccountId = null, stripeSecretKeyId = null) {
   const host = {
     id: uid('host_'),
     email,
@@ -148,6 +156,7 @@ export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id], w
     websiteId: websiteId || listingIds[0] || 'default', // Default to first listing ID if not provided
     sitePath: sitePath || null,
     stripeAccountId: stripeAccountId || null,
+    stripeSecretKeyId: stripeSecretKeyId || null, // Identifier for which Stripe secret key to use (e.g., 'host1', 'host2')
     createdAt: new Date().toISOString()
   };
   hosts.push(host);
@@ -190,6 +199,29 @@ export function getBookingsForHost(hostId) {
 // Get blocked dates for a specific host (manual blocks only)
 export function getBlockedDatesForHost(hostId) {
   return externalBlocks.filter(b => b.hostId === hostId && b.type === 'manual');
+}
+
+// Get all blocked dates for a host's listings (manual + external blocks)
+export function getAllBlockedDatesForHost(hostId) {
+  const host = findHostById(hostId);
+  if (!host) return [];
+  
+  // Get all external blocks for this host's listings
+  // Includes:
+  // 1. Manual blocks created by this host (b.type === 'manual' && b.hostId === hostId)
+  // 2. External blocks (from other sources like Airbnb, calendar sync) for this host's listings
+  return externalBlocks.filter(b => {
+    // Must belong to one of the host's listings
+    if (!host.listingIds.includes(b.listingId)) return false;
+    
+    // Manual blocks: must belong to this host
+    if (b.type === 'manual') {
+      return b.hostId === hostId;
+    }
+    
+    // External blocks: any block that's not manual (has source or no type)
+    return !b.type || b.source;
+  });
 }
 
 // Remove blocked date by ID (validates hostId ownership)

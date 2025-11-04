@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [error, setError] = useState('')
   const [showBlockModal, setShowBlockModal] = useState(false)
   const [newBlock, setNewBlock] = useState({ listingId: 'cedar-ridge', start: '', end: '', note: '' })
+  const [propertyName, setPropertyName] = useState('')
   const navigate = useNavigate()
 
   const getAuthHeaders = () => {
@@ -43,6 +44,10 @@ export default function Dashboard() {
         headers: getAuthHeaders()
       })
       if (!res.ok) throw new Error('Not authenticated')
+      const data = await res.json()
+      if (data.host?.primaryPropertyName) {
+        setPropertyName(data.host.primaryPropertyName)
+      }
       fetchBookings()
     } catch (err) {
       localStorage.removeItem('token')
@@ -164,7 +169,14 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Host Dashboard</h1>
+            <h1 className="text-3xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+              Host Dashboard
+              {propertyName && (
+                <span className="text-xl font-normal text-zinc-600 dark:text-zinc-400 ml-3">
+                  — {propertyName}
+                </span>
+              )}
+            </h1>
             <p className="text-zinc-600 dark:text-zinc-400">Manage your bookings, customers, and calendar</p>
           </div>
           <button
@@ -324,8 +336,19 @@ export default function Dashboard() {
                       key={block.id}
                       className="flex items-center justify-between p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
                     >
-                      <div>
-                        <div className="font-medium text-zinc-900 dark:text-zinc-100">{block.listingTitle}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <div className="font-medium text-zinc-900 dark:text-zinc-100">{block.listingTitle}</div>
+                          {block.isManual ? (
+                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+                              Manual
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400">
+                              {block.source || 'External'}
+                            </span>
+                          )}
+                        </div>
                         <div className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                           {formatDateRange(block.start, block.end)}
                         </div>
@@ -333,12 +356,19 @@ export default function Dashboard() {
                           <div className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">{block.note}</div>
                         )}
                       </div>
-                      <button
-                        onClick={() => handleRemoveBlock(block.id)}
-                        className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
-                      >
-                        <X size={16} />
-                      </button>
+                      {block.isManual ? (
+                        <button
+                          onClick={() => handleRemoveBlock(block.id)}
+                          className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
+                          title="Remove block"
+                        >
+                          <X size={16} />
+                        </button>
+                      ) : (
+                        <div className="p-2 text-zinc-400 dark:text-zinc-500" title="External blocks cannot be removed from dashboard">
+                          <X size={16} className="opacity-50" />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
