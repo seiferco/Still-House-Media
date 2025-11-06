@@ -1,0 +1,19 @@
+Terminal 1 (home):
+    from root
+    npm run dev
+
+Terminal 2 (coral-breeze)
+    cd hosts/coral-breeze-estate
+    npm run dev
+
+Terminal 3 (backend)
+    cd server 
+    npm run dev
+
+Terminal 4 (stripe)
+    from roott
+    stripe listen --forward-to localhost:3001/api/stripe-webhook
+
+Terminal 5 (git)
+    from root
+    run git commands 
