@@ -256,7 +256,8 @@ app.post('/api/checkout', async (req, res) => {
       // automatic_tax: { enabled: true },
 
       // ✅ ToS consent (set your policy URLs in Stripe Dashboard → Branding → Policies)
-      consent_collection: { terms_of_service: 'required' },
+      // Temporarily disabled for testing - uncomment and add ToS URL in Stripe Dashboard for production
+      // consent_collection: { terms_of_service: 'required' },
 
       // 💌 After submit note (small text under the button)
       custom_text: {
