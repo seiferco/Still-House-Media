@@ -9,7 +9,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
 import {
   LISTINGS, bookings, isFree, createHold,
   consumeHold, confirmBooking, getBlockedDates,

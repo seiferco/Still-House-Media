@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 
 const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+const withApiBase = (path) => API_BASE ? `${API_BASE}${path}` : path
 
 function startOfMonth(date){ return new Date(date.getFullYear(), date.getMonth(), 1) }
 function endOfMonth(date){ return new Date(date.getFullYear(), date.getMonth()+1, 0) }
@@ -42,7 +44,7 @@ export default function BookingWidget({ listingId }){
     const from = ymd(m1)
     const to   = ymd(addMonths(m2, 1)) // exclusive end: start of month after next
     const listing = listingId || new URLSearchParams(window.location.search).get('listing') || undefined
-    const url = `/api/blocked?from=${from}&to=${to}${listing ? `&listing=${listing}` : ''}`
+    const url = withApiBase(`/blocked?from=${from}&to=${to}${listing ? `&listing=${listing}` : ''}`)
     const res = await fetch(url)
     const j = await res.json()
     const set = new Set(j.blocked) // YYYY-MM-DD strings
@@ -89,7 +91,7 @@ export default function BookingWidget({ listingId }){
     if (!selStart || !selEnd) { setStatus('Pick a start and end date'); return }
     const listing = listingId || new URLSearchParams(window.location.search).get('listing') || undefined
     const qs = `start=${ymd(selStart)}&end=${ymd(selEnd)}${listing ? `&listing=${listing}` : ''}`
-    const r = await fetch(`/api/availability?${qs}`); const j = await r.json()
+    const r = await fetch(withApiBase(`/availability?${qs}`)); const j = await r.json()
     setStatus(j.available ? 'Available ✅' : 'Unavailable ❌')
   }
 
@@ -97,7 +99,7 @@ export default function BookingWidget({ listingId }){
     if (!selStart || !selEnd) { setStatus('Pick a start and end date'); return }
     setStatus('Placing 10-min hold…')
     const listing = listingId || new URLSearchParams(window.location.search).get('listing') || undefined
-    const r1 = await fetch('/api/hold',{ 
+    const r1 = await fetch(withApiBase('/hold'),{ 
       method:'POST', 
       headers:{'Content-Type':'application/json'}, 
       body: JSON.stringify({ 
@@ -109,7 +111,7 @@ export default function BookingWidget({ listingId }){
     const j1 = await r1.json()
     if(!r1.ok){ setStatus('Hold failed: '+(j1.error||'unknown')); return }
     setStatus('Creating checkout…')
-    const r2 = await fetch('/api/checkout',{ 
+    const r2 = await fetch(withApiBase('/checkout'),{ 
       method:'POST', 
       headers:{'Content-Type':'application/json'}, 
       body: JSON.stringify({ 
