@@ -17,14 +17,17 @@ const fade = {
 function Section({ id, title, children, eyebrow }) {
   return (
     <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <motion.div {...fade}>
+      <motion.div
+        {...fade}
+        className="rounded-3xl bg-[#FAF7F2] border border-[#CBBBAA]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-8 md:px-12 py-12"
+      >
         {eyebrow && (
-          <div className="text-sm font-medium tracking-widest uppercase text-zinc-500 dark:text-zinc-400 mb-2">
+          <div className="text-xs font-semibold tracking-[0.35em] uppercase text-[#3F6F63]/80 mb-4">
             {eyebrow}
           </div>
         )}
         {title && (
-          <h2 className="text-2xl md:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 mb-6">{title}</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold text-[#1E1E1E] mb-6">{title}</h2>
         )}
         {children}
       </motion.div>
@@ -34,21 +37,28 @@ function Section({ id, title, children, eyebrow }) {
 
 function Nav() {
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-lg bg-white/80 dark:bg-zinc-900/80 border-b border-zinc-200/50 dark:border-zinc-800/50 shadow-sm">
+    <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#" className="flex items-center gap-3 group">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-600 text-white grid place-items-center font-bold text-lg group-hover:scale-110 transition-transform shadow-md">
+          <div className="h-11 w-11 rounded-2xl bg-[#E17654] text-white grid place-items-center font-bold text-lg group-hover:scale-110 transition-transform shadow-lg shadow-[#E17654]/40">
             {SITE_CONFIG.brand.logoText}
           </div>
-          <span className="font-bold text-lg text-zinc-900 dark:text-zinc-100">{SITE_CONFIG.brand.name}</span>
+          <span className="font-semibold text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
         </a>
-        <nav className="hidden md:flex items-center gap-6 text-sm">
-          <a className="hover:text-cyan-600 dark:hover:text-cyan-400 text-zinc-700 dark:text-zinc-300 font-medium transition" href="#gallery">Gallery</a>
-          <a className="hover:text-cyan-600 dark:hover:text-cyan-400 text-zinc-700 dark:text-zinc-300 font-medium transition" href="#amenities">Amenities</a>
-          <a className="hover:text-cyan-600 dark:hover:text-cyan-400 text-zinc-700 dark:text-zinc-300 font-medium transition" href="#location">Location</a>
-          <a className="hover:text-cyan-600 dark:hover:text-cyan-400 text-zinc-700 dark:text-zinc-300 font-medium transition" href="#reviews">Reviews</a>
-          <a className="hover:text-cyan-600 dark:hover:text-cyan-400 text-zinc-700 dark:text-zinc-300 font-medium transition" href="#contact">Contact</a>
-          <a href="#book" className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:from-cyan-700 hover:to-blue-700 transition font-semibold shadow-md hover:shadow-lg">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
+          {["gallery","amenities","location","reviews","contact"].map((link) => (
+            <a
+              key={link}
+              className="text-[#3F6F63]/80 hover:text-[#3F6F63] transition-colors"
+              href={`#${link}`}
+            >
+              {link.charAt(0).toUpperCase() + link.slice(1)}
+            </a>
+          ))}
+          <a
+            href="#book"
+            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 bg-[#E17654] text-white shadow-sm shadow-[#E17654]/40 hover:bg-[#C65A3A] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D7A44E]/70"
+          >
             Book <ExternalLink size={16} />
           </a>
         </nav>
@@ -60,7 +70,7 @@ function Nav() {
 function Hero() {
   return (
     <div className="relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0F1514]/70 via-[#0F1514]/30 to-transparent z-0" />
       <img
         src={SITE_CONFIG.hero.image}
         alt={SITE_CONFIG.seo.coverAlt}
@@ -68,24 +78,29 @@ function Hero() {
       />
       <div className="absolute inset-0 z-10 flex items-end">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-          <motion.div {...fade} className="max-w-2xl">
-            <span className="text-white/95 text-sm tracking-widest uppercase font-medium">{SITE_CONFIG.brand.tagline}</span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mt-4 leading-tight">
+          <motion.div
+            {...fade}
+            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.82)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
+          >
+            <span className="text-xs font-semibold tracking-[0.4em] uppercase text-[#3F6F63]">
+              {SITE_CONFIG.brand.tagline}
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold mt-5 leading-tight">
               {SITE_CONFIG.brand.name}
             </h1>
-            <p className="text-lg md:text-xl text-white/95 mt-4 leading-relaxed font-light">
+            <p className="text-lg md:text-xl mt-4 leading-relaxed text-[#1E1E1E]/80">
               {SITE_CONFIG.description}
             </p>
             <div className="flex flex-wrap gap-4 mt-8">
               <a
                 href="#book"
-                className="rounded-2xl px-6 py-4 bg-white text-zinc-900 hover:bg-zinc-100 transition font-semibold shadow-lg hover:shadow-xl"
+                className="rounded-xl bg-[#E17654] px-6 py-3 font-semibold text-white shadow-sm shadow-[#E17654]/30 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
               >
                 Check Availability
               </a>
               <a
                 href="#contact"
-                className="rounded-2xl px-6 py-4 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition font-semibold border border-white/20"
+                className="rounded-xl border border-[#3F6F63]/30 px-6 py-3 font-semibold text-[#3F6F63] bg-white/70 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
               >
                 Contact Host
               </a>
@@ -100,7 +115,7 @@ function Hero() {
 function Highlights() {
   return (
     <Section id="highlights" eyebrow="Why you'll love it" title="Your Tropical Escape Awaits">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {SITE_CONFIG.highlights.map((h, i) => (
           <motion.div
             key={i}
@@ -108,14 +123,14 @@ function Highlights() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-md bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 hover:shadow-lg transition-all group"
+            className="rounded-2xl border border-[#CBBBAA]/70 p-6 bg-gradient-to-br from-[#FAF7F2] to-[#F4EDE4] hover:shadow-[0_25px_45px_-35px_rgba(30,30,30,0.45)] transition-all group"
           >
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 dark:from-cyan-600 dark:to-blue-700 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#E17654]/15 text-[#E17654] flex items-center justify-center group-hover:scale-110 transition-transform">
                 <h.icon size={24} />
               </div>
               <div className="flex-1">
-                <div className="text-zinc-900 dark:text-zinc-100 font-semibold text-base leading-tight">{h.label}</div>
+                <div className="text-[#1E1E1E] font-semibold text-base leading-tight">{h.label}</div>
               </div>
             </div>
           </motion.div>
@@ -174,25 +189,25 @@ function Gallery() {
   return (
     <>
       <Section id="gallery" title="Gallery">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 relative">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative">
           {visiblePhotos.map((src, idx) => (
             <motion.img
               {...fade}
               key={idx}
               src={src}
               alt={`${SITE_CONFIG.brand.name} photo ${idx + 1}`}
-              className="rounded-2xl h-52 w-full object-cover ring-1 ring-zinc-200 dark:ring-zinc-800 cursor-pointer hover:opacity-90 transition-opacity"
+              className="rounded-2xl h-52 w-full object-cover ring-1 ring-[#CBBBAA]/60 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
               onClick={() => setSelectedImage(idx)}
             />
           ))}
           {remainingCount > 0 && (
             <div
-              className="rounded-2xl h-52 w-full bg-zinc-900 dark:bg-zinc-800 flex items-center justify-center cursor-pointer hover:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors ring-1 ring-zinc-200 dark:ring-zinc-800"
+              className="rounded-2xl h-52 w-full bg-[#3F6F63] flex items-center justify-center cursor-pointer hover:bg-[#335b52] transition-colors ring-1 ring-[#3F6F63]/40 shadow-lg shadow-[#3F6F63]/30"
               onClick={() => setShowAllPhotos(true)}
             >
               <div className="text-center text-white">
-                <div className="text-3xl font-semibold">{remainingCount}+</div>
-                <div className="text-sm opacity-80 mt-1">More Photos</div>
+                <div className="text-3xl font-semibold tracking-wide">{remainingCount}+</div>
+                <div className="text-sm opacity-90 mt-1">More Photos</div>
               </div>
             </div>
           )}
@@ -258,11 +273,11 @@ function Gallery() {
       {/* All Photos Grid Modal */}
       {showAllPhotos && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 bg-[#0F1514]/95 backdrop-blur-sm p-4 overflow-y-auto"
           onClick={() => setShowAllPhotos(false)}
         >
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6 sticky top-4 bg-black/50 backdrop-blur rounded-lg p-4 z-10">
+            <div className="flex items-center justify-between mb-6 sticky top-4 bg-[#0F1514]/60 backdrop-blur rounded-lg p-4 z-10 text-[#FAF7F2]">
               <h3 className="text-xl font-semibold text-white">
                 All Photos ({photos.length})
               </h3>
@@ -280,7 +295,7 @@ function Gallery() {
                   key={idx}
                   src={src}
                   alt={`${SITE_CONFIG.brand.name} photo ${idx + 1}`}
-                  className="rounded-lg w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity ring-1 ring-zinc-700"
+                  className="rounded-lg w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity ring-1 ring-[#CBBBAA]/60"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowAllPhotos(false);
@@ -300,7 +315,7 @@ function DirectBooking() {
   return (
     <Section id="book" title="Book Your Stay">
       <BookingWidget listingId={LISTING_CONFIG.id} />
-      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
+      <p className="text-xs text-[#3F6F63]/80 mt-3">
         Secure booking powered by Stripe. Use test card 4242 4242 4242 4242 for demo mode.
       </p>
     </Section>
@@ -310,7 +325,7 @@ function DirectBooking() {
 function Amenities() {
   return (
     <Section id="amenities" title="Amenities & Features" eyebrow="Everything you need for the perfect stay">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
         {SITE_CONFIG.amenities.map((a, i) => (
           <motion.div
             key={i}
@@ -318,13 +333,13 @@ function Amenities() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.05 }}
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-5 bg-white dark:bg-zinc-900 hover:border-cyan-400 dark:hover:border-cyan-500 hover:shadow-lg transition-all group"
+            className="rounded-2xl border border-[#CBBBAA]/70 p-5 bg-[#FAF7F2] hover:border-[#3F6F63]/40 hover:shadow-[0_20px_45px_-30px_rgba(30,30,30,0.4)] transition-all group"
           >
             <div className="flex flex-col items-center text-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900/30 dark:to-blue-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-full bg-[#E17654]/15 text-[#E17654] flex items-center justify-center group-hover:scale-125 transition-transform shadow-sm shadow-[#E17654]/20">
                 <a.icon size={24} />
               </div>
-              <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200 leading-tight">{a.label}</span>
+              <span className="text-sm font-medium text-[#1E1E1E] leading-tight">{a.label}</span>
             </div>
           </motion.div>
         ))}
@@ -339,21 +354,21 @@ function LocationMap() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">Your Island Paradise</h3>
-            <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed text-lg">
+            <h3 className="text-xl font-semibold text-[#1E1E1E] mb-3">Your Island Paradise</h3>
+            <p className="text-[#1E1E1E]/75 leading-relaxed text-lg">
               Nestled in the heart of {SITE_CONFIG.location.city}, this mid-century gem puts you steps from pristine beaches, 
               world-class diving, and the laid-back island vibe that makes the Florida Keys unforgettable.
             </p>
           </div>
-          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-2xl p-6 border border-cyan-200 dark:border-cyan-800">
-            <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
-              <MapPin className="text-cyan-600 dark:text-cyan-400" size={20} />
+          <div className="bg-[#F4EDE4] rounded-2xl p-6 border border-[#CBBBAA]/70 shadow-sm">
+            <h4 className="font-semibold text-[#1E1E1E] mb-4 flex items-center gap-2">
+              <MapPin className="text-[#3F6F63]" size={20} />
               Nearby Attractions
             </h4>
             <ul className="space-y-3">
               {SITE_CONFIG.checkin.details.map((d, i) => (
-                <li key={i} className="flex items-start gap-3 text-zinc-700 dark:text-zinc-300">
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 mt-2 flex-shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-[#1E1E1E]/80">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
                   <span>{d}</span>
                 </li>
               ))}
@@ -362,7 +377,7 @@ function LocationMap() {
         </div>
 
         {SITE_CONFIG.location.mapEmbed && (
-          <div className="rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-zinc-800 shadow-xl bg-zinc-50 dark:bg-zinc-900">
+          <div className="rounded-2xl overflow-hidden border-2 border-[#CBBBAA]/70 shadow-xl bg-[#FAF7F2]">
             <div className="relative w-full pb-[66.6%] h-0">
               <iframe
                 title={`${SITE_CONFIG.brand.name} Location Map`}
@@ -393,18 +408,18 @@ function Reviews() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-950 shadow-md hover:shadow-lg transition-all"
+            className="rounded-2xl border border-[#CBBBAA]/70 p-6 bg-[#FAF7F2] shadow-sm hover:shadow-[0_22px_40px_-32px_rgba(30,30,30,0.45)] transition-all"
           >
             <div className="flex items-center gap-2 mb-3">
               {Array.from({ length: r.rating }).map((_, j) => (
-                <Star key={j} size={18} className="fill-yellow-400 text-yellow-400" />
+                <Star key={j} size={18} className="fill-[#D7A44E] text-[#D7A44E]" />
               ))}
             </div>
-            <p className="text-zinc-800 dark:text-zinc-200 leading-relaxed text-base mb-4">"{r.text}"</p>
-            <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
-              <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">— {r.name}</div>
+            <p className="text-[#1E1E1E]/80 leading-relaxed text-base mb-4">"{r.text}"</p>
+            <div className="flex items-center justify-between pt-4 border-t border-[#CBBBAA]/60">
+              <div className="text-sm font-semibold text-[#1E1E1E]">— {r.name}</div>
               {r.date && (
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">{r.date}</div>
+                <div className="text-xs text-[#1E1E1E]/60">{r.date}</div>
               )}
             </div>
           </motion.div>
@@ -417,42 +432,42 @@ function Reviews() {
 function Contact() {
   return (
     <Section id="contact" title="Contact the Host" eyebrow="Have questions?">
-      <div className="max-w-2xl mx-auto">
-        <div className="rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 p-8 bg-gradient-to-br from-white via-zinc-50 to-white dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900 shadow-xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white">
+      <div className="max-w-3xl mx-auto">
+        <div className="rounded-2xl border-2 border-[#CBBBAA]/70 p-8 bg-[#FAF7F2] shadow-[0_30px_60px_-35px_rgba(30,30,30,0.45)]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-white/70 border border-[#CBBBAA]/60 shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-[#E17654] flex items-center justify-center text-white shadow-sm shadow-[#E17654]/30">
                 <Phone size={20} />
               </div>
               <div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Phone</div>
-                <a href={`tel:${SITE_CONFIG.contact.phone}`} className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 hover:text-cyan-600 dark:hover:text-cyan-400 transition">
+                <div className="text-xs uppercase tracking-[0.3em] text-[#3F6F63]/70 mb-1">Phone</div>
+                <a href={`tel:${SITE_CONFIG.contact.phone}`} className="text-lg font-semibold text-[#1E1E1E] hover:text-[#3F6F63] transition">
                   {SITE_CONFIG.contact.phone}
                 </a>
               </div>
             </div>
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white">
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-white/70 border border-[#CBBBAA]/60 shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-[#3F6F63] flex items-center justify-center text-white shadow-sm shadow-[#3F6F63]/25">
                 <Mail size={20} />
               </div>
               <div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Email</div>
-                <a href={`mailto:${SITE_CONFIG.contact.email}`} className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 hover:text-cyan-600 dark:hover:text-cyan-400 transition break-all">
+                <div className="text-xs uppercase tracking-[0.3em] text-[#3F6F63]/70 mb-1">Email</div>
+                <a href={`mailto:${SITE_CONFIG.contact.email}`} className="text-lg font-semibold text-[#1E1E1E] hover:text-[#3F6F63] transition break-all">
                   {SITE_CONFIG.contact.email}
                 </a>
               </div>
             </div>
           </div>
           {SITE_CONFIG.contact.responseTime && (
-            <div className="text-center text-sm text-zinc-600 dark:text-zinc-400 mb-6">
-              <Star size={14} className="inline mr-1 fill-yellow-400 text-yellow-400" />
+            <div className="text-center text-sm text-[#1E1E1E]/70 mb-6">
+              <Star size={14} className="inline mr-1 fill-[#D7A44E] text-[#D7A44E]" />
               {SITE_CONFIG.contact.responseTime}
             </div>
           )}
           <div className="text-center">
             <a 
               href="#book" 
-              className="inline-flex items-center gap-2 rounded-2xl px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:from-cyan-700 hover:to-blue-700 transition font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-[#E17654] text-white font-semibold shadow-sm shadow-[#E17654]/40 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-transform hover:scale-[1.02]"
             >
               Book Your Stay <ExternalLink size={18} />
             </a>
@@ -466,14 +481,10 @@ function Contact() {
 function Footer() {
   const year = useMemo(() => new Date().getFullYear(), []);
   return (
-    <footer className="border-t border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-zinc-600 dark:text-zinc-400">
-        <div>
-          © {year} {SITE_CONFIG.brand.name}. {SITE_CONFIG.location.city}, {SITE_CONFIG.location.region}.
-        </div>
-        <div className="opacity-80">
-          Powered by Still House Media
-        </div>
+    <footer className="border-t border-[#CBBBAA]/70 bg-[#FAF7F2]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-[#1E1E1E]/70">
+        <div>© {year} {SITE_CONFIG.brand.name}. {SITE_CONFIG.location.city}, {SITE_CONFIG.location.region}.</div>
+        <div className="opacity-80 text-[#3F6F63]">Powered by Still House Media</div>
       </div>
     </footer>
   );
@@ -496,7 +507,7 @@ export default function PropertySite() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#F4EDE4] text-[#1E1E1E]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Nav />
       <Hero />
