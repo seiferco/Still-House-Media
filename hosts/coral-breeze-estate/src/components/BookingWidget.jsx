@@ -129,11 +129,11 @@ export default function BookingWidget({ listingId }){
   function renderMonth({ title, cells, first }){
     return (
       <div className="w-full">
-        <div className="flex items-center justify-between mb-3">
-          <div className="font-medium">{title}</div>
+        <div className="flex items-center justify-between mb-3 text-[#1E1E1E] font-semibold">
+          <div>{title}</div>
         </div>
-        <div className="grid grid-cols-7 text-xs mb-1">
-          {WEEKDAYS.map(w => <div key={w} className="text-center text-zinc-500">{w}</div>)}
+        <div className="grid grid-cols-7 text-xs mb-1 text-[#3F6F63]/70">
+          {WEEKDAYS.map(w => <div key={w} className="text-center">{w}</div>)}
         </div>
         <div className="grid grid-cols-7 gap-1">
           {cells.map((d,i)=>{
@@ -144,17 +144,17 @@ export default function BookingWidget({ listingId }){
             const isSelectedEnd   = selEnd && sameDay(d, selEnd)
             const inRange = withinSelected(d, selStart, selEnd)
 
-            let cls = 'h-10 rounded-md grid place-items-center text-sm select-none '
+            let cls = 'h-10 rounded-md grid place-items-center text-sm select-none transition-colors '
             if (!inMonth) {
-              cls += ' text-zinc-400/50 '
+              cls += ' text-[#CBBBAA] '
             } else if (isDisabled) {
-              cls += ' text-zinc-400 bg-zinc-100 dark:bg-zinc-800/50 line-through cursor-not-allowed '
+              cls += ' text-[#CBBBAA] bg-[#F4EDE4] line-through cursor-not-allowed '
             } else if (isSelectedStart || isSelectedEnd) {
-              cls += ' text-white bg-blue-600 '
+              cls += ' text-white bg-[#E17654] shadow-sm shadow-[#E17654]/40 '
             } else if (inRange) {
-              cls += ' bg-blue-600/10 text-blue-700 dark:text-blue-300 '
+              cls += ' bg-[#E17654]/15 text-[#E17654] '
             } else {
-              cls += ' hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer '
+              cls += ' hover:bg-[#F4EDE4] cursor-pointer '
             }
 
             return (
@@ -169,15 +169,15 @@ export default function BookingWidget({ listingId }){
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 bg-white dark:bg-zinc-900">
-      <div className="flex items-center justify-between mb-3">
+    <div className="rounded-2xl border border-[#CBBBAA]/70 p-5 bg-[#FAF7F2] shadow-[0_18px_40px_-32px_rgba(30,30,30,0.4)]">
+      <div className="flex items-center justify-between mb-4 text-[#3F6F63] font-semibold text-sm">
         <button
-          className="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700"
+          className="px-2 py-1 rounded border border-[#CBBBAA]/70 hover:bg-[#F4EDE4] transition-colors"
           onClick={()=>setAnchorMonth(addMonths(anchorMonth, -1))}
         >←</button>
-        <div className="text-sm opacity-70">Select dates</div>
+        <div className="tracking-[0.35em] uppercase text-xs text-[#3F6F63]/70">Select dates</div>
         <button
-          className="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700"
+          className="px-2 py-1 rounded border border-[#CBBBAA]/70 hover:bg-[#F4EDE4] transition-colors"
           onClick={()=>setAnchorMonth(addMonths(anchorMonth, +1))}
         >→</button>
       </div>
@@ -186,13 +186,23 @@ export default function BookingWidget({ listingId }){
         {months.map((m,idx)=><div key={idx}>{renderMonth(m)}</div>)}
       </div>
 
-      <div className="flex items-center gap-2 mt-4">
-        <button onClick={check} className="px-3 py-2 rounded bg-black text-white">Check</button>
-        <button onClick={book}  className="px-3 py-2 rounded bg-blue-600 text-white">Book</button>
-        <div className="text-sm opacity-80">{status}</div>
+      <div className="flex items-center gap-3 mt-6 flex-wrap">
+        <button
+          onClick={check}
+          className="rounded-xl bg-[#E17654] px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
+        >
+          Check
+        </button>
+        <button
+          onClick={book}
+          className="rounded-xl border border-[#3F6F63]/30 px-4 py-2.5 font-semibold text-[#3F6F63] bg-white/80 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
+        >
+          Book
+        </button>
+        <div className="text-sm text-[#3F6F63]">{status}</div>
       </div>
 
-      <div className="text-xs opacity-60 mt-2">
+      <div className="text-xs text-[#1E1E1E]/60 mt-3">
         Unavailable days are greyed out. Range selection cannot cross unavailable dates.
       </div>
     </div>
