@@ -184,6 +184,15 @@ app.post('/api/hold', (req, res) => {
   res.json({ hold });
 });
 
+/** Release hold */
+app.delete('/api/hold/:holdId', (req, res) => {
+  const { holdId } = req.params;
+  if (!holdId) return res.status(400).json({ error: 'holdId required' });
+  const hold = consumeHold(String(holdId));
+  if (!hold) return res.status(404).json({ error: 'Hold not found' });
+  res.json({ success: true, hold });
+});
+
 /** Checkout */
 app.post('/api/checkout', async (req, res) => {
   const listing = req.body.listing || LISTINGS[0].id;

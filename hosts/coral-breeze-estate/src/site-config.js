@@ -3,24 +3,24 @@
  * Edit this file to customize the property website
  */
 
-import { CalendarDays, MapPin, Star, Wifi, Car, Droplets, Umbrella, Sun, Coffee, UtensilsCrossed, Trees, Trophy, Anchor, Cloud } from "lucide-react";
+import { CalendarDays, MapPin, Star, Wifi, Car, Droplets, Sun, Coffee, UtensilsCrossed, Trees, Flame, Mountain, Leaf } from "lucide-react";
 
 export const SITE_CONFIG = {
   // Branding
   brand: {
-    name: "Coral Breeze Estate",           
-    tagline: "Mid-century modern meets tropical paradise",     
-    logoText: "CBE",                       
+    name: "Coral Breeze Estate",
+    tagline: "Desert-modern retreat tucked into the red rocks of Sedona",
+    logoText: "CBE",
   },
 
   // Location
   location: {
-    city: "Key Largo",
-    region: "Florida",
+    city: "Sedona",
+    region: "Arizona",
     country: "USA",
     // Optional: Add Google Maps embed URL
     // Get from: https://www.google.com/maps → Share → Embed a map
-    mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3625.6833325006123!2d-80.45237798752703!3d25.08602605279671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88d0e20e211357c5%3A0x9aecd9473ba8681!2sKey%20Largo!5e0!3m2!1sen!2sus!4v1761956569244!5m2!1sen!2sus",
+    mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3270.156272967268!2d-111.80058668479034!3d34.82219528139919!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x872da146986e01bd%3A0x1e3ddaa607e58780!2sChapel%20Area%2C%20Sedona%2C%20AZ%2086376!5e0!3m2!1sen!2sus!4v1762700000000!5m2!1sen!2sus",
   },
 
   // Hero Section (main banner)
@@ -46,81 +46,80 @@ export const SITE_CONFIG = {
     "/photos/gallery-12.jpg",
     "/photos/gallery-13.jpg",
     "/photos/gallery-14.jpg",
-    // Add more as needed
   ],
 
   // Highlights (shown below hero)
   highlights: [
-    { icon: Umbrella, label: "Steps from private beach access" },
-    { icon: Trees, label: "Stunning ocean views from every room" },
+    { icon: Mountain, label: "Panoramic red-rock vistas from every room" },
+    { icon: Trees, label: "Minutes to Cathedral Rock trailheads" },
     { icon: Star, label: "4.9 average guest rating" },
-    { icon: Droplets, label: "Private outdoor shower & deck" },
-    { icon: Sun, label: "Year-round tropical paradise" },
+    { icon: Droplets, label: "Private plunge spa + outdoor rainfall shower" },
+    { icon: Sun, label: "Golden-hour terraces facing Bell Rock" },
     { icon: CalendarDays, label: "Sleeps 8 comfortably" },
   ],
 
   // Amenities
   amenities: [
-    { icon: Droplets, label: "Private beach access" },
-    { icon: Umbrella, label: "Beach chairs & umbrellas" },
-    { icon: Cloud, label: "Oceanfront balcony" },
-    { icon: Coffee, label: "Fully equipped kitchen" },
+    { icon: Droplets, label: "Desert plunge spa + outdoor shower" },
+    { icon: Sun, label: "Two sunset viewing patios" },
+    { icon: Coffee, label: "Locally roasted Chemex coffee bar" },
     { icon: Wifi, label: "High-speed Wi-Fi" },
-    { icon: Car, label: "Free parking (2 spaces)" },
-    { icon: Anchor, label: "Kayak & paddleboard storage" },
-    { icon: Trophy, label: "Fishing equipment available" },
-    { icon: UtensilsCrossed, label: "Outdoor dining area" },
-    { icon: Sun, label: "Sunset viewing deck" },
+    { icon: Car, label: "Electric vehicle charger + private driveway" },
+    { icon: Trees, label: "Trailhead gear closet with daypacks + trekking poles" },
+    { icon: Flame, label: "Indoor-outdoor fireplaces with cedarwood supply" },
+    { icon: UtensilsCrossed, label: "Chef’s kitchen + outdoor grill station" },
+    { icon: Leaf, label: "Desert meditation terrace with yoga mats" },
   ],
 
   // Property Description
-  description: "Escape to a meticulously restored 1960s beach house where mid-century modern design meets laid-back island living. Wake up to turquoise waters, relax in your private hammock, and watch world-class sunsets from your oceanfront balcony. This architectural gem combines vintage charm with modern comforts in the heart of the Florida Keys.",
+  description: "Wake up to crimson skies over Sedona’s iconic red rocks at Coral Breeze Estate—a desert-modern haven minutes from the charming Village of Oak Creek. Designed with mid-century lines, hand-carved juniper beams, and floor-to-ceiling glass, the home blends resort comforts with Southwest soul. Brew locally roasted coffee as the sun hits Bell Rock, hike the neighboring Cathedral Rock and Bell Rock loops, or roll down to Tlaquepaque Arts Village for boutique shopping and patio dining. Evenings bring Aperol spritzes on the terracotta terrace, starry-night soaking in the plunge spa, and flickering fireplaces both indoors and out.",
 
   // Check-in Details & Location Info
   checkin: {
     details: [
-      "Self check-in with smart lock",
-      "200 feet to private beach access",
-      "5-minute drive to John Pennekamp Coral Reef State Park",
-      "10 minutes to world-class fishing & diving",
-      "Walking distance to local restaurants & bars",
-      "Quiet hours 10pm–7am (respectful beach community)",
-      "No smoking, no parties",
+      "Self check-in with smart lock + keyless desert gate",
+      "5-minute drive to the Village of Oak Creek coffeehouses",
+      "8 minutes to Cathedral Rock trailhead and Bell Rock Pathway",
+      "12 minutes to Sedona’s Uptown galleries and Tlaquepaque Arts Village",
+      "20 minutes to Page Springs Cellars & Verde Valley wine tasting rooms",
+      "EV charger in private driveway + space for 3 vehicles",
+      "Quiet hours 10pm–7am to honor the dark-sky community",
     ],
   },
 
   // Guest Reviews (optional - you can add real reviews)
   reviews: [
     {
-      name: "Sarah & Mark",
-      text: "This place is absolutely magical! The mid-century design is stunning and the ocean views are even better than the photos. We spent every morning on the balcony with coffee watching the sunrise. The beach access is incredibly convenient. Already planning our return!",
+      name: "Mia & Jordan",
+      text: "We celebrated our anniversary here and the views over Bell Rock felt surreal. Sunrise yoga on the terrace followed by cinnamon roll pancakes at Red Rock Café—pure Sedona magic. Loved the curated hiking guides and spa-level bathroom amenities.",
       rating: 5,
-      date: "March 2024"
+      date: "March 2025"
     },
     {
       name: "Jennifer",
-      text: "Perfection! The house has so much character and the location can't be beat. We loved having our own beach setup and the outdoor shower after swimming was a game-changer. The kitchen had everything we needed. Five stars!",
+      text: "The design is stunning—warm stucco, cedar beams, adobe fireplaces. We hiked Cathedral Rock at sunrise, grabbed matcha from Firecreek Coffee, then spent the afternoon wine tasting in Page Springs. The plunge spa under the Milky Way was unforgettable.",
       rating: 5,
-      date: "February 2024"
+      date: "February 2025"
     },
     {
       name: "Robert & Family",
-      text: "Our best family vacation yet! The kids loved the beach access and the house comfortably fit all 8 of us. The decor is Instagram-worthy and the sunsets from the deck are unreal. Host was super responsive too.",
+      text: "Perfect base for our spring break. The kids loved roasting marshmallows by the fire bowl after biking the Bell Rock Pathway. Plenty of room, thoughtful desert-inspired decor, and a fully stocked kitchen for tacos with farmers-market produce.",
       rating: 5,
-      date: "January 2024"
+      date: "January 2025"
     },
     {
       name: "Amanda",
-      text: "This mid-century gem is a dream! The attention to detail in the design is incredible, and the oceanfront location is spectacular. We spent hours kayaking and paddleboarding. Will definitely be back!",
+      text: "Remote work never looked so good—fast Wi-Fi, sunrise hikes before logging in, and lunch at Creekside American Bistro. Evenings we soaked in the spa, watched the red rocks glow, and sampled craft cocktails at The Hudson. Already booking our fall trip!",
       rating: 5,
-      date: "December 2023"
+      date: "December 2024"
     },
   ],
 
   // Contact Information
   contact: {
-    phone: "+1 (305) 555-OCEAN",
-    email: "stay@coralbreezestate.com",
+    phone: "+1 (928) 555-7788",
+    email: "hello@coralbreezestate.com",
+
     responseTime: "Usually responds within 1 hour",
   },
 
