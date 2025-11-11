@@ -14,10 +14,13 @@ const fade = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
+const MotionDiv = motion.div;
+const MotionImg = motion.img;
+
 function Section({ id, title, children, eyebrow }) {
   return (
     <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      <motion.div
+      <MotionDiv
         {...fade}
         className="rounded-3xl bg-[#FAF7F2] border border-[#CBBBAA]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-8 md:px-12 py-12"
       >
@@ -30,7 +33,7 @@ function Section({ id, title, children, eyebrow }) {
           <h2 className="text-3xl md:text-4xl font-semibold text-[#1E1E1E] mb-6">{title}</h2>
         )}
         {children}
-      </motion.div>
+      </MotionDiv>
     </section>
   );
 }
@@ -78,7 +81,7 @@ function Hero() {
       />
       <div className="absolute inset-0 z-10 flex items-end">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-          <motion.div
+          <MotionDiv
             {...fade}
             className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.82)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
           >
@@ -105,7 +108,7 @@ function Hero() {
                 Contact Host
               </a>
             </div>
-          </motion.div>
+          </MotionDiv>
         </div>
       </div>
     </div>
@@ -114,10 +117,10 @@ function Hero() {
 
 function Highlights() {
   return (
-    <Section id="highlights" eyebrow="Why you'll love it" title="Your Tropical Escape Awaits">
+    <Section id="highlights" eyebrow="Why you'll love it" title="Your Sedona Escape Awaits">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {SITE_CONFIG.highlights.map((h, i) => (
-          <motion.div
+          <MotionDiv
             key={i}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -133,7 +136,7 @@ function Highlights() {
                 <div className="text-[#1E1E1E] font-semibold text-base leading-tight">{h.label}</div>
               </div>
             </div>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
     </Section>
@@ -191,7 +194,7 @@ function Gallery() {
       <Section id="gallery" title="Gallery">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative">
           {visiblePhotos.map((src, idx) => (
-            <motion.img
+            <MotionImg
               {...fade}
               key={idx}
               src={src}
@@ -315,9 +318,6 @@ function DirectBooking() {
   return (
     <Section id="book" title="Book Your Stay">
       <BookingWidget listingId={LISTING_CONFIG.id} />
-      <p className="text-xs text-[#3F6F63]/80 mt-3">
-        Secure booking powered by Stripe. Use test card 4242 4242 4242 4242 for demo mode.
-      </p>
     </Section>
   );
 }
@@ -327,7 +327,7 @@ function Amenities() {
     <Section id="amenities" title="Amenities & Features" eyebrow="Everything you need for the perfect stay">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
         {SITE_CONFIG.amenities.map((a, i) => (
-          <motion.div
+          <MotionDiv
             key={i}
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -341,7 +341,7 @@ function Amenities() {
               </div>
               <span className="text-sm font-medium text-[#1E1E1E] leading-tight">{a.label}</span>
             </div>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
     </Section>
@@ -354,24 +354,41 @@ function LocationMap() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold text-[#1E1E1E] mb-3">Your Island Paradise</h3>
+            <h3 className="text-xl font-semibold text-[#1E1E1E] mb-3">Sedona’s Red-Rock Playground</h3>
             <p className="text-[#1E1E1E]/75 leading-relaxed text-lg">
-              Nestled in the heart of {SITE_CONFIG.location.city}, this mid-century gem puts you steps from pristine beaches, 
-              world-class diving, and the laid-back island vibe that makes the Florida Keys unforgettable.
+              Coral Breeze Estate sits in the Village of Oak Creek, five minutes from Bell Rock trailheads and just south of Sedona proper. Mornings are for sunrise hikes up Cathedral Rock, afternoons for Southwest plates at The Hudson or farm-to-table bites at Elote Café, and evenings for stargazing on our desert terraces or wine flights at Page Springs Cellars.
             </p>
           </div>
           <div className="bg-[#F4EDE4] rounded-2xl p-6 border border-[#CBBBAA]/70 shadow-sm">
             <h4 className="font-semibold text-[#1E1E1E] mb-4 flex items-center gap-2">
               <MapPin className="text-[#3F6F63]" size={20} />
-              Nearby Attractions
+              Nearby favorites
             </h4>
-            <ul className="space-y-3">
-              {SITE_CONFIG.checkin.details.map((d, i) => (
-                <li key={i} className="flex items-start gap-3 text-[#1E1E1E]/80">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                  <span>{d}</span>
-                </li>
-              ))}
+            <ul className="space-y-3 text-[#1E1E1E]/80">
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                <span>Cathedral Rock Trailhead – 8 minutes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                <span>Bell Rock Pathway for e-biking & hiking – 5 minutes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                <span>Red Rock Café (breakfast) & Firecreek Coffee – 4 minutes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                <span>Tlaquepaque Arts & Shopping Village – 12 minutes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                <span>Elote Café & The Hudson (dinner hotspots) – 15 minutes</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                <span>Page Springs Cellars wine tasting – 20 minutes</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -402,7 +419,7 @@ function Reviews() {
     <Section id="reviews" title="What Guests Are Saying" eyebrow="Guest Reviews">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {SITE_CONFIG.reviews.map((r, i) => (
-          <motion.div
+          <MotionDiv
             key={i}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -422,7 +439,7 @@ function Reviews() {
                 <div className="text-xs text-[#1E1E1E]/60">{r.date}</div>
               )}
             </div>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
     </Section>

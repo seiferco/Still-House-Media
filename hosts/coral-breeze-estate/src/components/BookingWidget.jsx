@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
 const withApiBase = (path) => API_BASE ? `${API_BASE}${path}` : path
+const HOLD_STORAGE_PREFIX = 'coral-breeze-hold'
 
 function startOfMonth(date){ return new Date(date.getFullYear(), date.getMonth(), 1) }
 function endOfMonth(date){ return new Date(date.getFullYear(), date.getMonth()+1, 0) }
@@ -36,6 +37,8 @@ export default function BookingWidget({ listingId }){
   const [status,setStatus] = useState('')
   const [selStart,setSelStart] = useState(null) 
   const [selEnd,setSelEnd]     = useState(null)
+  const [activeHold, setActiveHold] = useState(null)
+  const storageKey = `${HOLD_STORAGE_PREFIX}-${listingId || 'default'}`
 
   // fetch blocked dates for two months (anchor + next)
   async function loadBlocked(monthDate){
@@ -51,7 +54,40 @@ export default function BookingWidget({ listingId }){
     setBlocked(set)
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(()=>{ loadBlocked(anchorMonth) }, [anchorMonth, listingId])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const success = params.get('success')
+    const stored = sessionStorage.getItem(storageKey)
+    if (stored) {
+      const data = JSON.parse(stored)
+      if (success === '1') {
+        sessionStorage.removeItem(storageKey)
+      } else {
+        releaseHold(data.holdId)
+      }
+    } else if (success === '1') {
+      params.delete('success')
+      const newUrl = `${window.location.pathname}?${params.toString()}`
+      window.history.replaceState({}, '', newUrl)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey])
+
+  async function releaseHold(holdId){
+    if (!holdId) return
+    try {
+      await fetch(withApiBase(`/hold/${holdId}`), { method: 'DELETE' })
+    } catch (err) {
+      console.error('Failed to release hold', err)
+    } finally {
+      sessionStorage.removeItem(storageKey)
+      setActiveHold(null)
+      loadBlocked(anchorMonth)
+    }
+  }
 
   const months = useMemo(()=>[ monthGrid(anchorMonth), monthGrid(addMonths(anchorMonth,1)) ], [anchorMonth])
 
@@ -110,6 +146,8 @@ export default function BookingWidget({ listingId }){
     })
     const j1 = await r1.json()
     if(!r1.ok){ setStatus('Hold failed: '+(j1.error||'unknown')); return }
+    setActiveHold(j1.hold)
+    sessionStorage.setItem(storageKey, JSON.stringify({ holdId: j1.hold.id, listing }))
     setStatus('Creating checkout…')
     const r2 = await fetch(withApiBase('/checkout'),{ 
       method:'POST', 
@@ -205,6 +243,14 @@ export default function BookingWidget({ listingId }){
       <div className="text-xs text-[#1E1E1E]/60 mt-3">
         Unavailable days are greyed out. Range selection cannot cross unavailable dates.
       </div>
+      {activeHold && (
+        <button
+          onClick={() => releaseHold(activeHold.id)}
+          className="mt-4 text-xs text-[#3F6F63] underline underline-offset-4"
+        >
+          Release pending hold
+        </button>
+      )}
     </div>
   )
 }
