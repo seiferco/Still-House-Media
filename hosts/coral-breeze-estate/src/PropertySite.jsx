@@ -83,7 +83,7 @@ function Hero() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
           <MotionDiv
             {...fade}
-            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.82)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
+            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.88)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
           >
             <span className="text-xs font-semibold tracking-[0.4em] uppercase text-[#3F6F63]">
               {SITE_CONFIG.brand.tagline}

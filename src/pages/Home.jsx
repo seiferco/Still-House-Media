@@ -108,7 +108,7 @@ export default function Home() {
                 { 
                   icon: DollarSign, 
                   title: "Keep 100% of revenue", 
-                  text: "No platform fees. Only Stripe's standard 2.9% processing fee—you keep everything else." 
+                  text: "No more platform fees. Only Stripe's standard 2.9% processing fee—you keep everything else." 
                 },
                 { 
                   icon: Users, 
@@ -209,13 +209,42 @@ export default function Home() {
 
       {/* Contact (simple) */}
       <Section id="contact" title="Get a quote">
-        <div className="md:col-span-2">
+        <div className="max-w-3xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a
+              href="tel:15412943114"
+              className="flex items-center gap-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition"
+            >
+              <div className="w-12 h-12 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center">
+                <Phone size={20} />
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400">Phone</div>
+                <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  541-294-3114
+                </div>
+              </div>
+            </a>
+            <a
+              href="mailto:stillhousemedia@outlook.com"
+              className="flex items-center gap-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition"
+            >
+              <div className="w-12 h-12 rounded-full bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 flex items-center justify-center">
+                <Mail size={20} />
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400">Email</div>
+                <div className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 break-all">
+                  stillhousemedia@outlook.com
+                </div>
+              </div>
+            </a>
+          </div>
+          <p className="mt-6 text-sm text-zinc-600 dark:text-zinc-400">
+            Prefer a quick overview? Call or email and we’ll send a custom quote within 24 hours.
+          </p>
         </div>
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow-sm h-max">
-          <div className="flex items-center gap-2 text-zinc-800 dark:text-zinc-200"><Phone size={18}/> 541-294-3114 </div>
-          <div className="flex items-center gap-2 mt-2 text-zinc-800 dark:text-zinc-200"><Mail size={18}/> stillhousemedia@outlook.com </div>
-        </div>
-    </Section>
+      </Section>
     </>
   )
 }
