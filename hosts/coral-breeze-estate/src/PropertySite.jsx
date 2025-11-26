@@ -5,7 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, Home, Clock, Shield, AlertCircle, FileText, Calendar, Ban, Camera, Cigarette, Volume2 } from "lucide-react";
+import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, Home, Clock, Shield, AlertCircle, FileText, Calendar, Ban, Camera, Cigarette, Volume2, ArrowRight } from "lucide-react";
 import { SITE_CONFIG, LISTING_CONFIG } from "./site-config.js";
 import BookingWidget from "./components/BookingWidget.jsx";
 
@@ -115,26 +115,27 @@ function Nav() {
           </a>
         </nav>
 
-        {/* Mobile Hamburger Button */}
+        {/* Mobile Hamburger Button - Touch-friendly */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-2 rounded-lg text-[#3F6F63] hover:bg-[#F4EDE4] transition-colors"
+          className="md:hidden p-3 rounded-lg text-[#3F6F63] hover:bg-[#F4EDE4] active:bg-[#E8DDD0] transition-colors touch-manipulation"
           aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
         >
           <Menu size={24} />
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Touch-optimized */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-[#CBBBAA]/60 bg-[#FAF7F2] shadow-lg">
-          <nav className="mx-auto max-w-7xl px-4 py-3 space-y-1">
+          <nav className="mx-auto max-w-7xl px-4 py-2 space-y-1">
             {navLinks.map((link) => (
               <a
                 key={link.id}
                 href={`#${link.id}`}
                 onClick={handleLinkClick}
-                className="block px-4 py-2.5 rounded-lg text-[#3F6F63] font-semibold text-base hover:bg-[#F4EDE4] active:bg-[#E8DDD0] transition-colors"
+                className="block px-4 py-3.5 rounded-lg text-[#3F6F63] font-semibold text-base hover:bg-[#F4EDE4] active:bg-[#E8DDD0] transition-colors touch-manipulation min-h-[44px] flex items-center"
               >
                 {link.label}
               </a>
@@ -222,99 +223,113 @@ function PhotoGallery() {
 
   return (
     <>
-      <div className="pt-16 sm:pt-0">
-        {/* Mobile: Single image with navigation arrows and description preview */}
-        <div className="md:hidden">
-          <div 
-            className="relative"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-          >
-            <img
-              src={photos[currentMobileIndex]}
-              alt={`${SITE_CONFIG.brand.name} - Photo ${currentMobileIndex + 1}`}
-              className="w-full h-[60vh] object-cover select-none"
-              draggable="false"
-            />
-            
-            {/* Navigation Arrows */}
+      {/* Luxury Full-Width Hero Section */}
+      <div className="pt-16 md:pt-0 relative">
+        <div 
+          className="relative h-[70vh] md:h-[85vh] overflow-hidden"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <img
+            src={photos[currentMobileIndex]}
+            alt={`${SITE_CONFIG.brand.name} - Hero`}
+            className="w-full h-full object-cover select-none"
+            draggable="false"
+          />
+          
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F1514]/80 via-[#0F1514]/40 to-transparent" />
+          
+          {/* Content Overlay */}
+          <div className="absolute inset-0 flex items-end">
+            <div className="w-full px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
+              <div className="max-w-4xl">
+          <MotionDiv
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="text-white"
+                >
+                  <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-4">
+              {SITE_CONFIG.brand.tagline}
+                  </div>
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              {SITE_CONFIG.brand.name}
+            </h1>
+                  <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed mb-8">
+                    {SITE_CONFIG.description.substring(0, 200)}...
+            </p>
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <a
+                href="#book"
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#E17654] text-white font-semibold rounded-xl hover:bg-[#C65A3A] active:scale-95 transition-all shadow-lg shadow-[#E17654]/30 text-sm sm:text-base touch-manipulation min-h-[48px]"
+                    >
+                      Reserve Your Stay
+                      <ArrowRight size={18} className="sm:w-5 sm:h-5" />
+                    </a>
+                    <button
+                      onClick={() => {
+                        const gallerySection = document.querySelector('#gallery') || document.querySelector('.photo-gallery-section');
+                        if (gallerySection) {
+                          gallerySection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-xl hover:bg-white/20 active:scale-95 transition-all border border-white/20 text-sm sm:text-base touch-manipulation min-h-[48px]"
+                    >
+                      View Gallery
+                    </button>
+                  </div>
+                </MotionDiv>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Arrows - Mobile (Touch-optimized) */}
+          <div className="md:hidden">
             <button
               onClick={() => navigateMobile('prev')}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all z-20"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
               aria-label="Previous photo"
             >
-              <ChevronLeft size={24} className="text-[#1E1E1E]" />
+              <ChevronLeft size={26} className="text-[#1E1E1E]" />
             </button>
             <button
               onClick={() => navigateMobile('next')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all z-20"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
               aria-label="Next photo"
             >
-              <ChevronRight size={24} className="text-[#1E1E1E]" />
+              <ChevronRight size={26} className="text-[#1E1E1E]" />
             </button>
-
+            
             {/* Photo Counter */}
             <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-semibold z-20">
               {currentMobileIndex + 1} / {photos.length}
             </div>
+          </div>
 
-            {/* Description preview overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-6 z-10">
-              <p className="text-white/80 text-xs mt-2">Swipe or use arrows to see more photos</p>
-            </div>
-
-            {/* Dot Indicators */}
-            <div className="absolute bottom-20 left-0 right-0 flex justify-center gap-2 z-20">
-              {photos.slice(0, Math.min(photos.length, 10)).map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentMobileIndex(idx)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    idx === currentMobileIndex
-                      ? 'bg-white w-6'
-                      : 'bg-white/50 hover:bg-white/75'
-                  }`}
-                  aria-label={`Go to photo ${idx + 1}`}
-                />
-              ))}
-              {photos.length > 10 && (
-                <span className="text-white/80 text-xs ml-1">+{photos.length - 10}</span>
-              )}
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <button
+              onClick={() => navigateMobile('prev')}
+              className="absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft size={28} className="text-[#1E1E1E]" />
+            </button>
+            <button
+              onClick={() => navigateMobile('next')}
+              className="absolute right-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
+              aria-label="Next photo"
+            >
+              <ChevronRight size={28} className="text-[#1E1E1E]" />
+            </button>
+            
+            {/* Photo Counter */}
+            <div className="absolute top-8 right-8 bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold z-20">
+              {currentMobileIndex + 1} / {photos.length}
             </div>
           </div>
-        </div>
-
-        {/* Desktop: Grid layout */}
-        <div className="hidden md:grid grid-cols-4 gap-2 max-w-[1760px] mx-auto">
-          <div className="col-span-2 row-span-2">
-            <img
-              src={photos[0]}
-              alt={`${SITE_CONFIG.brand.name} - Main photo`}
-              className="w-full h-full object-cover rounded-l-3xl cursor-pointer hover:opacity-95 transition-opacity"
-              onClick={() => setSelectedImage(0)}
-            />
-          </div>
-          {photos.slice(1, 5).map((src, idx) => (
-            <div key={idx} className="relative">
-              <img
-                src={src}
-                alt={`${SITE_CONFIG.brand.name} - Photo ${idx + 2}`}
-                className="w-full h-64 object-cover cursor-pointer hover:opacity-95 transition-opacity"
-                onClick={() => setSelectedImage(idx + 1)}
-              />
-              {idx === 3 && photos.length > 5 && (
-                <div
-                  className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors rounded-r-3xl"
-                  onClick={() => setSelectedImage(5)}
-                >
-                  <div className="text-white text-lg font-semibold">
-                    Show all photos
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
         </div>
       </div>
 
@@ -374,38 +389,116 @@ function PhotoGallery() {
   );
 }
 
-// Property Details Section (Airbnb style)
+// Luxury Photo Gallery Section (Storytelling) - Mobile Optimized
+function PhotoGallerySection() {
+  const photos = SITE_CONFIG.photos.slice(0, 6); // Show first 6 photos
+  
+  return (
+    <div className="bg-white py-12 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <MotionDiv
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8 sm:mb-12 md:mb-16"
+        >
+          <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+            Visual Journey
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+            Experience Every Moment
+          </h2>
+        </MotionDiv>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+          {photos.map((src, idx) => (
+            <MotionDiv
+              key={idx}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="relative group cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl touch-manipulation active:scale-95 transition-transform"
+              onClick={() => {
+                // Scroll to top to see the hero gallery
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <img
+                src={src}
+                alt={`${SITE_CONFIG.brand.name} - Photo ${idx + 1}`}
+                className="w-full h-48 sm:h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            </MotionDiv>
+          ))}
+        </div>
+        
+        {SITE_CONFIG.photos.length > 6 && (
+          <div className="text-center mt-6 sm:mt-8">
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white border-2 border-[#3F6F63] text-[#3F6F63] font-semibold rounded-xl hover:bg-[#3F6F63] hover:text-white active:scale-95 transition-all touch-manipulation min-h-[48px] text-sm sm:text-base"
+            >
+              View All {SITE_CONFIG.photos.length + 1} Photos
+              <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Luxury Property Details Section - Mobile Optimized
 function PropertyDetails() {
   const { property, location } = SITE_CONFIG;
   
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-6 border-b border-[#CBBBAA]/40">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
-        <div>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-2">
-            {SITE_CONFIG.brand.name}
-          </h1>
-          <p className="text-sm md:text-base text-[#1E1E1E]/70 mb-2 md:mb-3">
-            {property.type} in {location.city}, {location.region}
-          </p>
-          <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm text-[#1E1E1E]/80">
-            <span className="flex items-center gap-1">
-              <Users size={14} className="md:w-4 md:h-4" />
-              {property.guests} {property.guests === 1 ? 'guest' : 'guests'}
-            </span>
-            <span className="flex items-center gap-1">
-              <Bed size={14} className="md:w-4 md:h-4" />
-              {property.bedrooms} {property.bedrooms === 1 ? 'bedroom' : 'bedrooms'}
-            </span>
-            <span className="flex items-center gap-1">
-              <Bed size={14} className="md:w-4 md:h-4" />
-              {property.beds} {property.beds === 1 ? 'bed' : 'beds'}
-            </span>
-            <span className="flex items-center gap-1">
-              <Bath size={14} className="md:w-4 md:h-4" />
-              {property.bathrooms} {property.bathrooms === 1 ? 'bath' : 'baths'}
-            </span>
-          </div>
+    <div className="bg-white border-b border-[#CBBBAA]/30">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
+        <div className="max-w-4xl">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="space-y-4 sm:space-y-6"
+          >
+            <div>
+              <div className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+                {property.type} · {location.city}, {location.region}
+              </div>
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3 sm:gap-6 text-sm sm:text-base text-[#1E1E1E]/70 mb-6 sm:mb-8">
+                <span className="flex items-center gap-2">
+                  <Users size={18} className="sm:w-5 sm:h-5 text-[#3F6F63] flex-shrink-0" />
+                  <span className="font-medium">{property.guests} {property.guests === 1 ? 'guest' : 'guests'}</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <Bed size={18} className="sm:w-5 sm:h-5 text-[#3F6F63] flex-shrink-0" />
+                  <span className="font-medium">{property.bedrooms} {property.bedrooms === 1 ? 'bedroom' : 'bedrooms'}</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <Bed size={18} className="sm:w-5 sm:h-5 text-[#3F6F63] flex-shrink-0" />
+                  <span className="font-medium">{property.beds} {property.beds === 1 ? 'bed' : 'beds'}</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <Bath size={18} className="sm:w-5 sm:h-5 text-[#3F6F63] flex-shrink-0" />
+                  <span className="font-medium">{property.bathrooms} {property.bathrooms === 1 ? 'bath' : 'baths'}</span>
+                </span>
+              </div>
+            </div>
+            
+            {/* Full Description */}
+            <div className="prose prose-sm sm:prose-lg max-w-none">
+              <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/80 leading-relaxed">
+                {SITE_CONFIG.description}
+              </p>
+            </div>
+          </MotionDiv>
         </div>
       </div>
     </div>
@@ -611,14 +704,34 @@ function Gallery() {
   );
 }
 
+// Luxury Booking Section - Mobile Optimized
 function DirectBooking() {
   return (
-    <div id="book" className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
-      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
-        Where you'll sleep
-      </h2>
-      <div className="border border-[#CBBBAA]/40 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg bg-white">
-        <BookingWidget listingId={LISTING_CONFIG.id} />
+    <div id="book" className="bg-white py-12 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <MotionDiv
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8 sm:mb-12 md:mb-16"
+        >
+          <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+            Reserve Your Stay
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+            Plan Your Sedona Escape
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/70 max-w-2xl mx-auto px-4">
+            Select your dates and secure your reservation at Coral Breeze Estate
+          </p>
+        </MotionDiv>
+        
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-[#CBBBAA]/40 shadow-xl">
+      <BookingWidget listingId={LISTING_CONFIG.id} />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -748,7 +861,7 @@ function BookingSummary() {
   const nightlyPrice = LISTING_CONFIG.nightlyPrice;
 
   return (
-    <div className="border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-lg bg-white sticky top-24">
+    <div className="border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-2xl bg-white w-80">
       <div className="mb-6">
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-semibold text-[#1E1E1E] underline">
@@ -807,40 +920,107 @@ function BookingSummary() {
   );
 }
 
+// Luxury Amenities Section with Visual Cards
 function Amenities() {
+  const featuredAmenities = SITE_CONFIG.amenities.slice(0, 6);
+  const remainingAmenities = SITE_CONFIG.amenities.slice(6);
+  
   return (
-    <div className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
-      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
-        What this place offers
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-        {SITE_CONFIG.amenities.map((a, i) => (
-          <div
-            key={i}
-            className="flex items-start gap-2 md:gap-3 py-2 md:py-3"
-          >
-            <a.icon size={20} className="md:w-6 md:h-6 text-[#3F6F63] flex-shrink-0 mt-0.5" />
-            <span className="text-sm md:text-base text-[#1E1E1E]/80">{a.label}</span>
+    <div className="bg-[#FAF7F2] py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <MotionDiv
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 md:mb-16"
+        >
+          <div className="text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-4">
+            Premium Amenities
           </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-4">
+            Every Detail, Curated
+          </h2>
+          <p className="text-lg md:text-xl text-[#1E1E1E]/70 max-w-2xl mx-auto">
+            Thoughtfully designed spaces and amenities that elevate your Sedona experience
+          </p>
+        </MotionDiv>
+
+        {/* Featured Amenities Grid - Mobile Optimized */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          {featuredAmenities.map((a, i) => (
+          <MotionDiv
+            key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 border border-[#CBBBAA]/40 hover:border-[#3F6F63]/40 hover:shadow-xl transition-all group touch-manipulation"
+          >
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#E17654]/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-[#E17654]/20 transition-colors">
+                <a.icon size={24} className="sm:w-7 sm:h-7 text-[#E17654]" />
+              </div>
+              <h3 className="text-base sm:text-lg font-semibold text-[#1E1E1E]">{a.label}</h3>
+          </MotionDiv>
         ))}
+      </div>
+
+        {/* Remaining Amenities - Compact List - Mobile Optimized */}
+        {remainingAmenities.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-[#CBBBAA]/40">
+            {remainingAmenities.map((a, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs sm:text-sm text-[#1E1E1E]/70">
+                <a.icon size={16} className="sm:w-[18px] sm:h-[18px] text-[#3F6F63] flex-shrink-0" />
+                <span className="break-words">{a.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
+// Luxury Location Section with Storytelling - Mobile Optimized
 function LocationMap() {
   return (
-    <div className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
-      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
-        Where you'll be
-      </h2>
-      <div className="space-y-4 md:space-y-6">
-        <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">
-          {SITE_CONFIG.location.city}, {SITE_CONFIG.location.region}
-        </p>
+    <div className="bg-white py-12 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
+          <MotionDiv
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+              Location
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-4 sm:mb-6">
+              In the Heart of Red Rock Country
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/80 leading-relaxed mb-6 sm:mb-8">
+              Coral Breeze Estate sits in the Village of Oak Creek, five minutes from Bell Rock trailheads and just south of Sedona proper. Mornings are for sunrise hikes up Cathedral Rock, afternoons for Southwest plates at The Hudson or farm-to-table bites at Elote Café, and evenings for stargazing on our desert terraces or wine flights at Page Springs Cellars.
+            </p>
+            <div className="space-y-2 sm:space-y-3">
+              {SITE_CONFIG.checkin.details.slice(1, 6).map((detail, i) => (
+                <div key={i} className="flex items-start gap-2 sm:gap-3">
+                  <MapPin size={18} className="sm:w-5 sm:h-5 text-[#3F6F63] flex-shrink-0 mt-0.5 sm:mt-1" />
+                  <span className="text-sm sm:text-base text-[#1E1E1E]/80">{detail}</span>
+          </div>
+              ))}
+          </div>
+          </MotionDiv>
+
         {SITE_CONFIG.location.mapEmbed && (
-          <div className="rounded-xl md:rounded-2xl overflow-hidden border border-[#CBBBAA]/40">
-            <div className="relative w-full pb-[66.6%] h-0">
+            <MotionDiv
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#CBBBAA]/40 shadow-2xl"
+            >
+              <div className="relative w-full pb-[66.6%] sm:pb-[75%] h-0">
               <iframe
                 title={`${SITE_CONFIG.brand.name} Location Map`}
                 src={SITE_CONFIG.location.mapEmbed}
@@ -850,6 +1030,194 @@ function LocationMap() {
                 allowFullScreen
               />
             </div>
+            </MotionDiv>
+        )}
+      </div>
+      </div>
+    </div>
+  );
+}
+
+// Luxury Reviews Section with Integrated Testimonials
+function Reviews() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reviewsToShow, setReviewsToShow] = useState(5); // Show 5 reviews at a time in modal
+  if (!SITE_CONFIG.reviews || SITE_CONFIG.reviews.length === 0) return null;
+  
+  const hasMoreThanThree = SITE_CONFIG.reviews.length > 3;
+  const visibleReviews = SITE_CONFIG.reviews.slice(0, 3); // Always show 3 on page
+  const featuredReview = SITE_CONFIG.reviews[0];
+  const modalReviews = SITE_CONFIG.reviews.slice(0, reviewsToShow);
+  const hasMoreInModal = reviewsToShow < SITE_CONFIG.reviews.length;
+  
+  return (
+    <div className="bg-[#FAF7F2] py-12 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8 sm:mb-12 md:mb-16"
+        >
+          <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+            Guest Experiences
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+            Stories from Our Guests
+          </h2>
+        </MotionDiv>
+
+        {/* Featured Review - Large Card - Mobile Optimized */}
+        {featuredReview && (
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto mb-8 sm:mb-12"
+          >
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-[#CBBBAA]/40 shadow-xl">
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#E17654] flex items-center justify-center text-white text-base sm:text-xl font-bold flex-shrink-0">
+                  {featuredReview.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-lg sm:text-xl font-semibold text-[#1E1E1E]">{featuredReview.name}</div>
+                  {featuredReview.date && (
+                    <div className="text-xs sm:text-sm text-[#1E1E1E]/60">{featuredReview.date}</div>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-1 mb-3 sm:mb-4">
+                {Array.from({ length: featuredReview.rating }).map((_, j) => (
+                  <Star key={j} size={18} className="sm:w-5 sm:h-5 fill-[#D7A44E] text-[#D7A44E]" />
+              ))}
+            </div>
+              <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/80 leading-relaxed">"{featuredReview.text}"</p>
+            </div>
+          </MotionDiv>
+        )}
+
+        {/* Additional Reviews Grid - Show 2 more (total 3) - Mobile Optimized */}
+        {visibleReviews.length > 1 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            {visibleReviews.slice(1, 3).map((r, i) => (
+          <MotionDiv
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 border border-[#CBBBAA]/40 hover:shadow-lg transition-all"
+              >
+                <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#E17654] flex items-center justify-center text-white text-sm sm:text-base font-semibold flex-shrink-0">
+                    {r.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-sm sm:text-base text-[#1E1E1E]">{r.name}</div>
+              {r.date && (
+                <div className="text-xs text-[#1E1E1E]/60">{r.date}</div>
+              )}
+            </div>
+                </div>
+                <div className="flex items-center gap-1 mb-2 sm:mb-3">
+              {Array.from({ length: r.rating }).map((_, j) => (
+                    <Star key={j} size={14} className="sm:w-4 sm:h-4 fill-[#D7A44E] text-[#D7A44E]" />
+              ))}
+            </div>
+                <p className="text-sm sm:text-base text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
+          </MotionDiv>
+        ))}
+      </div>
+        )}
+
+        {hasMoreThanThree && (
+          <div className="text-center">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-white text-[#3F6F63] font-semibold rounded-xl border-2 border-[#3F6F63] hover:bg-[#3F6F63] hover:text-white transition-all text-sm md:text-base"
+            >
+              View All {SITE_CONFIG.reviews.length} Reviews
+              <ChevronRight size={18} className="md:w-5 md:h-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Reviews Modal - Mobile Optimized */}
+        {isModalOpen && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 overflow-y-auto"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <div 
+              className="bg-white rounded-t-3xl sm:rounded-2xl md:rounded-3xl max-w-4xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header - Mobile Optimized */}
+              <div className="sticky top-0 bg-white border-b border-[#CBBBAA]/40 px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between z-10">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1E1E1E]">
+                    All Reviews
+                  </h2>
+                  <p className="text-xs sm:text-sm md:text-base text-[#1E1E1E]/70 mt-1">
+                    {SITE_CONFIG.reviews.length} {SITE_CONFIG.reviews.length === 1 ? 'review' : 'reviews'}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 sm:p-3 hover:bg-[#F4EDE4] active:bg-[#E8DDD0] rounded-full transition-colors touch-manipulation flex-shrink-0 ml-4"
+                  aria-label="Close modal"
+                >
+                  <X size={24} className="sm:w-6 sm:h-6" />
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+                {modalReviews.map((r, i) => (
+                  <div 
+                    key={i}
+                    className="pb-4 md:pb-6 border-b border-[#CBBBAA]/30 last:border-0"
+                  >
+                    <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#E17654] flex items-center justify-center text-white text-sm md:text-base font-semibold flex-shrink-0">
+                        {r.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-base md:text-lg font-semibold text-[#1E1E1E]">{r.name}</div>
+              {r.date && (
+                          <div className="text-xs md:text-sm text-[#1E1E1E]/60">{r.date}</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 mb-2 md:mb-3">
+                      {Array.from({ length: r.rating }).map((_, j) => (
+                        <Star key={j} size={16} className="md:w-5 md:h-5 fill-[#D7A44E] text-[#D7A44E]" />
+                      ))}
+                    </div>
+                    <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
+                  </div>
+                ))}
+
+                {/* Load More Button - Mobile Optimized */}
+                {hasMoreInModal && (
+                  <div className="text-center pt-4 pb-4 sm:pb-6">
+                    <button
+                      onClick={() => setReviewsToShow(prev => Math.min(prev + 5, SITE_CONFIG.reviews.length))}
+                      className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-[#FAF7F2] text-[#3F6F63] font-semibold rounded-xl border-2 border-[#3F6F63] hover:bg-[#3F6F63] hover:text-white active:scale-95 transition-all text-sm sm:text-base touch-manipulation min-h-[48px]"
+                    >
+                      Load More Reviews
+                      <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+                    </button>
+                    <p className="text-xs sm:text-sm text-[#1E1E1E]/60 mt-2">
+                      Showing {reviewsToShow} of {SITE_CONFIG.reviews.length}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -857,93 +1225,53 @@ function LocationMap() {
   );
 }
 
-function Reviews() {
-  const [showAll, setShowAll] = useState(false);
-  if (!SITE_CONFIG.reviews || SITE_CONFIG.reviews.length === 0) return null;
-  
-  const hasMoreThanTwo = SITE_CONFIG.reviews.length > 2;
-  const visibleReviews = showAll || !hasMoreThanTwo ? SITE_CONFIG.reviews : SITE_CONFIG.reviews.slice(0, 2);
-  
-  return (
-    <div className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
-      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
-        Reviews
-      </h2>
-      <div className="space-y-4 md:space-y-6">
-        {visibleReviews.map((r, i) => (
-          <div key={i} className="pb-4 md:pb-6 border-b border-[#CBBBAA]/30 last:border-0">
-            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#E17654] flex items-center justify-center text-white text-xs md:text-sm font-semibold">
-                {r.name.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div>
-                <div className="text-sm md:text-base font-semibold text-[#1E1E1E]">{r.name}</div>
-                {r.date && (
-                  <div className="text-xs md:text-sm text-[#1E1E1E]/60">{r.date}</div>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-1 mb-2">
-              {Array.from({ length: r.rating }).map((_, j) => (
-                <Star key={j} size={14} className="md:w-4 md:h-4 fill-[#D7A44E] text-[#D7A44E]" />
-              ))}
-            </div>
-            <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
-          </div>
-        ))}
-      </div>
-      {hasMoreThanTwo && !showAll && (
-        <button
-          onClick={() => setShowAll(true)}
-          className="mt-4 md:mt-6 text-sm md:text-base font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
-        >
-          Show all {SITE_CONFIG.reviews.length} reviews
-        </button>
-      )}
-      {showAll && hasMoreThanTwo && (
-        <button
-          onClick={() => setShowAll(false)}
-          className="mt-4 md:mt-6 text-sm md:text-base font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
-        >
-          Show less
-        </button>
-      )}
-    </div>
-  );
-}
-
-// Meet Your Host Section
+// Luxury Meet Your Host Section - Mobile Optimized
 function MeetYourHost() {
   const { host } = SITE_CONFIG;
   
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8 border-b border-[#CBBBAA]/40">
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8">
-        <div className="flex-shrink-0">
-          <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-[#E17654] flex items-center justify-center text-white text-xl md:text-2xl font-bold">
-            {host.name.split(' ').map(n => n[0]).join('')}
-          </div>
-        </div>
-        <div className="flex-1">
-          <h2 className="text-lg md:text-xl lg:text-2xl font-semibold text-[#1E1E1E] mb-2">
-            Meet your host
-          </h2>
-          <p className="text-xs md:text-sm text-[#1E1E1E]/70 mb-3 md:mb-4">
-            Hosted by {host.name} · Joined in {host.joined}
-          </p>
-          <div className="flex flex-wrap gap-3 md:gap-4 mb-3 md:mb-4 text-xs md:text-sm">
-            <div className="flex items-center gap-2">
-              <Star size={14} className="md:w-4 md:h-4 fill-[#D7A44E] text-[#D7A44E]" />
-              <span className="text-[#1E1E1E]/80">{host.responseRate} response rate</span>
+    <div className="bg-white py-12 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-[#CBBBAA]/40"
+          >
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
+              <div className="flex-shrink-0 mx-auto sm:mx-0">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#E17654] flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-lg">
+                  {host.name.split(' ').map(n => n[0]).join('')}
+                </div>
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-2">
+                  Your Hosts
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+                  Meet {host.name}
+                </h2>
+                <p className="text-sm sm:text-base text-[#1E1E1E]/70 mb-4 sm:mb-6">
+                  Hosted by {host.name} · Joined in {host.joined}
+                </p>
+                <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-[#CBBBAA]/40">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <Star size={18} className="sm:w-5 sm:h-5 fill-[#D7A44E] text-[#D7A44E]" />
+                    <span className="text-sm sm:text-base text-[#1E1E1E]/80 font-medium">{host.responseRate} response rate</span>
+                  </div>
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <Clock size={18} className="sm:w-5 sm:h-5 text-[#3F6F63]" />
+                    <span className="text-sm sm:text-base text-[#1E1E1E]/80 font-medium">{host.responseTime}</span>
+                  </div>
+                </div>
+                <p className="text-base sm:text-lg text-[#1E1E1E]/80 leading-relaxed">
+                  {host.bio}
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock size={14} className="md:w-4 md:h-4 text-[#3F6F63]" />
-              <span className="text-[#1E1E1E]/80">{host.responseTime}</span>
-            </div>
-          </div>
-          <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">
-            {host.bio}
-          </p>
+          </MotionDiv>
         </div>
       </div>
     </div>
@@ -977,56 +1305,69 @@ function ThingsToKnow() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8 border-b border-[#CBBBAA]/40">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
-          Things to know
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-          {/* House Rules */}
+      <div className="bg-[#FAF7F2] py-12 sm:py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 sm:mb-12 md:mb-16"
+          >
+            <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+              Important Information
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+              Things to Know
+            </h2>
+          </MotionDiv>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+          {/* House Rules - Mobile Optimized */}
           <div>
-            <h3 className="font-semibold text-[#1E1E1E] mb-3">House rules</h3>
-            <ul className="space-y-2 text-sm text-[#1E1E1E]/80 mb-3">
+            <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">House rules</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
               <li>{thingsToKnow.houseRules.checkIn}</li>
               <li>{thingsToKnow.houseRules.checkout}</li>
               <li>{thingsToKnow.houseRules.guests}</li>
             </ul>
             <button
               onClick={() => handleShowMore('houseRules')}
-              className="text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+              className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
             >
               Show more
             </button>
           </div>
 
-          {/* Safety & Property */}
+          {/* Safety & Property - Mobile Optimized */}
           <div>
-            <h3 className="font-semibold text-[#1E1E1E] mb-3">Safety & property</h3>
-            <ul className="space-y-2 text-sm text-[#1E1E1E]/80 mb-3">
+            <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">Safety & property</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
               <li>{thingsToKnow.safety.carbonMonoxide}</li>
               <li>{thingsToKnow.safety.smokeAlarm}</li>
               <li>{thingsToKnow.safety.noise}</li>
             </ul>
             <button
               onClick={() => handleShowMore('safety')}
-              className="text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+              className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
             >
               Show more
             </button>
           </div>
 
-          {/* Cancellation Policy */}
+          {/* Cancellation Policy - Mobile Optimized */}
           <div>
-            <h3 className="font-semibold text-[#1E1E1E] mb-3">Cancellation policy</h3>
-            <p className="text-sm text-[#1E1E1E]/80 mb-3">
+            <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">Cancellation policy</h3>
+            <p className="text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
               {thingsToKnow.cancellation.policy}
             </p>
             <button
               onClick={() => handleShowMore('cancellation')}
-              className="text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+              className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
             >
               Show more
             </button>
           </div>
+        </div>
         </div>
       </div>
 
@@ -1110,7 +1451,7 @@ function ThingsToKnow() {
                     </li>
                   ))}
                 </ul>
-              </div>
+      </div>
             </div>
           </div>
         </div>
@@ -1195,52 +1536,82 @@ function ThingsToKnow() {
   );
 }
 
+// Luxury Contact Section - Mobile Optimized
 function Contact() {
   return (
-    <Section id="contact" title="Contact the Host" eyebrow="Have questions?">
-      <div className="max-w-3xl mx-auto">
-        <div className="rounded-2xl border-2 border-[#CBBBAA]/70 p-8 bg-[#FAF7F2] shadow-[0_30px_60px_-35px_rgba(30,30,30,0.45)]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-white/70 border border-[#CBBBAA]/60 shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-[#E17654] flex items-center justify-center text-white shadow-sm shadow-[#E17654]/30">
-                <Phone size={20} />
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-[0.3em] text-[#3F6F63]/70 mb-1">Phone</div>
-                <a href={`tel:${SITE_CONFIG.contact.phone}`} className="text-lg font-semibold text-[#1E1E1E] hover:text-[#3F6F63] transition">
-                  {SITE_CONFIG.contact.phone}
-                </a>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-white/70 border border-[#CBBBAA]/60 shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-[#3F6F63] flex items-center justify-center text-white shadow-sm shadow-[#3F6F63]/25">
-                <Mail size={20} />
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-[0.3em] text-[#3F6F63]/70 mb-1">Email</div>
-                <a href={`mailto:${SITE_CONFIG.contact.email}`} className="text-lg font-semibold text-[#1E1E1E] hover:text-[#3F6F63] transition break-all">
-                  {SITE_CONFIG.contact.email}
-                </a>
-              </div>
-            </div>
+    <div id="contact" className="bg-white py-12 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <MotionDiv
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8 sm:mb-12 md:mb-16"
+        >
+          <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+            Get in Touch
           </div>
-          {SITE_CONFIG.contact.responseTime && (
-            <div className="text-center text-sm text-[#1E1E1E]/70 mb-6">
-              <Star size={14} className="inline mr-1 fill-[#D7A44E] text-[#D7A44E]" />
-              {SITE_CONFIG.contact.responseTime}
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+            Questions? We're Here to Help
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/70 max-w-2xl mx-auto px-4">
+            Reach out anytime—we're committed to making your stay exceptional
+          </p>
+        </MotionDiv>
+        
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-[#CBBBAA]/40 shadow-xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
+              <a
+                href={`tel:${SITE_CONFIG.contact.phone}`}
+                className="group flex items-center gap-4 sm:gap-6 p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white border-2 border-[#CBBBAA]/40 hover:border-[#E17654] active:scale-95 transition-all hover:shadow-lg touch-manipulation"
+              >
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-[#E17654] flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform flex-shrink-0">
+                  <Phone size={24} className="sm:w-7 sm:h-7" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs uppercase tracking-[0.2em] text-[#3F6F63]/70 mb-1">Phone</div>
+                  <div className="text-base sm:text-xl font-bold text-[#1E1E1E] group-hover:text-[#E17654] transition-colors">
+                    {SITE_CONFIG.contact.phone}
+                  </div>
+                </div>
+              </a>
+              <a
+                href={`mailto:${SITE_CONFIG.contact.email}`}
+                className="group flex items-center gap-4 sm:gap-6 p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white border-2 border-[#CBBBAA]/40 hover:border-[#3F6F63] active:scale-95 transition-all hover:shadow-lg touch-manipulation"
+              >
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-[#3F6F63] flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform flex-shrink-0">
+                  <Mail size={24} className="sm:w-7 sm:h-7" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs uppercase tracking-[0.2em] text-[#3F6F63]/70 mb-1">Email</div>
+                  <div className="text-sm sm:text-lg font-bold text-[#1E1E1E] group-hover:text-[#3F6F63] transition-colors break-all">
+                    {SITE_CONFIG.contact.email}
+                  </div>
+                </div>
+              </a>
             </div>
-          )}
-          <div className="text-center">
-            <a 
-              href="#book" 
-              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 bg-[#E17654] text-white font-semibold shadow-sm shadow-[#E17654]/40 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-transform hover:scale-[1.02]"
-            >
-              Book Your Stay <ExternalLink size={18} />
-            </a>
+            {SITE_CONFIG.contact.responseTime && (
+              <div className="text-center mb-6 sm:mb-8 pb-6 sm:pb-8 border-b border-[#CBBBAA]/40">
+                <div className="inline-flex items-center gap-2 text-sm sm:text-base text-[#1E1E1E]/70">
+                  <Star size={16} className="sm:w-[18px] sm:h-[18px] fill-[#D7A44E] text-[#D7A44E]" />
+                  <span className="font-medium">{SITE_CONFIG.contact.responseTime}</span>
+                </div>
+              </div>
+            )}
+            <div className="text-center">
+              <a 
+                href="#book" 
+                className="inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl px-8 sm:px-10 py-4 sm:py-5 bg-[#E17654] text-white font-bold text-base sm:text-lg shadow-lg shadow-[#E17654]/30 hover:bg-[#C65A3A] hover:shadow-xl active:scale-95 transition-all touch-manipulation min-h-[48px]"
+              >
+                Reserve Your Stay
+                <ArrowRight size={20} className="sm:w-[22px] sm:h-[22px]" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </Section>
+    </div>
   );
 }
 
@@ -1279,37 +1650,19 @@ export default function PropertySite() {
       <PhotoGallery />
       <PropertyDetails />
       
-      {/* Main Content Area */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6 md:space-y-8">
-            {/* Description - Hidden on mobile (shown in photo overlay) */}
-            <div className="hidden md:block border-b border-[#CBBBAA]/40 pb-8">
-              <p className="text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
-                {SITE_CONFIG.description}
-              </p>
-            </div>
-            {/* Mobile: Show description after photos */}
-            <div className="md:hidden border-b border-[#CBBBAA]/40 pb-6">
-              <p className="text-[#1E1E1E]/80 leading-relaxed text-sm">
-                {SITE_CONFIG.description}
-              </p>
-            </div>
-
-            <DirectBooking />
-            <Amenities />
-            <LocationMap />
-            <Reviews />
-            <MeetYourHost />
-            <ThingsToKnow />
-          </div>
-
-          {/* Right Column - Booking Summary (Sticky, hidden on mobile) */}
-          <div className="hidden lg:block lg:col-span-1">
-            <BookingSummary />
-          </div>
-        </div>
+      {/* Photo Gallery Section */}
+      <PhotoGallerySection />
+      
+      <Amenities />
+      <DirectBooking />
+      <LocationMap />
+      <Reviews />
+      <MeetYourHost />
+      <ThingsToKnow />
+      
+      {/* Floating Booking Widget - Desktop Only */}
+      <div className="hidden lg:block fixed bottom-8 right-8 z-40">
+        <BookingSummary />
       </div>
 
       <Contact />

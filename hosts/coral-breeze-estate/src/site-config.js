@@ -62,9 +62,6 @@ export const SITE_CONFIG = {
     "/photos/gallery-9.jpg",
     "/photos/gallery-10.jpg",
     "/photos/gallery-11.jpg",
-    "/photos/gallery-12.jpg",
-    "/photos/gallery-13.jpg",
-    "/photos/gallery-14.jpg",
   ],
 
   // Highlights (shown below hero)
