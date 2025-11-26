@@ -23,6 +23,25 @@ export const SITE_CONFIG = {
     mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3270.156272967268!2d-111.80058668479034!3d34.82219528139919!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x872da146986e01bd%3A0x1e3ddaa607e58780!2sChapel%20Area%2C%20Sedona%2C%20AZ%2086376!5e0!3m2!1sen!2sus!4v1762700000000!5m2!1sen!2sus",
   },
 
+  // Property Details
+  property: {
+    type: "Entire guesthouse",
+    guests: 3,
+    bedrooms: 1,
+    beds: 2,
+    bathrooms: 1,
+  },
+
+  // Host Information
+  host: {
+    name: "Sarah & Michael",
+    avatar: "/photos/host-avatar.jpg", // Optional: add host photo
+    joined: "2020",
+    responseTime: "Usually responds within 1 hour",
+    responseRate: "100%",
+    bio: "We're passionate about sharing the beauty of Sedona with travelers. As longtime locals, we love helping guests discover hidden trails, local eateries, and the best sunset spots. When we're not hosting, you'll find us hiking Cathedral Rock or enjoying wine at Page Springs Cellars.",
+  },
+
   // Hero Section (main banner)
   hero: {
     image: "/photos/hero.jpg",            // Main cover photo (put in public/photos/)
@@ -119,8 +138,39 @@ export const SITE_CONFIG = {
   contact: {
     phone: "+1 (928) 555-7788",
     email: "hello@coralbreezestate.com",
-
     responseTime: "Usually responds within 1 hour",
+  },
+
+  // Things to Know
+  thingsToKnow: {
+    houseRules: {
+      checkIn: "Check-in after 4:00 PM",
+      checkout: "Checkout before 10:00 AM",
+      guests: "3 guests maximum",
+      pets: "Pets allowed",
+      quietHours: "Quiet hours 10:00 PM - 8:00 AM",
+      noParties: "No parties or events",
+      noCommercial: "No commercial photography",
+      noSmoking: "No smoking",
+      additionalRules: [
+        "The primary renter must be at least 25 years of age, per insurance requirements.",
+        "Maximum number of pets allowed is 2. There is a pet fee, and pets must be included on the reservation's guest count at the time of booking so that the system calculates the cost of the reservation correctly. Pets must be crated when left alone. Guests are required to clean up pet waste or will incur an automatic charge of $60.",
+        "Please respect the quiet hours to honor our dark-sky community designation.",
+        "No unregistered guests. All guests must be included in the reservation.",
+      ],
+    },
+    safety: {
+      carbonMonoxide: "Carbon monoxide alarm",
+      smokeAlarm: "Smoke alarm",
+      noise: "Potential for noise",
+      security: "Security camera on property",
+      neighborhood: "Located in a residential neighborhood",
+    },
+    cancellation: {
+      policy: "Free cancellation for 24 hours.",
+      details: "Review this host's full policy for details.",
+      fullPolicy: "Free cancellation within 24 hours of booking. After that, cancel before check-in for a 50% refund (minus service fees). No refund for cancellations made less than 7 days before check-in.",
+    },
   },
 
   // SEO/Meta

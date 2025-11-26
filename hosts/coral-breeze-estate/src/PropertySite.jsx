@@ -5,7 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, Home, Clock, Shield, AlertCircle, FileText, Calendar, Ban, Camera, Cigarette, Volume2 } from "lucide-react";
 import { SITE_CONFIG, LISTING_CONFIG } from "./site-config.js";
 import BookingWidget from "./components/BookingWidget.jsx";
 
@@ -146,45 +146,167 @@ function Nav() {
   );
 }
 
-function Hero() {
+// Airbnb-style scrollable photo gallery
+function PhotoGallery() {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const photos = [SITE_CONFIG.hero.image, ...SITE_CONFIG.photos];
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedImage === null) return;
+      if (e.key === 'Escape') {
+        setSelectedImage(null);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setSelectedImage((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setSelectedImage((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
+      }
+    };
+
+    if (selectedImage !== null) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedImage, photos.length]);
+
+  const navigateImage = (direction) => {
+    if (direction === 'prev') {
+      setSelectedImage((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
+    } else {
+      setSelectedImage((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
+    }
+  };
+
   return (
-    <div className="relative pt-16 sm:pt-0">
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0F1514]/70 via-[#0F1514]/30 to-transparent z-0" />
-      <img
-        src={SITE_CONFIG.hero.image}
-        alt={SITE_CONFIG.seo.coverAlt}
-        className="h-[45vh] sm:h-[60vh] md:h-[70vh] lg:h-[75vh] w-full object-cover"
-      />
-      <div className="absolute inset-0 z-10 flex items-end sm:items-end">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-4 sm:pb-8 md:pb-12 w-full">
-          <MotionDiv
-            {...fade}
-            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.88)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-4 sm:p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)] mx-auto sm:mx-0"
-          >
-            <span className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[#3F6F63]">
-              {SITE_CONFIG.brand.tagline}
-            </span>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-2 sm:mt-5 leading-tight">
-              {SITE_CONFIG.brand.name}
-            </h1>
-            <p className="text-sm sm:text-lg md:text-xl mt-2 sm:mt-4 leading-relaxed text-[#1E1E1E]/80">
-              {SITE_CONFIG.description}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 sm:mt-8">
-              <a
-                href="#book"
-                className="rounded-xl bg-[#E17654] px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white shadow-sm shadow-[#E17654]/30 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors text-center"
-              >
-                Check Availability
-              </a>
-              <a
-                href="#contact"
-                className="rounded-xl border border-[#3F6F63]/30 px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-[#3F6F63] bg-white/70 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors text-center"
-              >
-                Contact Host
-              </a>
+    <>
+      <div className="pt-16 sm:pt-0">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-2 max-w-[1760px] mx-auto">
+          <div className="col-span-2 row-span-2">
+            <img
+              src={photos[0]}
+              alt={`${SITE_CONFIG.brand.name} - Main photo`}
+              className="w-full h-full object-cover rounded-l-2xl md:rounded-l-3xl cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setSelectedImage(0)}
+            />
+          </div>
+          {photos.slice(1, 5).map((src, idx) => (
+            <div key={idx} className="relative">
+              <img
+                src={src}
+                alt={`${SITE_CONFIG.brand.name} - Photo ${idx + 2}`}
+                className="w-full h-48 md:h-64 object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                onClick={() => setSelectedImage(idx + 1)}
+              />
+              {idx === 3 && photos.length > 5 && (
+                <div
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors rounded-r-2xl md:rounded-r-3xl"
+                  onClick={() => setSelectedImage(5)}
+                >
+                  <div className="text-white text-lg font-semibold">
+                    Show all photos
+                  </div>
+                </div>
+              )}
             </div>
-          </MotionDiv>
+          ))}
+        </div>
+      </div>
+
+      {/* Full Screen Image Modal */}
+      {selectedImage !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-full w-full p-4">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 text-white hover:text-zinc-300 transition-colors p-2 z-10 bg-black/50 rounded-full"
+              aria-label="Close modal"
+            >
+              <X size={32} />
+            </button>
+            
+            {photos.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateImage('prev');
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-zinc-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70 z-10"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft size={32} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateImage('next');
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-zinc-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70 z-10"
+                  aria-label="Next image"
+                >
+                  <ChevronRight size={32} />
+                </button>
+              </>
+            )}
+
+            <img
+              src={photos[selectedImage]}
+              alt={`${SITE_CONFIG.brand.name} photo ${selectedImage + 1}`}
+              className="max-w-full max-h-[90vh] object-contain rounded-lg mx-auto"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 text-white text-sm">
+              <span>{selectedImage + 1} / {photos.length}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Property Details Section (Airbnb style)
+function PropertyDetails() {
+  const { property, location } = SITE_CONFIG;
+  
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 border-b border-[#CBBBAA]/40">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-2">
+            {SITE_CONFIG.brand.name}
+          </h1>
+          <p className="text-base text-[#1E1E1E]/70 mb-3">
+            {property.type} in {location.city}, {location.region}
+          </p>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#1E1E1E]/80">
+            <span className="flex items-center gap-1">
+              <Users size={16} />
+              {property.guests} {property.guests === 1 ? 'guest' : 'guests'}
+            </span>
+            <span className="flex items-center gap-1">
+              <Bed size={16} />
+              {property.bedrooms} {property.bedrooms === 1 ? 'bedroom' : 'bedrooms'}
+            </span>
+            <span className="flex items-center gap-1">
+              <Bed size={16} />
+              {property.beds} {property.beds === 1 ? 'bed' : 'beds'}
+            </span>
+            <span className="flex items-center gap-1">
+              <Bath size={16} />
+              {property.bathrooms} {property.bathrooms === 1 ? 'bath' : 'baths'}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -392,85 +514,233 @@ function Gallery() {
 
 function DirectBooking() {
   return (
-    <Section id="book" title="Book Your Stay">
-      <BookingWidget listingId={LISTING_CONFIG.id} />
-    </Section>
+    <div id="book" className="border-b border-[#CBBBAA]/40 pb-8">
+      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+        Where you'll sleep
+      </h2>
+      <div className="border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-lg bg-white">
+        <BookingWidget listingId={LISTING_CONFIG.id} />
+      </div>
+    </div>
+  );
+}
+
+// Booking Summary Widget (Airbnb-style sticky card)
+function BookingSummary() {
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
+  const [nights, setNights] = useState(0);
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingStatus, setBookingStatus] = useState('');
+
+  const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const withApiBase = (path) => API_BASE ? `${API_BASE}${path}` : path;
+  const ymd = (d) => d.toISOString().slice(0, 10);
+
+  // Calculate nights when dates change
+  useEffect(() => {
+    if (checkIn && checkOut) {
+      const diffTime = Math.abs(checkOut - checkIn);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setNights(diffDays);
+    } else {
+      setNights(0);
+    }
+  }, [checkIn, checkOut]);
+
+  // Listen for date selections from the main booking widget via custom events
+  useEffect(() => {
+    const handleDateSelection = (e) => {
+      if (e.detail?.checkIn) {
+        const date = e.detail.checkIn instanceof Date ? e.detail.checkIn : new Date(e.detail.checkIn);
+        setCheckIn(date);
+      } else if (e.detail?.checkIn === null) {
+        setCheckIn(null);
+      }
+      if (e.detail?.checkOut) {
+        const date = e.detail.checkOut instanceof Date ? e.detail.checkOut : new Date(e.detail.checkOut);
+        setCheckOut(date);
+      } else if (e.detail?.checkOut === null) {
+        setCheckOut(null);
+      }
+    };
+    window.addEventListener('booking-dates-selected', handleDateSelection);
+
+    return () => {
+      window.removeEventListener('booking-dates-selected', handleDateSelection);
+    };
+  }, []);
+
+  const formatDate = (date) => {
+    if (!date) return '';
+    return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+  };
+
+  const calculateTotal = () => {
+    if (!nights) return LISTING_CONFIG.nightlyPrice;
+    const basePrice = LISTING_CONFIG.nightlyPrice * nights;
+    const cleaningFee = LISTING_CONFIG.cleaningFee;
+    return basePrice + cleaningFee;
+  };
+
+  const handleReserve = async () => {
+    if (!checkIn || !checkOut) {
+      // Scroll to booking widget if dates not selected
+      document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    setIsBooking(true);
+    setBookingStatus('Placing 10-min hold…');
+
+    try {
+      // Create hold
+      const r1 = await fetch(withApiBase('/hold'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          start: ymd(checkIn),
+          end: ymd(checkOut),
+          listing: LISTING_CONFIG.id
+        })
+      });
+
+      const j1 = await r1.json();
+      if (!r1.ok) {
+        setBookingStatus('Hold failed: ' + (j1.error || 'unknown'));
+        setIsBooking(false);
+        return;
+      }
+
+      // Store hold in sessionStorage
+      const storageKey = `coral-breeze-hold-${LISTING_CONFIG.id}`;
+      sessionStorage.setItem(storageKey, JSON.stringify({ holdId: j1.hold.id, listing: LISTING_CONFIG.id }));
+
+      setBookingStatus('Creating checkout…');
+
+      // Create checkout
+      const r2 = await fetch(withApiBase('/checkout'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          start: ymd(checkIn),
+          end: ymd(checkOut),
+          holdId: j1.hold.id,
+          listing: LISTING_CONFIG.id
+        })
+      });
+
+      const j2 = await r2.json();
+      if (!r2.ok || !j2.url) {
+        setBookingStatus('Checkout failed: ' + (j2.error || 'unknown'));
+        setIsBooking(false);
+        return;
+      }
+
+      // Redirect to Stripe checkout
+      window.location.href = j2.url;
+    } catch (error) {
+      setBookingStatus('Error: ' + error.message);
+      setIsBooking(false);
+    }
+  };
+
+  const total = calculateTotal();
+  const nightlyPrice = LISTING_CONFIG.nightlyPrice;
+
+  return (
+    <div className="border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-lg bg-white sticky top-24">
+      <div className="mb-6">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-semibold text-[#1E1E1E] underline">
+            ${(total / 100).toLocaleString()}
+          </span>
+          {nights > 0 && (
+            <span className="text-[#1E1E1E]/70">for {nights} {nights === 1 ? 'night' : 'nights'}</span>
+          )}
+        </div>
+        {nights === 0 && (
+          <span className="text-sm text-[#1E1E1E]/70">${(nightlyPrice / 100).toLocaleString()} per night</span>
+        )}
+      </div>
+
+      {/* Date Selection Box */}
+      <div 
+        className="border border-[#CBBBAA]/60 rounded-xl mb-4 overflow-hidden cursor-pointer hover:border-[#3F6F63] transition-colors"
+        onClick={() => document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })}
+      >
+        <div className="grid grid-cols-2">
+          <div className="p-4 border-r border-[#CBBBAA]/60">
+            <div className="text-xs font-semibold text-[#1E1E1E]/70 mb-1">CHECK-IN</div>
+            <div className="text-base font-medium text-[#1E1E1E]">
+              {checkIn ? formatDate(checkIn) : 'Add date'}
+            </div>
+          </div>
+          <div className="p-4 flex items-end justify-end">
+            <div className="flex-1">
+              <div className="text-xs font-semibold text-[#1E1E1E]/70 mb-1">CHECKOUT</div>
+              <div className="text-base font-medium text-[#1E1E1E]">
+                {checkOut ? formatDate(checkOut) : 'Add date'}
+              </div>
+            </div>
+            <ChevronRight size={20} className="text-[#1E1E1E]/50 ml-2" />
+          </div>
+        </div>
+      </div>
+
+      {/* Reserve Button */}
+      <button
+        onClick={handleReserve}
+        disabled={isBooking}
+        className="w-full rounded-xl bg-gradient-to-r from-[#E17654] via-[#E17654] to-[#E17654]/90 text-white font-semibold py-4 text-lg hover:from-[#C65A3A] hover:via-[#C65A3A] hover:to-[#C65A3A]/90 transition-all shadow-md hover:shadow-lg mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isBooking ? bookingStatus : (checkIn && checkOut ? 'Book Now' : 'Check availability')}
+      </button>
+
+      {bookingStatus && !isBooking && bookingStatus.includes('failed') && (
+        <p className="text-center text-sm text-red-600 mb-2">{bookingStatus}</p>
+      )}
+
+      <p className="text-center text-sm text-[#1E1E1E]/70">
+        You won't be charged yet
+      </p>
+    </div>
   );
 }
 
 function Amenities() {
   return (
-    <Section id="amenities" title="Amenities & Features" eyebrow="Everything you need for the perfect stay">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
+    <div className="border-b border-[#CBBBAA]/40 pb-8">
+      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+        What this place offers
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {SITE_CONFIG.amenities.map((a, i) => (
-          <MotionDiv
+          <div
             key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.05 }}
-            className="rounded-2xl border border-[#CBBBAA]/70 p-5 bg-[#FAF7F2] hover:border-[#3F6F63]/40 hover:shadow-[0_20px_45px_-30px_rgba(30,30,30,0.4)] transition-all group"
+            className="flex items-start gap-3 py-3"
           >
-            <div className="flex flex-col items-center text-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#E17654]/15 text-[#E17654] flex items-center justify-center group-hover:scale-125 transition-transform shadow-sm shadow-[#E17654]/20">
-                <a.icon size={24} />
-              </div>
-              <span className="text-sm font-medium text-[#1E1E1E] leading-tight">{a.label}</span>
-            </div>
-          </MotionDiv>
+            <a.icon size={24} className="text-[#3F6F63] flex-shrink-0" />
+            <span className="text-[#1E1E1E]/80">{a.label}</span>
+          </div>
         ))}
       </div>
-    </Section>
+    </div>
   );
 }
 
 function LocationMap() {
   return (
-    <Section id="location" title="Perfect Location" eyebrow={`${SITE_CONFIG.location.city}, ${SITE_CONFIG.location.region}`}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-xl font-semibold text-[#1E1E1E] mb-3">Sedona’s Red-Rock Playground</h3>
-            <p className="text-[#1E1E1E]/75 leading-relaxed text-lg">
-              Coral Breeze Estate sits in the Village of Oak Creek, five minutes from Bell Rock trailheads and just south of Sedona proper. Mornings are for sunrise hikes up Cathedral Rock, afternoons for Southwest plates at The Hudson or farm-to-table bites at Elote Café, and evenings for stargazing on our desert terraces or wine flights at Page Springs Cellars.
-            </p>
-          </div>
-          <div className="bg-[#F4EDE4] rounded-2xl p-6 border border-[#CBBBAA]/70 shadow-sm">
-            <h4 className="font-semibold text-[#1E1E1E] mb-4 flex items-center gap-2">
-              <MapPin className="text-[#3F6F63]" size={20} />
-              Nearby favorites
-            </h4>
-            <ul className="space-y-3 text-[#1E1E1E]/80">
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                <span>Cathedral Rock Trailhead – 8 minutes</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                <span>Bell Rock Pathway for e-biking & hiking – 5 minutes</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                <span>Red Rock Café (breakfast) & Firecreek Coffee – 4 minutes</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                <span>Tlaquepaque Arts & Shopping Village – 12 minutes</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                <span>Elote Café & The Hudson (dinner hotspots) – 15 minutes</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
-                <span>Page Springs Cellars wine tasting – 20 minutes</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
+    <div className="border-b border-[#CBBBAA]/40 pb-8">
+      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+        Where you'll be
+      </h2>
+      <div className="space-y-6">
+        <p className="text-[#1E1E1E]/80 leading-relaxed">
+          {SITE_CONFIG.location.city}, {SITE_CONFIG.location.region}
+        </p>
         {SITE_CONFIG.location.mapEmbed && (
-          <div className="rounded-2xl overflow-hidden border-2 border-[#CBBBAA]/70 shadow-xl bg-[#FAF7F2]">
+          <div className="rounded-2xl overflow-hidden border border-[#CBBBAA]/40">
             <div className="relative w-full pb-[66.6%] h-0">
               <iframe
                 title={`${SITE_CONFIG.brand.name} Location Map`}
@@ -484,7 +754,7 @@ function LocationMap() {
           </div>
         )}
       </div>
-    </Section>
+    </div>
   );
 }
 
@@ -492,33 +762,317 @@ function Reviews() {
   if (!SITE_CONFIG.reviews || SITE_CONFIG.reviews.length === 0) return null;
   
   return (
-    <Section id="reviews" title="What Guests Are Saying" eyebrow="Guest Reviews">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="border-b border-[#CBBBAA]/40 pb-8">
+      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+        Reviews
+      </h2>
+      <div className="space-y-6">
         {SITE_CONFIG.reviews.map((r, i) => (
-          <MotionDiv
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="rounded-2xl border border-[#CBBBAA]/70 p-6 bg-[#FAF7F2] shadow-sm hover:shadow-[0_22px_40px_-32px_rgba(30,30,30,0.45)] transition-all"
-          >
-            <div className="flex items-center gap-2 mb-3">
+          <div key={i} className="pb-6 border-b border-[#CBBBAA]/30 last:border-0">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-[#E17654] flex items-center justify-center text-white text-sm font-semibold">
+                {r.name.split(' ').map(n => n[0]).join('')}
+              </div>
+              <div>
+                <div className="font-semibold text-[#1E1E1E]">{r.name}</div>
+                {r.date && (
+                  <div className="text-sm text-[#1E1E1E]/60">{r.date}</div>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-1 mb-2">
               {Array.from({ length: r.rating }).map((_, j) => (
-                <Star key={j} size={18} className="fill-[#D7A44E] text-[#D7A44E]" />
+                <Star key={j} size={16} className="fill-[#D7A44E] text-[#D7A44E]" />
               ))}
             </div>
-            <p className="text-[#1E1E1E]/80 leading-relaxed text-base mb-4">"{r.text}"</p>
-            <div className="flex items-center justify-between pt-4 border-t border-[#CBBBAA]/60">
-              <div className="text-sm font-semibold text-[#1E1E1E]">— {r.name}</div>
-              {r.date && (
-                <div className="text-xs text-[#1E1E1E]/60">{r.date}</div>
-              )}
-            </div>
-          </MotionDiv>
+            <p className="text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
+          </div>
         ))}
       </div>
-    </Section>
+    </div>
+  );
+}
+
+// Meet Your Host Section
+function MeetYourHost() {
+  const { host } = SITE_CONFIG;
+  
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 border-b border-[#CBBBAA]/40">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+        <div className="flex-shrink-0">
+          <div className="w-24 h-24 rounded-full bg-[#E17654] flex items-center justify-center text-white text-2xl font-bold">
+            {host.name.split(' ').map(n => n[0]).join('')}
+          </div>
+        </div>
+        <div className="flex-1">
+          <h2 className="text-xl md:text-2xl font-semibold text-[#1E1E1E] mb-2">
+            Meet your host
+          </h2>
+          <p className="text-sm text-[#1E1E1E]/70 mb-4">
+            Hosted by {host.name} · Joined in {host.joined}
+          </p>
+          <div className="flex flex-wrap gap-4 mb-4 text-sm">
+            <div className="flex items-center gap-2">
+              <Star size={16} className="fill-[#D7A44E] text-[#D7A44E]" />
+              <span className="text-[#1E1E1E]/80">{host.responseRate} response rate</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-[#3F6F63]" />
+              <span className="text-[#1E1E1E]/80">{host.responseTime}</span>
+            </div>
+          </div>
+          <p className="text-[#1E1E1E]/80 leading-relaxed">
+            {host.bio}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Things to Know Section with Modals
+function ThingsToKnow() {
+  const [openModal, setOpenModal] = useState(null);
+  const { thingsToKnow } = SITE_CONFIG;
+
+  const handleShowMore = (type) => {
+    setOpenModal(type);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(null);
+    document.body.style.overflow = 'unset';
+  };
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') handleCloseModal();
+    };
+    if (openModal) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [openModal]);
+
+  return (
+    <>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 border-b border-[#CBBBAA]/40">
+        <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+          Things to know
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* House Rules */}
+          <div>
+            <h3 className="font-semibold text-[#1E1E1E] mb-3">House rules</h3>
+            <ul className="space-y-2 text-sm text-[#1E1E1E]/80 mb-3">
+              <li>{thingsToKnow.houseRules.checkIn}</li>
+              <li>{thingsToKnow.houseRules.checkout}</li>
+              <li>{thingsToKnow.houseRules.guests}</li>
+            </ul>
+            <button
+              onClick={() => handleShowMore('houseRules')}
+              className="text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+            >
+              Show more
+            </button>
+          </div>
+
+          {/* Safety & Property */}
+          <div>
+            <h3 className="font-semibold text-[#1E1E1E] mb-3">Safety & property</h3>
+            <ul className="space-y-2 text-sm text-[#1E1E1E]/80 mb-3">
+              <li>{thingsToKnow.safety.carbonMonoxide}</li>
+              <li>{thingsToKnow.safety.smokeAlarm}</li>
+              <li>{thingsToKnow.safety.noise}</li>
+            </ul>
+            <button
+              onClick={() => handleShowMore('safety')}
+              className="text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+            >
+              Show more
+            </button>
+          </div>
+
+          {/* Cancellation Policy */}
+          <div>
+            <h3 className="font-semibold text-[#1E1E1E] mb-3">Cancellation policy</h3>
+            <p className="text-sm text-[#1E1E1E]/80 mb-3">
+              {thingsToKnow.cancellation.policy}
+            </p>
+            <button
+              onClick={() => handleShowMore('cancellation')}
+              className="text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+            >
+              Show more
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* House Rules Modal */}
+      {openModal === 'houseRules' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={handleCloseModal}>
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-[#CBBBAA]/40 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-[#1E1E1E]">House rules</h2>
+              <button onClick={handleCloseModal} className="p-2 hover:bg-[#F4EDE4] rounded-full transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <p className="text-[#1E1E1E]/80">
+                You'll be staying in someone's home, so please treat it with care and respect.
+              </p>
+              
+              <div>
+                <h3 className="font-semibold text-[#1E1E1E] mb-3 flex items-center gap-2">
+                  <Clock size={20} className="text-[#3F6F63]" />
+                  Checking in and out
+                </h3>
+                <ul className="space-y-2 text-[#1E1E1E]/80">
+                  <li className="flex items-start gap-3">
+                    <Clock size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <span>{thingsToKnow.houseRules.checkIn}</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Clock size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <span>{thingsToKnow.houseRules.checkout}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-[#1E1E1E] mb-3 flex items-center gap-2">
+                  <Users size={20} className="text-[#3F6F63]" />
+                  During your stay
+                </h3>
+                <ul className="space-y-2 text-[#1E1E1E]/80">
+                  <li className="flex items-start gap-3">
+                    <Users size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <span>{thingsToKnow.houseRules.guests}</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#3F6F63] flex-shrink-0">🐾</span>
+                    <span>{thingsToKnow.houseRules.pets}</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Volume2 size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <div>
+                      <div>{thingsToKnow.houseRules.quietHours}</div>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Ban size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <span>{thingsToKnow.houseRules.noParties}</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Camera size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <span>{thingsToKnow.houseRules.noCommercial}</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Cigarette size={16} className="mt-1 text-[#3F6F63] flex-shrink-0" />
+                    <span>{thingsToKnow.houseRules.noSmoking}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold text-[#1E1E1E] mb-3 flex items-center gap-2">
+                  <FileText size={20} className="text-[#3F6F63]" />
+                  Additional rules
+                </h3>
+                <ul className="space-y-2 text-[#1E1E1E]/80">
+                  {thingsToKnow.houseRules.additionalRules.map((rule, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#D7A44E] mt-2 flex-shrink-0" />
+                      <span>{rule}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Safety Modal */}
+      {openModal === 'safety' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={handleCloseModal}>
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-[#CBBBAA]/40 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-[#1E1E1E]">Safety & property</h2>
+              <button onClick={handleCloseModal} className="p-2 hover:bg-[#F4EDE4] rounded-full transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-start gap-3">
+                <Shield size={20} className="text-[#3F6F63] flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-[#1E1E1E] mb-1">{thingsToKnow.safety.carbonMonoxide}</div>
+                  <div className="text-sm text-[#1E1E1E]/70">This property has a carbon monoxide alarm installed.</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Shield size={20} className="text-[#3F6F63] flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-[#1E1E1E] mb-1">{thingsToKnow.safety.smokeAlarm}</div>
+                  <div className="text-sm text-[#1E1E1E]/70">Smoke alarms are installed throughout the property.</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <AlertCircle size={20} className="text-[#3F6F63] flex-shrink-0 mt-1" />
+                <div>
+                  <div className="font-semibold text-[#1E1E1E] mb-1">{thingsToKnow.safety.noise}</div>
+                  <div className="text-sm text-[#1E1E1E]/70">The property is located in a residential area. Please be mindful of neighbors.</div>
+                </div>
+              </div>
+              {thingsToKnow.safety.security && (
+                <div className="flex items-start gap-3">
+                  <Camera size={20} className="text-[#3F6F63] flex-shrink-0 mt-1" />
+                  <div>
+                    <div className="font-semibold text-[#1E1E1E] mb-1">{thingsToKnow.safety.security}</div>
+                    <div className="text-sm text-[#1E1E1E]/70">Security cameras are present for safety purposes.</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancellation Policy Modal */}
+      {openModal === 'cancellation' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={handleCloseModal}>
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-[#CBBBAA]/40 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-[#1E1E1E]">Cancellation policy</h2>
+              <button onClick={handleCloseModal} className="p-2 hover:bg-[#F4EDE4] rounded-full transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-[#1E1E1E]/80">
+                {thingsToKnow.cancellation.policy}
+              </p>
+              <div className="bg-[#F4EDE4] rounded-xl p-4 border border-[#CBBBAA]/40">
+                <h3 className="font-semibold text-[#1E1E1E] mb-2">Full policy details</h3>
+                <p className="text-sm text-[#1E1E1E]/80">
+                  {thingsToKnow.cancellation.fullPolicy}
+                </p>
+              </div>
+              <div className="pt-4 border-t border-[#CBBBAA]/40">
+                <p className="text-sm text-[#1E1E1E]/70">
+                  {thingsToKnow.cancellation.details}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -600,16 +1154,39 @@ export default function PropertySite() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4EDE4] text-[#1E1E1E]">
+    <div className="min-h-screen bg-white text-[#1E1E1E]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Nav />
-      <Hero />
-      <Highlights />
-      <Gallery />
-      <DirectBooking />
-      <Amenities />
-      <LocationMap />
-      <Reviews />
+      <PhotoGallery />
+      <PropertyDetails />
+      
+      {/* Main Content Area */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Description */}
+            <div className="border-b border-[#CBBBAA]/40 pb-8">
+              <p className="text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
+                {SITE_CONFIG.description}
+              </p>
+            </div>
+
+            <DirectBooking />
+            <Amenities />
+            <LocationMap />
+            <Reviews />
+            <MeetYourHost />
+            <ThingsToKnow />
+          </div>
+
+          {/* Right Column - Booking Summary (Sticky) */}
+          <div className="lg:col-span-1">
+            <BookingSummary />
+          </div>
+        </div>
+      </div>
+
       <Contact />
       <Footer />
     </div>

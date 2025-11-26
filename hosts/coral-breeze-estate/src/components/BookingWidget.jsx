@@ -108,12 +108,21 @@ export default function BookingWidget({ listingId }){
     // selecting
     if (!selStart || (selStart && selEnd)) {
       setSelStart(d); setSelEnd(null); setStatus('')
+      // Emit event for booking summary
+      window.dispatchEvent(new CustomEvent('booking-dates-selected', {
+        detail: { checkIn: new Date(d), checkOut: null }
+      }))
       return
     }
     // ensure d > selStart and no blocked inside
     if (!isAfter(d, selStart)) {
       // if clicked before start, swap
-      if (!blockedBetween(d, selStart)) { setSelStart(d); setSelEnd(null); setStatus('') }
+      if (!blockedBetween(d, selStart)) { 
+        setSelStart(d); setSelEnd(null); setStatus('')
+        window.dispatchEvent(new CustomEvent('booking-dates-selected', {
+          detail: { checkIn: new Date(d), checkOut: null, guests: 1 }
+        }))
+      }
       return
     }
     if (blockedBetween(selStart, d)) {
@@ -121,6 +130,10 @@ export default function BookingWidget({ listingId }){
       return
     }
     setSelEnd(d); setStatus('Range selected — click Book to continue')
+    // Emit event for booking summary
+    window.dispatchEvent(new CustomEvent('booking-dates-selected', {
+      detail: { checkIn: new Date(selStart), checkOut: new Date(d) }
+    }))
   }
 
   async function check(){
