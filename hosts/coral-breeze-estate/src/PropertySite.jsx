@@ -187,12 +187,32 @@ function PhotoGallery() {
   return (
     <>
       <div className="pt-16 sm:pt-0">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-2 max-w-[1760px] mx-auto">
+        {/* Mobile: Single image with description preview */}
+        <div className="md:hidden">
+          <div className="relative">
+            <img
+              src={photos[0]}
+              alt={`${SITE_CONFIG.brand.name} - Main photo`}
+              className="w-full h-[60vh] object-cover cursor-pointer"
+              onClick={() => setSelectedImage(0)}
+            />
+            {/* Description preview overlay */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-6">
+              <p className="text-white text-sm leading-relaxed line-clamp-3">
+                {SITE_CONFIG.description.substring(0, 150)}...
+              </p>
+              <p className="text-white/80 text-xs mt-2">Scroll for more details</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: Grid layout */}
+        <div className="hidden md:grid grid-cols-4 gap-2 max-w-[1760px] mx-auto">
           <div className="col-span-2 row-span-2">
             <img
               src={photos[0]}
               alt={`${SITE_CONFIG.brand.name} - Main photo`}
-              className="w-full h-full object-cover rounded-l-2xl md:rounded-l-3xl cursor-pointer hover:opacity-95 transition-opacity"
+              className="w-full h-full object-cover rounded-l-3xl cursor-pointer hover:opacity-95 transition-opacity"
               onClick={() => setSelectedImage(0)}
             />
           </div>
@@ -201,12 +221,12 @@ function PhotoGallery() {
               <img
                 src={src}
                 alt={`${SITE_CONFIG.brand.name} - Photo ${idx + 2}`}
-                className="w-full h-48 md:h-64 object-cover cursor-pointer hover:opacity-95 transition-opacity"
+                className="w-full h-64 object-cover cursor-pointer hover:opacity-95 transition-opacity"
                 onClick={() => setSelectedImage(idx + 1)}
               />
               {idx === 3 && photos.length > 5 && (
                 <div
-                  className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors rounded-r-2xl md:rounded-r-3xl"
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors rounded-r-3xl"
                   onClick={() => setSelectedImage(5)}
                 >
                   <div className="text-white text-lg font-semibold">
@@ -280,30 +300,30 @@ function PropertyDetails() {
   const { property, location } = SITE_CONFIG;
   
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 border-b border-[#CBBBAA]/40">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-6 border-b border-[#CBBBAA]/40">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-2">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-2">
             {SITE_CONFIG.brand.name}
           </h1>
-          <p className="text-base text-[#1E1E1E]/70 mb-3">
+          <p className="text-sm md:text-base text-[#1E1E1E]/70 mb-2 md:mb-3">
             {property.type} in {location.city}, {location.region}
           </p>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[#1E1E1E]/80">
+          <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm text-[#1E1E1E]/80">
             <span className="flex items-center gap-1">
-              <Users size={16} />
+              <Users size={14} className="md:w-4 md:h-4" />
               {property.guests} {property.guests === 1 ? 'guest' : 'guests'}
             </span>
             <span className="flex items-center gap-1">
-              <Bed size={16} />
+              <Bed size={14} className="md:w-4 md:h-4" />
               {property.bedrooms} {property.bedrooms === 1 ? 'bedroom' : 'bedrooms'}
             </span>
             <span className="flex items-center gap-1">
-              <Bed size={16} />
+              <Bed size={14} className="md:w-4 md:h-4" />
               {property.beds} {property.beds === 1 ? 'bed' : 'beds'}
             </span>
             <span className="flex items-center gap-1">
-              <Bath size={16} />
+              <Bath size={14} className="md:w-4 md:h-4" />
               {property.bathrooms} {property.bathrooms === 1 ? 'bath' : 'baths'}
             </span>
           </div>
@@ -514,11 +534,11 @@ function Gallery() {
 
 function DirectBooking() {
   return (
-    <div id="book" className="border-b border-[#CBBBAA]/40 pb-8">
-      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+    <div id="book" className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
+      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
         Where you'll sleep
       </h2>
-      <div className="border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-lg bg-white">
+      <div className="border border-[#CBBBAA]/40 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg bg-white">
         <BookingWidget listingId={LISTING_CONFIG.id} />
       </div>
     </div>
@@ -710,18 +730,18 @@ function BookingSummary() {
 
 function Amenities() {
   return (
-    <div className="border-b border-[#CBBBAA]/40 pb-8">
-      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+    <div className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
+      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
         What this place offers
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
         {SITE_CONFIG.amenities.map((a, i) => (
           <div
             key={i}
-            className="flex items-start gap-3 py-3"
+            className="flex items-start gap-2 md:gap-3 py-2 md:py-3"
           >
-            <a.icon size={24} className="text-[#3F6F63] flex-shrink-0" />
-            <span className="text-[#1E1E1E]/80">{a.label}</span>
+            <a.icon size={20} className="md:w-6 md:h-6 text-[#3F6F63] flex-shrink-0 mt-0.5" />
+            <span className="text-sm md:text-base text-[#1E1E1E]/80">{a.label}</span>
           </div>
         ))}
       </div>
@@ -731,16 +751,16 @@ function Amenities() {
 
 function LocationMap() {
   return (
-    <div className="border-b border-[#CBBBAA]/40 pb-8">
-      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+    <div className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
+      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
         Where you'll be
       </h2>
-      <div className="space-y-6">
-        <p className="text-[#1E1E1E]/80 leading-relaxed">
+      <div className="space-y-4 md:space-y-6">
+        <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">
           {SITE_CONFIG.location.city}, {SITE_CONFIG.location.region}
         </p>
         {SITE_CONFIG.location.mapEmbed && (
-          <div className="rounded-2xl overflow-hidden border border-[#CBBBAA]/40">
+          <div className="rounded-xl md:rounded-2xl overflow-hidden border border-[#CBBBAA]/40">
             <div className="relative w-full pb-[66.6%] h-0">
               <iframe
                 title={`${SITE_CONFIG.brand.name} Location Map`}
@@ -759,36 +779,56 @@ function LocationMap() {
 }
 
 function Reviews() {
+  const [showAll, setShowAll] = useState(false);
   if (!SITE_CONFIG.reviews || SITE_CONFIG.reviews.length === 0) return null;
   
+  const hasMoreThanTwo = SITE_CONFIG.reviews.length > 2;
+  const visibleReviews = showAll || !hasMoreThanTwo ? SITE_CONFIG.reviews : SITE_CONFIG.reviews.slice(0, 2);
+  
   return (
-    <div className="border-b border-[#CBBBAA]/40 pb-8">
-      <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+    <div className="border-b border-[#CBBBAA]/40 pb-6 md:pb-8">
+      <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
         Reviews
       </h2>
-      <div className="space-y-6">
-        {SITE_CONFIG.reviews.map((r, i) => (
-          <div key={i} className="pb-6 border-b border-[#CBBBAA]/30 last:border-0">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-[#E17654] flex items-center justify-center text-white text-sm font-semibold">
+      <div className="space-y-4 md:space-y-6">
+        {visibleReviews.map((r, i) => (
+          <div key={i} className="pb-4 md:pb-6 border-b border-[#CBBBAA]/30 last:border-0">
+            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#E17654] flex items-center justify-center text-white text-xs md:text-sm font-semibold">
                 {r.name.split(' ').map(n => n[0]).join('')}
               </div>
               <div>
-                <div className="font-semibold text-[#1E1E1E]">{r.name}</div>
+                <div className="text-sm md:text-base font-semibold text-[#1E1E1E]">{r.name}</div>
                 {r.date && (
-                  <div className="text-sm text-[#1E1E1E]/60">{r.date}</div>
+                  <div className="text-xs md:text-sm text-[#1E1E1E]/60">{r.date}</div>
                 )}
               </div>
             </div>
             <div className="flex items-center gap-1 mb-2">
               {Array.from({ length: r.rating }).map((_, j) => (
-                <Star key={j} size={16} className="fill-[#D7A44E] text-[#D7A44E]" />
+                <Star key={j} size={14} className="md:w-4 md:h-4 fill-[#D7A44E] text-[#D7A44E]" />
               ))}
             </div>
-            <p className="text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
+            <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
           </div>
         ))}
       </div>
+      {hasMoreThanTwo && !showAll && (
+        <button
+          onClick={() => setShowAll(true)}
+          className="mt-4 md:mt-6 text-sm md:text-base font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+        >
+          Show all {SITE_CONFIG.reviews.length} reviews
+        </button>
+      )}
+      {showAll && hasMoreThanTwo && (
+        <button
+          onClick={() => setShowAll(false)}
+          className="mt-4 md:mt-6 text-sm md:text-base font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors"
+        >
+          Show less
+        </button>
+      )}
     </div>
   );
 }
@@ -798,31 +838,31 @@ function MeetYourHost() {
   const { host } = SITE_CONFIG;
   
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 border-b border-[#CBBBAA]/40">
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8 border-b border-[#CBBBAA]/40">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8">
         <div className="flex-shrink-0">
-          <div className="w-24 h-24 rounded-full bg-[#E17654] flex items-center justify-center text-white text-2xl font-bold">
+          <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full bg-[#E17654] flex items-center justify-center text-white text-xl md:text-2xl font-bold">
             {host.name.split(' ').map(n => n[0]).join('')}
           </div>
         </div>
         <div className="flex-1">
-          <h2 className="text-xl md:text-2xl font-semibold text-[#1E1E1E] mb-2">
+          <h2 className="text-lg md:text-xl lg:text-2xl font-semibold text-[#1E1E1E] mb-2">
             Meet your host
           </h2>
-          <p className="text-sm text-[#1E1E1E]/70 mb-4">
+          <p className="text-xs md:text-sm text-[#1E1E1E]/70 mb-3 md:mb-4">
             Hosted by {host.name} · Joined in {host.joined}
           </p>
-          <div className="flex flex-wrap gap-4 mb-4 text-sm">
+          <div className="flex flex-wrap gap-3 md:gap-4 mb-3 md:mb-4 text-xs md:text-sm">
             <div className="flex items-center gap-2">
-              <Star size={16} className="fill-[#D7A44E] text-[#D7A44E]" />
+              <Star size={14} className="md:w-4 md:h-4 fill-[#D7A44E] text-[#D7A44E]" />
               <span className="text-[#1E1E1E]/80">{host.responseRate} response rate</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock size={16} className="text-[#3F6F63]" />
+              <Clock size={14} className="md:w-4 md:h-4 text-[#3F6F63]" />
               <span className="text-[#1E1E1E]/80">{host.responseTime}</span>
             </div>
           </div>
-          <p className="text-[#1E1E1E]/80 leading-relaxed">
+          <p className="text-sm md:text-base text-[#1E1E1E]/80 leading-relaxed">
             {host.bio}
           </p>
         </div>
@@ -858,11 +898,11 @@ function ThingsToKnow() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 border-b border-[#CBBBAA]/40">
-        <h2 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] mb-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-8 border-b border-[#CBBBAA]/40">
+        <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#1E1E1E] mb-4 md:mb-6">
           Things to know
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
           {/* House Rules */}
           <div>
             <h3 className="font-semibold text-[#1E1E1E] mb-3">House rules</h3>
@@ -1161,13 +1201,19 @@ export default function PropertySite() {
       <PropertyDetails />
       
       {/* Main Content Area */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Description */}
-            <div className="border-b border-[#CBBBAA]/40 pb-8">
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
+            {/* Description - Hidden on mobile (shown in photo overlay) */}
+            <div className="hidden md:block border-b border-[#CBBBAA]/40 pb-8">
               <p className="text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
+                {SITE_CONFIG.description}
+              </p>
+            </div>
+            {/* Mobile: Show description after photos */}
+            <div className="md:hidden border-b border-[#CBBBAA]/40 pb-6">
+              <p className="text-[#1E1E1E]/80 leading-relaxed text-sm">
                 {SITE_CONFIG.description}
               </p>
             </div>
@@ -1180,8 +1226,8 @@ export default function PropertySite() {
             <ThingsToKnow />
           </div>
 
-          {/* Right Column - Booking Summary (Sticky) */}
-          <div className="lg:col-span-1">
+          {/* Right Column - Booking Summary (Sticky, hidden on mobile) */}
+          <div className="hidden lg:block lg:col-span-1">
             <BookingSummary />
           </div>
         </div>

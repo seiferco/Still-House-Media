@@ -234,7 +234,9 @@ export default function BookingWidget({ listingId }){
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {months.map((m,idx)=><div key={idx}>{renderMonth(m)}</div>)}
+        {/* Mobile: Show only first month, Desktop: Show both months */}
+        <div className="md:hidden">{renderMonth(months[0])}</div>
+        {months.map((m,idx)=><div key={idx} className="hidden md:block">{renderMonth(m)}</div>)}
       </div>
 
       <div className="flex items-center gap-3 mt-6 flex-wrap">
