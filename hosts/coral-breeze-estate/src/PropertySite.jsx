@@ -5,7 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu } from "lucide-react";
 import { SITE_CONFIG, LISTING_CONFIG } from "./site-config.js";
 import BookingWidget from "./components/BookingWidget.jsx";
 
@@ -39,6 +39,39 @@ function Section({ id, title, children, eyebrow }) {
 }
 
 function Nav() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navLinks = [
+    { id: "gallery", label: "Gallery" },
+    { id: "amenities", label: "Amenities" },
+    { id: "location", label: "Location" },
+    { id: "reviews", label: "Reviews" },
+    { id: "book", label: "Book" },
+    { id: "contact", label: "Contact" },
+  ];
+
+  const handleLinkClick = (e) => {
+    setIsMenuOpen(false);
+    // Smooth scroll to section
+    const href = e.currentTarget.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const element = document.querySelector(href);
+      if (element) {
+        e.preventDefault();
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
+  // Close menu on scroll
+  useEffect(() => {
+    if (isMenuOpen) {
+      const handleScroll = () => setIsMenuOpen(false);
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [isMenuOpen]);
+
   return (
     <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -48,24 +81,67 @@ function Nav() {
           </div>
           <span className="font-semibold text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
         </a>
+        
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
           {["gallery","amenities","location","reviews","contact"].map((link) => (
             <a
               key={link}
               className="text-[#3F6F63]/80 hover:text-[#3F6F63] transition-colors"
               href={`#${link}`}
+              onClick={(e) => {
+                const element = document.querySelector(`#${link}`);
+                if (element) {
+                  e.preventDefault();
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
             >
               {link.charAt(0).toUpperCase() + link.slice(1)}
             </a>
           ))}
           <a
             href="#book"
+            onClick={(e) => {
+              const element = document.querySelector('#book');
+              if (element) {
+                e.preventDefault();
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
             className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 bg-[#E17654] text-white shadow-sm shadow-[#E17654]/40 hover:bg-[#C65A3A] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D7A44E]/70"
           >
             Book <ExternalLink size={16} />
           </a>
         </nav>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 rounded-lg text-[#3F6F63] hover:bg-[#F4EDE4] transition-colors"
+          aria-label="Toggle menu"
+        >
+          <Menu size={24} />
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-[#CBBBAA]/60 bg-[#FAF7F2]">
+          <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 space-y-2">
+            {navLinks.map((link) => (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                onClick={handleLinkClick}
+                className="block px-4 py-3 rounded-xl text-[#3F6F63] font-semibold hover:bg-[#F4EDE4] transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
@@ -77,33 +153,33 @@ function Hero() {
       <img
         src={SITE_CONFIG.hero.image}
         alt={SITE_CONFIG.seo.coverAlt}
-        className="h-[75vh] w-full object-cover"
+        className="h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[75vh] w-full object-cover"
       />
       <div className="absolute inset-0 z-10 flex items-end">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 md:pb-12">
           <MotionDiv
             {...fade}
-            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.88)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
+            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.88)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-4 sm:p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
           >
             <span className="text-xs font-semibold tracking-[0.4em] uppercase text-[#3F6F63]">
               {SITE_CONFIG.brand.tagline}
             </span>
-            <h1 className="text-4xl md:text-6xl font-bold mt-5 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-3 sm:mt-5 leading-tight">
               {SITE_CONFIG.brand.name}
             </h1>
-            <p className="text-lg md:text-xl mt-4 leading-relaxed text-[#1E1E1E]/80">
+            <p className="text-base sm:text-lg md:text-xl mt-3 sm:mt-4 leading-relaxed text-[#1E1E1E]/80">
               {SITE_CONFIG.description}
             </p>
-            <div className="flex flex-wrap gap-4 mt-8">
+            <div className="flex flex-wrap gap-3 sm:gap-4 mt-6 sm:mt-8">
               <a
                 href="#book"
-                className="rounded-xl bg-[#E17654] px-6 py-3 font-semibold text-white shadow-sm shadow-[#E17654]/30 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
+                className="rounded-xl bg-[#E17654] px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white shadow-sm shadow-[#E17654]/30 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
               >
                 Check Availability
               </a>
               <a
                 href="#contact"
-                className="rounded-xl border border-[#3F6F63]/30 px-6 py-3 font-semibold text-[#3F6F63] bg-white/70 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
+                className="rounded-xl border border-[#3F6F63]/30 px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-[#3F6F63] bg-white/70 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
               >
                 Contact Host
               </a>
