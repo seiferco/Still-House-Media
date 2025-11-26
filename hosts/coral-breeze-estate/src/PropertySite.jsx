@@ -149,7 +149,13 @@ function Nav() {
 // Airbnb-style scrollable photo gallery
 function PhotoGallery() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [currentMobileIndex, setCurrentMobileIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   const photos = [SITE_CONFIG.hero.image, ...SITE_CONFIG.photos];
+
+  // Minimum swipe distance (in pixels)
+  const minSwipeDistance = 50;
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -184,24 +190,100 @@ function PhotoGallery() {
     }
   };
 
+  const navigateMobile = (direction) => {
+    if (direction === 'prev') {
+      setCurrentMobileIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
+    } else {
+      setCurrentMobileIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      navigateMobile('next');
+    } else if (isRightSwipe) {
+      navigateMobile('prev');
+    }
+  };
+
   return (
     <>
       <div className="pt-16 sm:pt-0">
-        {/* Mobile: Single image with description preview */}
+        {/* Mobile: Single image with navigation arrows and description preview */}
         <div className="md:hidden">
-          <div className="relative">
+          <div 
+            className="relative"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
             <img
-              src={photos[0]}
-              alt={`${SITE_CONFIG.brand.name} - Main photo`}
-              className="w-full h-[60vh] object-cover cursor-pointer"
-              onClick={() => setSelectedImage(0)}
+              src={photos[currentMobileIndex]}
+              alt={`${SITE_CONFIG.brand.name} - Photo ${currentMobileIndex + 1}`}
+              className="w-full h-[60vh] object-cover select-none"
+              draggable="false"
             />
+            
+            {/* Navigation Arrows */}
+            <button
+              onClick={() => navigateMobile('prev')}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all z-20"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft size={24} className="text-[#1E1E1E]" />
+            </button>
+            <button
+              onClick={() => navigateMobile('next')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all z-20"
+              aria-label="Next photo"
+            >
+              <ChevronRight size={24} className="text-[#1E1E1E]" />
+            </button>
+
+            {/* Photo Counter */}
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-semibold z-20">
+              {currentMobileIndex + 1} / {photos.length}
+            </div>
+
             {/* Description preview overlay */}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-6">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-6 z-10">
               <p className="text-white text-sm leading-relaxed line-clamp-3">
                 {SITE_CONFIG.description.substring(0, 150)}...
               </p>
-              <p className="text-white/80 text-xs mt-2">Scroll for more details</p>
+              <p className="text-white/80 text-xs mt-2">Swipe or use arrows to see more photos</p>
+            </div>
+
+            {/* Dot Indicators */}
+            <div className="absolute bottom-20 left-0 right-0 flex justify-center gap-2 z-20">
+              {photos.slice(0, Math.min(photos.length, 10)).map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentMobileIndex(idx)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    idx === currentMobileIndex
+                      ? 'bg-white w-6'
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                  aria-label={`Go to photo ${idx + 1}`}
+                />
+              ))}
+              {photos.length > 10 && (
+                <span className="text-white/80 text-xs ml-1">+{photos.length - 10}</span>
+              )}
             </div>
           </div>
         </div>
