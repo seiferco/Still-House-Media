@@ -19,10 +19,10 @@ const MotionImg = motion.img;
 
 function Section({ id, title, children, eyebrow }) {
   return (
-    <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+    <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
       <MotionDiv
         {...fade}
-        className="rounded-3xl bg-[#FAF7F2] border border-[#CBBBAA]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-8 md:px-12 py-12"
+        className="rounded-3xl bg-[#FAF7F2] border border-[#CBBBAA]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-4 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-10 md:py-12"
       >
         {eyebrow && (
           <div className="text-xs font-semibold tracking-[0.35em] uppercase text-[#3F6F63]/80 mb-4">
@@ -75,11 +75,11 @@ function Nav() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-3 group">
-          <div className="h-11 w-11 rounded-2xl bg-[#E17654] text-white grid place-items-center font-bold text-lg group-hover:scale-110 transition-transform shadow-lg shadow-[#E17654]/40">
+        <a href="#" className="flex items-center gap-2 sm:gap-3 group">
+          <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-2xl bg-[#E17654] text-white grid place-items-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform shadow-lg shadow-[#E17654]/40">
             {SITE_CONFIG.brand.logoText}
           </div>
-          <span className="font-semibold text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
+          <span className="font-semibold text-base sm:text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
         </a>
         
         {/* Desktop Navigation */}
@@ -127,14 +127,14 @@ function Nav() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-[#CBBBAA]/60 bg-[#FAF7F2]">
-          <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 space-y-2">
+        <div className="md:hidden border-t border-[#CBBBAA]/60 bg-[#FAF7F2] shadow-lg">
+          <nav className="mx-auto max-w-7xl px-4 py-3 space-y-1">
             {navLinks.map((link) => (
               <a
                 key={link.id}
                 href={`#${link.id}`}
                 onClick={handleLinkClick}
-                className="block px-4 py-3 rounded-xl text-[#3F6F63] font-semibold hover:bg-[#F4EDE4] transition-colors"
+                className="block px-4 py-2.5 rounded-lg text-[#3F6F63] font-semibold text-base hover:bg-[#F4EDE4] active:bg-[#E8DDD0] transition-colors"
               >
                 {link.label}
               </a>
@@ -148,38 +148,38 @@ function Nav() {
 
 function Hero() {
   return (
-    <div className="relative">
+    <div className="relative pt-16 sm:pt-0">
       <div className="absolute inset-0 bg-gradient-to-t from-[#0F1514]/70 via-[#0F1514]/30 to-transparent z-0" />
       <img
         src={SITE_CONFIG.hero.image}
         alt={SITE_CONFIG.seo.coverAlt}
-        className="h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[75vh] w-full object-cover"
+        className="h-[45vh] sm:h-[60vh] md:h-[70vh] lg:h-[75vh] w-full object-cover"
       />
-      <div className="absolute inset-0 z-10 flex items-end">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 md:pb-12">
+      <div className="absolute inset-0 z-10 flex items-end sm:items-end">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-4 sm:pb-8 md:pb-12 w-full">
           <MotionDiv
             {...fade}
-            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.88)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-4 sm:p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)]"
+            className="max-w-2xl rounded-2xl bg-[rgba(250,247,242,0.88)] backdrop-blur-md ring-1 ring-[#CBBBAA]/60 p-4 sm:p-6 md:p-8 text-[#1E1E1E] shadow-[0_35px_80px_-35px_rgba(15,21,20,0.65)] mx-auto sm:mx-0"
           >
-            <span className="text-xs font-semibold tracking-[0.4em] uppercase text-[#3F6F63]">
+            <span className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[#3F6F63]">
               {SITE_CONFIG.brand.tagline}
             </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-3 sm:mt-5 leading-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-2 sm:mt-5 leading-tight">
               {SITE_CONFIG.brand.name}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl mt-3 sm:mt-4 leading-relaxed text-[#1E1E1E]/80">
+            <p className="text-sm sm:text-lg md:text-xl mt-2 sm:mt-4 leading-relaxed text-[#1E1E1E]/80">
               {SITE_CONFIG.description}
             </p>
-            <div className="flex flex-wrap gap-3 sm:gap-4 mt-6 sm:mt-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4 sm:mt-8">
               <a
                 href="#book"
-                className="rounded-xl bg-[#E17654] px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white shadow-sm shadow-[#E17654]/30 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
+                className="rounded-xl bg-[#E17654] px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white shadow-sm shadow-[#E17654]/30 hover:bg-[#C65A3A] focus:outline-none focus:ring-2 focus:ring-[#D7A44E] focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors text-center"
               >
                 Check Availability
               </a>
               <a
                 href="#contact"
-                className="rounded-xl border border-[#3F6F63]/30 px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-[#3F6F63] bg-white/70 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors"
+                className="rounded-xl border border-[#3F6F63]/30 px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-[#3F6F63] bg-white/70 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#3F6F63]/40 focus:ring-offset-2 focus:ring-offset-[#FAF7F2] transition-colors text-center"
               >
                 Contact Host
               </a>
