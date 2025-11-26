@@ -261,9 +261,6 @@ function PhotoGallery() {
 
             {/* Description preview overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent p-6 z-10">
-              <p className="text-white text-sm leading-relaxed line-clamp-3">
-                {SITE_CONFIG.description.substring(0, 150)}...
-              </p>
               <p className="text-white/80 text-xs mt-2">Swipe or use arrows to see more photos</p>
             </div>
 
