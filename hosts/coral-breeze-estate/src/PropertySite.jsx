@@ -224,7 +224,7 @@ function PhotoGallery() {
   return (
     <>
       {/* Luxury Full-Width Hero Section */}
-      <div className="pt-16 md:pt-0 relative">
+      <div className="relative">
         <div
           className="relative h-[70vh] md:h-[85vh] overflow-hidden"
           onTouchStart={onTouchStart}
@@ -289,14 +289,14 @@ function PhotoGallery() {
           <div className="md:hidden">
             <button
               onClick={() => navigateMobile('prev')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
+              className="absolute left-3 top-[35%] -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
               aria-label="Previous photo"
             >
               <ChevronLeft size={20} className="text-[#1E1E1E]" />
             </button>
             <button
               onClick={() => navigateMobile('next')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
+              className="absolute right-3 top-[35%] -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
               aria-label="Next photo"
             >
               <ChevronRight size={20} className="text-[#1E1E1E]" />
@@ -1231,62 +1231,115 @@ function BookingSummary() {
 
 // Luxury Amenities Section with Visual Cards
 function Amenities() {
-  const featuredAmenities = SITE_CONFIG.amenities.slice(0, 6);
-  const remainingAmenities = SITE_CONFIG.amenities.slice(6);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const maxVisible = 6;
+  const visibleAmenities = SITE_CONFIG.amenities.slice(0, maxVisible);
+  const hasMore = SITE_CONFIG.amenities.length > maxVisible;
 
   return (
-    <div id="amenities" className="bg-[#FAF7F2] py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <div className="text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-4">
-            Premium Amenities
-          </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-4">
-            Every Detail, Curated
-          </h2>
-          <p className="text-lg md:text-xl text-[#1E1E1E]/70 max-w-2xl mx-auto">
-            Thoughtfully designed spaces and amenities that elevate your Sedona experience
-          </p>
-        </MotionDiv>
+    <>
+      <div id="amenities" className="bg-[#FAF7F2] py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12 md:mb-16"
+          >
+            <div className="text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-4">
+              Premium Amenities
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-4">
+              Every Detail, Curated
+            </h2>
+            <p className="text-lg md:text-xl text-[#1E1E1E]/70 max-w-2xl mx-auto">
+              Thoughtfully designed spaces and amenities that elevate your Sedona experience
+            </p>
+          </MotionDiv>
 
-        {/* Featured Amenities Grid - Mobile Optimized */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          {featuredAmenities.map((a, i) => (
-            <MotionDiv
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 border border-[#CBBBAA]/40 hover:border-[#3F6F63]/40 hover:shadow-xl transition-all group touch-manipulation"
-            >
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#E17654]/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-[#E17654]/20 transition-colors">
-                <a.icon size={24} className="sm:w-7 sm:h-7 text-[#E17654]" />
-              </div>
-              <h3 className="text-base sm:text-lg font-semibold text-[#1E1E1E]">{a.label}</h3>
-            </MotionDiv>
-          ))}
-        </div>
-
-        {/* Remaining Amenities - Compact List - Mobile Optimized */}
-        {remainingAmenities.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-[#CBBBAA]/40">
-            {remainingAmenities.map((a, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs sm:text-sm text-[#1E1E1E]/70">
-                <a.icon size={16} className="sm:w-[18px] sm:h-[18px] text-[#3F6F63] flex-shrink-0" />
-                <span className="break-words">{a.label}</span>
-              </div>
+          {/* Amenities Grid - Mobile Optimized */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            {visibleAmenities.map((a, i) => (
+              <MotionDiv
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 border border-[#CBBBAA]/40 hover:border-[#3F6F63]/40 hover:shadow-xl transition-all group touch-manipulation"
+              >
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#E17654]/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-[#E17654]/20 transition-colors">
+                  <a.icon size={24} className="sm:w-7 sm:h-7 text-[#E17654]" />
+                </div>
+                <h3 className="text-base sm:text-lg font-semibold text-[#1E1E1E]">{a.label}</h3>
+              </MotionDiv>
             ))}
           </div>
-        )}
+
+          {/* See All Button */}
+          {hasMore && (
+            <div className="text-center">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white border-2 border-[#3F6F63] text-[#3F6F63] font-semibold rounded-xl hover:bg-[#3F6F63] hover:text-white active:scale-95 transition-all touch-manipulation min-h-[48px] text-sm sm:text-base"
+              >
+                See all {SITE_CONFIG.amenities.length} amenities
+                <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* All Amenities Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm p-4 overflow-y-auto"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="max-w-5xl mx-auto my-8 bg-white rounded-2xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-[#CBBBAA]/40 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#1E1E1E]">
+                All Amenities ({SITE_CONFIG.amenities.length})
+              </h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-[#1E1E1E]/50 hover:text-[#1E1E1E] transition-colors p-2"
+                aria-label="Close modal"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {SITE_CONFIG.amenities.map((a, i) => (
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 p-4 rounded-lg hover:bg-[#FAF7F2] transition-colors"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-[#E17654]/10 flex items-center justify-center flex-shrink-0">
+                      <a.icon size={20} className="text-[#E17654]" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm sm:text-base font-semibold text-[#1E1E1E]">
+                        {a.label}
+                      </h4>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
