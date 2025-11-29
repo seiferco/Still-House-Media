@@ -3,6 +3,7 @@ import Home from './pages/Home.jsx'
 import DemoTemplate from './pages/DemoTemplate.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import BookingConfirmation from './components/BookingConfirmation.jsx'
 
 function SiteNav() {
   const linkCls = ({ isActive }) =>
@@ -48,16 +49,18 @@ function SiteNav() {
 export default function App() {
   const location = useLocation()
   const isDemo = location.pathname.startsWith('/demo-template')
+  const isConfirmation = location.pathname === '/booking/confirmation'
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
 
-      {/* Hide global navbar on demo route */}
-      {!isDemo && <SiteNav />}
+      {/* Hide global navbar on demo and confirmation routes */}
+      {!isDemo && !isConfirmation && <SiteNav />}
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/demo-template" element={<DemoTemplate />} />
+        <Route path="/booking/confirmation" element={<BookingConfirmation />} />
         <Route path="/login" element={
           localStorage.getItem('token') ? <Navigate to="/dashboard" replace /> : <Login />
         } />
@@ -67,8 +70,8 @@ export default function App() {
         <Route path="*" element={<Home />} />
       </Routes>
 
-      {/* Hide global footer on demo route */}
-      {!isDemo && (
+      {/* Hide global footer on demo and confirmation routes */}
+      {!isDemo && !isConfirmation && (
         <footer className="border-t border-zinc-200 dark:border-zinc-800">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 text-sm text-zinc-600 dark:text-zinc-400 flex items-center justify-between">
             <span>© {new Date().getFullYear()} Stillhouse Media</span>

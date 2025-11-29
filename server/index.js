@@ -14,7 +14,7 @@ import {
   consumeHold, confirmBooking, getBlockedDates,
   findHostByEmail, findHostById, createHost, findHostByListingId,
   getBookingsForHost, addBlockedDate, removeBlockedDateByHost,
-  getAllBlockedDatesForHost
+  getAllBlockedDatesForHost, hosts
 } from './store.js';
 
 // Helper function to get Stripe instance for a specific host
@@ -42,12 +42,12 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 const app = express();
 
 // Default Stripe instance (for backwards compatibility and webhook verification)
-const stripe = process.env.STRIPE_SECRET_KEY 
+const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' })
   : null;
 
 /** HEALTH CHECK */
-app.get('/api/health', (_,res)=>res.json({ ok: true }));
+app.get('/api/health', (_, res) => res.json({ ok: true }));
 
 /** Stripe webhook FIRST (raw body). Only needed if you test webhooks. */
 app.post('/api/stripe-webhook',
@@ -57,12 +57,12 @@ app.post('/api/stripe-webhook',
     // We'll verify the signature with the appropriate secret after identifying the host
     let event;
     let host = null;
-    
+
     // Try to parse event to get listing ID (we'll need to verify signature later)
     try {
       const rawBody = req.body;
       const parsed = JSON.parse(rawBody.toString());
-      
+
       if (parsed.type === 'checkout.session.completed' && parsed.data?.object?.metadata?.listingId) {
         const listingIdStr = String(parsed.data.object.metadata.listingId);
         host = findHostByListingId(listingIdStr);
@@ -70,7 +70,7 @@ app.post('/api/stripe-webhook',
     } catch (e) {
       // If we can't parse, we'll try default verification
     }
-    
+
     // Get webhook secret for this host (or use default)
     let webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     if (host && host.stripeSecretKeyId) {
@@ -79,12 +79,12 @@ app.post('/api/stripe-webhook',
         webhookSecret = hostWebhookSecret;
       }
     }
-    
+
     if (!webhookSecret) {
       console.error('No webhook secret found');
       return res.status(400).send('Webhook Error: No webhook secret configured');
     }
-    
+
     // Verify webhook signature
     try {
       event = stripe.webhooks.constructEvent(
@@ -116,23 +116,23 @@ app.post('/api/stripe-webhook',
       const s = event.data.object;
       const { listingId, start, end, holdId } = s.metadata || {};
       const listingIdStr = String(listingId);
-      
+
       // Find which host owns this listing (if not already found)
       if (!host) {
         host = findHostByListingId(listingIdStr);
       }
-      
+
       if (!host) {
         console.error(`No host found for listing ${listingIdStr}`);
         return res.json({ received: true, error: 'Host not found for listing' });
       }
-      
+
       const hold = consumeHold(String(holdId));
       if (hold && isFree(listingIdStr, String(start), String(end))) {
         confirmBooking(
           host.id, // hostId - links booking to specific host
-          listingIdStr, 
-          String(start), 
+          listingIdStr,
+          String(start),
           String(end),
           s.customer_details?.email,
           s.customer_details?.phone,
@@ -148,7 +148,23 @@ app.post('/api/stripe-webhook',
 );
 
 /** other middleware AFTER webhook */
-app.use(cors({ credentials: true, origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
+app.use(cors({
+  credentials: true,
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175'
+    ].filter(Boolean);
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -156,7 +172,7 @@ app.use(cookieParser());
 function authenticateToken(req, res, next) {
   const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Authentication required' });
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-change-in-production');
     req.user = decoded;
@@ -205,15 +221,15 @@ app.post('/api/checkout', async (req, res) => {
   if (!L) {
     return res.status(404).json({ error: 'Listing not found' });
   }
-  
+
   // Find which host owns this listing to get their Stripe key
   const host = findHostByListingId(listing);
   if (!host) {
     return res.status(404).json({ error: 'Host not found for listing' });
   }
-  
+
   const hostStripe = getStripeForHost(host);
-  
+
   const nights = Math.max(
     1,
     Math.round((Date.parse(end + 'T00:00:00') - Date.parse(start + 'T00:00:00')) / (24 * 3600 * 1000))
@@ -223,7 +239,7 @@ app.post('/api/checkout', async (req, res) => {
     const session = await hostStripe.checkout.sessions.create({
       mode: 'payment',
       // If you add a dedicated Success page later, send session_id so you can fetch its details.
-      success_url: `${process.env.SITE_URL}/?success=1&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.SITE_URL}/booking/confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.SITE_URL}/?canceled=1`,
 
       // 🧾 Itemized line items (looks more professional than one lump sum)
@@ -283,7 +299,13 @@ app.post('/api/checkout', async (req, res) => {
       client_reference_id: holdId,
 
       // Keep your original metadata for the webhook & DB
-      metadata: { listingId: listing, start, end, holdId }
+      metadata: {
+        listingId: listing,
+        start,
+        end,
+        holdId,
+        origin: req.headers.origin // Save the origin (e.g. http://localhost:5175)
+      }
     });
 
     return res.json({ url: session.url });
@@ -298,12 +320,12 @@ app.get('/api/checkout-session', async (req, res) => {
   try {
     const { session_id, listing } = req.query;
     if (!session_id) return res.status(400).json({ error: 'session_id required' });
-    
+
     // Find host to get their Stripe instance
     const listingId = listing || LISTINGS[0].id;
     const host = findHostByListingId(listingId);
     const hostStripe = host ? getStripeForHost(host) : stripe;
-    
+
     if (!hostStripe) {
       return res.status(500).json({ error: 'Stripe not configured' });
     }
@@ -332,6 +354,129 @@ app.get('/api/checkout-session', async (req, res) => {
   }
 });
 
+// Booking confirmation details - combines Stripe session + our booking data
+app.get('/api/booking-session/:sessionId', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    if (!sessionId) return res.status(400).json({ error: 'sessionId required' });
+
+    // First, retrieve the Stripe session to get metadata
+    // We need to figure out which host's Stripe instance to use
+    // Try default first, then specific host if we can identify from booking
+    let session = null;
+    let hostStripe = stripe;
+
+    // Try with default Stripe instance first
+    try {
+      session = await stripe.checkout.sessions.retrieve(sessionId);
+    } catch (e) {
+      // If default fails, try finding it with any of the hosts' keys
+      // This is necessary because we don't know which host created the session yet
+      let found = false;
+      for (const host of hosts) {
+        try {
+          const hostStripe = getStripeForHost(host);
+          // Skip if it's the same as default to avoid redundant calls
+          if (hostStripe === stripe) continue;
+
+          session = await hostStripe.checkout.sessions.retrieve(sessionId);
+          if (session) {
+            found = true;
+            hostStripe = hostStripe; // Keep reference to the working stripe instance
+            break;
+          }
+        } catch (err) {
+          // Continue to next host
+        }
+      }
+
+      if (!found) {
+        console.error('Session not found with any configured Stripe key');
+        return res.status(404).json({ error: 'Session not found' });
+      }
+    }
+
+    const { listingId, start, end } = session.metadata || {};
+
+    if (!listingId) {
+      return res.status(400).json({ error: 'No listing metadata in session' });
+    }
+
+    // Find the listing details
+    const listing = LISTINGS.find(l => l.id === listingId);
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+
+    // Find the booking in our store
+    const booking = bookings.find(b => b.stripeSessionId === sessionId);
+
+    if (!booking) {
+      // Booking might not exist yet if webhook hasn't processed
+      // Return session data anyway for confirmation display
+      return res.json({
+        booking: {
+          id: 'pending',
+          listingId: listingId,
+          propertyName: listing.title,
+          checkIn: start,
+          checkOut: end,
+          nights: Math.round((Date.parse(end + 'T00:00:00') - Date.parse(start + 'T00:00:00')) / (24 * 3600 * 1000)),
+          total: session.amount_total,
+          guestEmail: session.customer_details?.email,
+          guestPhone: session.customer_details?.phone,
+          status: 'pending',
+          createdAt: new Date().toISOString()
+        }
+      });
+    }
+
+    // Return full booking details
+    const nights = Math.round((Date.parse(booking.end + 'T00:00:00') - Date.parse(booking.start + 'T00:00:00')) / (24 * 3600 * 1000));
+
+    // Find the host to get the site URL
+    const host = findHostByListingId(booking.listingId);
+    let siteUrl = '/';
+    if (host) {
+      // In production this would be their actual domain
+      // In dev we might need to know their port, but for now we'll link to the main site 
+      // with a query param or if we know the dev port mapping
+      // For this specific demo, we know coral-breeze is usually on 5174/5175
+      // But safer to just return the main site with a query param that the main site handles
+      // OR if we want to be fancy, we can try to guess the dev port
+
+      // BETTER APPROACH: Return the full URL if known, otherwise relative
+      // For the demo, let's assume it's the same domain/port if it's a path-based routing
+      // But since we are running separate vite servers on different ports...
+
+      // Let's just return the listing page on the main site as a fallback
+      // unless we have a specific URL stored
+      // Use the origin from session metadata if available (best for dev ports)
+      siteUrl = session.metadata?.origin || host.siteUrl || `/?listing=${booking.listingId}`;
+    }
+
+    return res.json({
+      booking: {
+        id: booking.id,
+        listingId: booking.listingId,
+        propertyName: listing.title,
+        checkIn: booking.start,
+        checkOut: booking.end,
+        nights: nights,
+        total: session.amount_total,
+        guestEmail: booking.customerEmail || session.customer_details?.email,
+        guestPhone: booking.customerPhone || session.customer_details?.phone,
+        status: booking.status,
+        createdAt: booking.createdAt,
+        siteUrl: siteUrl // Add this field
+      }
+    });
+  } catch (e) {
+    console.error('get booking session error', e);
+    res.status(500).json({ error: 'Failed to retrieve booking details' });
+  }
+});
+
 /** ICS export (Airbnb import) */
 app.get('/api/calendar/:listing.ics', (req, res) => {
   const listing = req.params.listing || LISTINGS[0].id;
@@ -354,10 +499,10 @@ app.get('/api/calendar/:listing.ics', (req, res) => {
   res.send(lines.join('\r\n'));
 });
 
-app.get('/api/blocked', (req,res)=>{
+app.get('/api/blocked', (req, res) => {
   const listing = (req.query.listing || LISTINGS[0].id);
   const from = String(req.query.from); // inclusive YYYY-MM-DD
-  const to   = String(req.query.to);   // exclusive YYYY-MM-DD
+  const to = String(req.query.to);   // exclusive YYYY-MM-DD
   if (!from || !to) return res.status(400).json({ error: 'from and to (YYYY-MM-DD) required' });
   const blocked = getBlockedDates(listing, from, to);
   res.json({ listing, from, to, blocked });
@@ -381,8 +526,8 @@ app.post('/api/login', async (req, res) => {
   }
 
   const token = jwt.sign(
-    { 
-      id: host.id, 
+    {
+      id: host.id,
       email: host.email,
       hostId: host.id, // For clarity in middleware
       websiteId: host.websiteId,
@@ -399,15 +544,15 @@ app.post('/api/login', async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
-  res.json({ 
-    token, 
-    host: { 
-      id: host.id, 
-      email: host.email, 
+  res.json({
+    token,
+    host: {
+      id: host.id,
+      email: host.email,
       listingIds: host.listingIds,
       websiteId: host.websiteId,
       sitePath: host.sitePath
-    } 
+    }
   });
 });
 
@@ -426,17 +571,17 @@ app.get('/api/me', authenticateToken, (req, res) => {
     .map(listingId => LISTINGS.find(l => l.id === listingId)?.title)
     .filter(Boolean);
   const primaryPropertyName = propertyNames[0] || null;
-  
-  res.json({ 
-    host: { 
-      id: host.id, 
-      email: host.email, 
+
+  res.json({
+    host: {
+      id: host.id,
+      email: host.email,
       listingIds: host.listingIds,
       websiteId: host.websiteId,
       sitePath: host.sitePath,
       propertyNames: propertyNames,
       primaryPropertyName: primaryPropertyName
-    } 
+    }
   });
 });
 
@@ -448,7 +593,7 @@ app.get('/api/dashboard/bookings', authenticateToken, (req, res) => {
 
   // Get bookings filtered by hostId - only this host's bookings
   const allBookings = getBookingsForHost(hostId);
-  
+
   // Enrich with listing titles
   const enrichedBookings = allBookings.map(b => ({
     ...b,
@@ -465,9 +610,9 @@ app.get('/api/dashboard/customers', authenticateToken, (req, res) => {
 
   // Get bookings filtered by hostId - only this host's bookings
   const allBookings = getBookingsForHost(hostId);
-  
+
   const customersMap = new Map();
-  
+
   for (const booking of allBookings) {
     if (booking.customerEmail) {
       const key = booking.customerEmail.toLowerCase();
@@ -537,10 +682,10 @@ app.delete('/api/dashboard/blocked-dates/:blockId', authenticateToken, (req, res
   if (!host) return res.status(404).json({ error: 'Host not found' });
 
   const { blockId } = req.params;
-  
+
   // Remove blocked date with hostId validation (ensures host owns the block)
   const removed = removeBlockedDateByHost(blockId, hostId);
-  
+
   if (!removed) {
     return res.status(404).json({ error: 'Blocked date not found or access denied' });
   }
@@ -555,8 +700,8 @@ if (process.env.NODE_ENV !== 'production') {
     if (!findHostByEmail(defaultEmail)) {
       const passwordHash = await bcrypt.hash('password', 10);
       createHost(
-        defaultEmail, 
-        passwordHash, 
+        defaultEmail,
+        passwordHash,
         [LISTINGS[0].id],
         LISTINGS[0].id, // websiteId defaults to first listing ID
         null, // sitePath (can be set when creating actual host sites)
@@ -573,13 +718,13 @@ if (process.env.NODE_ENV !== 'production') {
   const hostEmail = 'stillhousemedia@outlook.com';
   const hostPassword = 'OregonSpain2025!!'; // Generate a secure password
   const listingId = 'coral-breeze-estate'; // Match the listing ID from Step 4
-  
+
   // Stripe key identifier - must match the suffix in server/.env
   // For example, if you used STRIPE_SECRET_KEY_HOST1 in .env, use 'HOST1' here
   // If you used STRIPE_SECRET_KEY_MOUNTAIN_CABIN, use 'MOUNTAIN_CABIN' here
   // Leave as null to use the default STRIPE_SECRET_KEY
   const stripeSecretKeyId = 'CORAL_BREEZE_ESTATE'; // or null, or 'MOUNTAIN_CABIN', etc.
-  
+
   if (!findHostByEmail(hostEmail)) {
     const passwordHash = await bcrypt.hash(hostPassword, 10);
     createHost(

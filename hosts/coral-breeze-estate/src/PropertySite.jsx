@@ -253,7 +253,7 @@ function PhotoGallery() {
                 >
                   {/* Tagline and Title - Higher on mobile, normal on desktop */}
                   <div className="md:mb-0">
-                    <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-4">
+                    <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-3">
                       {SITE_CONFIG.brand.tagline}
                     </div>
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-0 md:mb-12 lg:mb-16 leading-tight">
