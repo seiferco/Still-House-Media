@@ -242,8 +242,8 @@ function PhotoGallery() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F1514]/80 via-[#0F1514]/40 to-transparent" />
 
           {/* Content Overlay */}
-          <div className="absolute inset-0 flex items-end">
-            <div className="w-full px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
+          <div className="absolute inset-0 flex flex-col justify-between md:items-end md:justify-end">
+            <div className="w-full px-4 sm:px-6 lg:px-8 pt-8 md:pt-0 md:pb-20">
               <div className="max-w-4xl">
                 <MotionDiv
                   initial={{ opacity: 0, y: 20 }}
@@ -251,12 +251,28 @@ function PhotoGallery() {
                   transition={{ duration: 0.6 }}
                   className="text-white"
                 >
-                  <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-4">
-                    {SITE_CONFIG.brand.tagline}
+                  {/* Tagline and Title - Higher on mobile, normal on desktop */}
+                  <div className="md:mb-0">
+                    <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-4">
+                      {SITE_CONFIG.brand.tagline}
+                    </div>
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-0 md:mb-12 lg:mb-16 leading-tight">
+                      {SITE_CONFIG.brand.name}
+                    </h1>
                   </div>
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-12 md:mb-16 leading-tight">
-                    {SITE_CONFIG.brand.name}
-                  </h1>
+                </MotionDiv>
+              </div>
+            </div>
+
+            {/* Description and Buttons - Stay at bottom */}
+            <div className="w-full px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
+              <div className="max-w-4xl">
+                <MotionDiv
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-white"
+                >
                   <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed mb-8">
                     {SITE_CONFIG.description.substring(0, 200)}...
                   </p>
