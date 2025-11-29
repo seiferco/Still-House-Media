@@ -36,7 +36,7 @@ function SiteNav() {
             return token ? (
               <NavLink to="/dashboard" className={linkCls}>Dashboard</NavLink>
             ) : (
-              <NavLink to="/login" className={linkCls}>Login</NavLink>
+              <NavLink to="/login" className={linkCls}>Host Portal</NavLink>
             )
           })()}
         </nav>
