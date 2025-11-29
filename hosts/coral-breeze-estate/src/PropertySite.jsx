@@ -81,10 +81,10 @@ function Nav() {
           </div>
           <span className="font-semibold text-base sm:text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
         </a>
-        
+
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
-          {["gallery","amenities","location","reviews","contact"].map((link) => (
+          {["gallery", "amenities", "location", "reviews", "contact"].map((link) => (
             <a
               key={link}
               className="text-[#3F6F63]/80 hover:text-[#3F6F63] transition-colors"
@@ -176,7 +176,7 @@ function PhotoGallery() {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     }
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
@@ -225,7 +225,7 @@ function PhotoGallery() {
     <>
       {/* Luxury Full-Width Hero Section */}
       <div className="pt-16 md:pt-0 relative">
-        <div 
+        <div
           className="relative h-[70vh] md:h-[85vh] overflow-hidden"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
@@ -237,32 +237,32 @@ function PhotoGallery() {
             className="w-full h-full object-cover select-none"
             draggable="false"
           />
-          
+
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F1514]/80 via-[#0F1514]/40 to-transparent" />
-          
+
           {/* Content Overlay */}
           <div className="absolute inset-0 flex items-end">
             <div className="w-full px-4 sm:px-6 lg:px-8 pb-12 md:pb-20">
               <div className="max-w-4xl">
-          <MotionDiv
+                <MotionDiv
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
                   className="text-white"
                 >
                   <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-4">
-              {SITE_CONFIG.brand.tagline}
+                    {SITE_CONFIG.brand.tagline}
                   </div>
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              {SITE_CONFIG.brand.name}
-            </h1>
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-12 md:mb-16 leading-tight">
+                    {SITE_CONFIG.brand.name}
+                  </h1>
                   <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed mb-8">
                     {SITE_CONFIG.description.substring(0, 200)}...
-            </p>
+                  </p>
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <a
-                href="#book"
+                    <a
+                      href="#book"
                       className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#E17654] text-white font-semibold rounded-xl hover:bg-[#C65A3A] active:scale-95 transition-all shadow-lg shadow-[#E17654]/30 text-sm sm:text-base touch-manipulation min-h-[48px]"
                     >
                       Reserve Your Stay
@@ -289,19 +289,19 @@ function PhotoGallery() {
           <div className="md:hidden">
             <button
               onClick={() => navigateMobile('prev')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
               aria-label="Previous photo"
             >
-              <ChevronLeft size={26} className="text-[#1E1E1E]" />
+              <ChevronLeft size={20} className="text-[#1E1E1E]" />
             </button>
             <button
               onClick={() => navigateMobile('next')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
               aria-label="Next photo"
             >
-              <ChevronRight size={26} className="text-[#1E1E1E]" />
+              <ChevronRight size={20} className="text-[#1E1E1E]" />
             </button>
-            
+
             {/* Photo Counter */}
             <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-semibold z-20">
               {currentMobileIndex + 1} / {photos.length}
@@ -312,19 +312,19 @@ function PhotoGallery() {
           <div className="hidden md:block">
             <button
               onClick={() => navigateMobile('prev')}
-              className="absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
+              className="absolute left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
               aria-label="Previous photo"
             >
-              <ChevronLeft size={28} className="text-[#1E1E1E]" />
+              <ChevronLeft size={22} className="text-[#1E1E1E]" />
             </button>
             <button
               onClick={() => navigateMobile('next')}
-              className="absolute right-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
+              className="absolute right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
               aria-label="Next photo"
             >
-              <ChevronRight size={28} className="text-[#1E1E1E]" />
+              <ChevronRight size={22} className="text-[#1E1E1E]" />
             </button>
-            
+
             {/* Photo Counter */}
             <div className="absolute top-8 right-8 bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold z-20">
               {currentMobileIndex + 1} / {photos.length}
@@ -347,7 +347,7 @@ function PhotoGallery() {
             >
               <X size={32} />
             </button>
-            
+
             {photos.length > 1 && (
               <>
                 <button
@@ -391,72 +391,207 @@ function PhotoGallery() {
 
 // Luxury Photo Gallery Section (Storytelling) - Mobile Optimized
 function PhotoGallerySection() {
-  const photos = SITE_CONFIG.photos.slice(0, 6); // Show first 6 photos
-  
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const allPhotos = [SITE_CONFIG.hero.image, ...SITE_CONFIG.photos];
+  const displayPhotos = SITE_CONFIG.photos.slice(0, 6); // Show first 6 photos
+
+  // Handle keyboard navigation and ESC key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedImage === null && !showAllPhotos) return;
+
+      if (e.key === 'Escape') {
+        setSelectedImage(null);
+        setShowAllPhotos(false);
+      } else if (selectedImage !== null) {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          setSelectedImage((prev) => (prev > 0 ? prev - 1 : allPhotos.length - 1));
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          setSelectedImage((prev) => (prev < allPhotos.length - 1 ? prev + 1 : 0));
+        }
+      }
+    };
+
+    if (selectedImage !== null || showAllPhotos) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedImage, showAllPhotos, allPhotos.length]);
+
+  const navigateImage = (direction) => {
+    if (direction === 'prev') {
+      setSelectedImage((prev) => (prev > 0 ? prev - 1 : allPhotos.length - 1));
+    } else {
+      setSelectedImage((prev) => (prev < allPhotos.length - 1 ? prev + 1 : 0));
+    }
+  };
+
   return (
-    <div className="bg-white py-12 sm:py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-12 md:mb-16"
-        >
-          <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
-            Visual Journey
+    <>
+      <div id="gallery" className="bg-white py-12 sm:py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 sm:mb-12 md:mb-16"
+          >
+            <div className="text-xs sm:text-sm font-semibold tracking-[0.3em] uppercase text-[#3F6F63] mb-3 sm:mb-4">
+              Visual Journey
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
+              Experience Every Moment
+            </h2>
+          </MotionDiv>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+            {displayPhotos.map((src, idx) => (
+              <MotionDiv
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="relative group cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl touch-manipulation active:scale-95 transition-transform"
+                onClick={() => {
+                  // +1 because allPhotos includes hero image at index 0
+                  setSelectedImage(idx + 1);
+                }}
+              >
+                <img
+                  src={src}
+                  alt={`${SITE_CONFIG.brand.name} - Photo ${idx + 1}`}
+                  className="w-full h-48 sm:h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </MotionDiv>
+            ))}
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#1E1E1E] mb-3 sm:mb-4">
-            Experience Every Moment
-          </h2>
-        </MotionDiv>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-          {photos.map((src, idx) => (
-            <MotionDiv
-              key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="relative group cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl touch-manipulation active:scale-95 transition-transform"
-              onClick={() => {
-                // Scroll to top to see the hero gallery
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              <img
-                src={src}
-                alt={`${SITE_CONFIG.brand.name} - Photo ${idx + 1}`}
-                className="w-full h-48 sm:h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            </MotionDiv>
-          ))}
+
+          {SITE_CONFIG.photos.length > 6 && (
+            <div className="text-center mt-6 sm:mt-8">
+              <button
+                onClick={() => setShowAllPhotos(true)}
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white border-2 border-[#3F6F63] text-[#3F6F63] font-semibold rounded-xl hover:bg-[#3F6F63] hover:text-white active:scale-95 transition-all touch-manipulation min-h-[48px] text-sm sm:text-base"
+              >
+                View All {allPhotos.length} Photos
+                <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+              </button>
+            </div>
+          )}
         </div>
-        
-        {SITE_CONFIG.photos.length > 6 && (
-          <div className="text-center mt-6 sm:mt-8">
-            <button
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white border-2 border-[#3F6F63] text-[#3F6F63] font-semibold rounded-xl hover:bg-[#3F6F63] hover:text-white active:scale-95 transition-all touch-manipulation min-h-[48px] text-sm sm:text-base"
-            >
-              View All {SITE_CONFIG.photos.length + 1} Photos
-              <ChevronRight size={18} className="sm:w-5 sm:h-5" />
-            </button>
-          </div>
-        )}
       </div>
-    </div>
+
+      {/* Single Image Modal */}
+      {selectedImage !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-full w-full">
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-zinc-300 transition-colors p-2 z-10"
+              aria-label="Close modal"
+            >
+              <X size={32} />
+            </button>
+
+            {/* Previous button */}
+            {allPhotos.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateImage('prev');
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-zinc-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70 z-10"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={32} />
+              </button>
+            )}
+
+            {/* Next button */}
+            {allPhotos.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateImage('next');
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-zinc-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70 z-10"
+                aria-label="Next image"
+              >
+                <ChevronRight size={32} />
+              </button>
+            )}
+
+            <img
+              src={allPhotos[selectedImage]}
+              alt={`${SITE_CONFIG.brand.name} photo ${selectedImage + 1}`}
+              className="max-w-full max-h-[90vh] object-contain rounded-lg mx-auto"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="absolute -bottom-12 left-0 right-0 flex justify-center gap-2 text-white text-sm">
+              <span>{selectedImage + 1} / {allPhotos.length}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* All Photos Grid Modal */}
+      {showAllPhotos && (
+        <div
+          className="fixed inset-0 z-50 bg-[#0F1514]/95 backdrop-blur-sm p-4 overflow-y-auto"
+          onClick={() => setShowAllPhotos(false)}
+        >
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-6 sticky top-4 bg-[#0F1514]/60 backdrop-blur rounded-lg p-4 z-10 text-[#FAF7F2]">
+              <h3 className="text-xl font-semibold text-white">
+                All Photos ({allPhotos.length})
+              </h3>
+              <button
+                onClick={() => setShowAllPhotos(false)}
+                className="text-white hover:text-zinc-300 transition-colors p-2"
+                aria-label="Close modal"
+              >
+                <X size={32} />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {allPhotos.map((src, idx) => (
+                <img
+                  key={idx}
+                  src={src}
+                  alt={`${SITE_CONFIG.brand.name} photo ${idx + 1}`}
+                  className="rounded-lg w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity ring-1 ring-[#CBBBAA]/60"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAllPhotos(false);
+                    setSelectedImage(idx);
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 // Luxury Property Details Section - Mobile Optimized
 function PropertyDetails() {
   const { property, location } = SITE_CONFIG;
-  
+
   return (
     <div className="bg-white border-b border-[#CBBBAA]/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
@@ -491,7 +626,7 @@ function PropertyDetails() {
                 </span>
               </div>
             </div>
-            
+
             {/* Full Description */}
             <div className="prose prose-sm sm:prose-lg max-w-none">
               <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/80 leading-relaxed">
@@ -564,7 +699,7 @@ function Gallery() {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     }
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
@@ -621,7 +756,7 @@ function Gallery() {
             >
               <X size={32} />
             </button>
-            
+
             {/* Previous button */}
             {photos.length > 1 && (
               <button
@@ -726,10 +861,10 @@ function DirectBooking() {
             Select your dates and secure your reservation at Coral Breeze Estate
           </p>
         </MotionDiv>
-        
+
         <div className="max-w-4xl mx-auto">
           <div className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-[#CBBBAA]/40 shadow-xl">
-      <BookingWidget listingId={LISTING_CONFIG.id} />
+            <BookingWidget listingId={LISTING_CONFIG.id} />
           </div>
         </div>
       </div>
@@ -744,6 +879,9 @@ function BookingSummary() {
   const [nights, setNights] = useState(0);
   const [isBooking, setIsBooking] = useState(false);
   const [bookingStatus, setBookingStatus] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [blocked, setBlocked] = useState(new Set());
+  const [validationError, setValidationError] = useState('');
 
   const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
   const withApiBase = (path) => API_BASE ? `${API_BASE}${path}` : path;
@@ -783,16 +921,140 @@ function BookingSummary() {
     };
   }, []);
 
+  // Close expanded menu when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isExpanded) {
+        setIsExpanded(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isExpanded]);
+
+  // Fetch blocked dates
+  useEffect(() => {
+    const loadBlocked = async () => {
+      const today = new Date();
+      const threeMonthsLater = new Date(today);
+      threeMonthsLater.setMonth(today.getMonth() + 3);
+
+      const from = ymd(today);
+      const to = ymd(threeMonthsLater);
+
+      try {
+        const url = withApiBase(`/blocked?from=${from}&to=${to}&listing=${LISTING_CONFIG.id}`);
+        const res = await fetch(url);
+        const j = await res.json();
+        setBlocked(new Set(j.blocked));
+      } catch (error) {
+        console.error('Failed to fetch blocked dates:', error);
+      }
+    };
+
+    loadBlocked();
+  }, [withApiBase, ymd]);
+
+  // Date validation helpers
+  const isDateBlocked = (date) => {
+    if (!date) return false;
+    return blocked.has(ymd(date));
+  };
+
+  const hasBlockedDatesBetween = (start, end) => {
+    if (!start || !end) return false;
+    let current = new Date(start);
+    const stopDate = new Date(end);
+
+    while (current <= stopDate) {
+      if (blocked.has(ymd(current))) return true;
+      current.setDate(current.getDate() + 1);
+    }
+    return false;
+  };
+
+  // Handle date input changes
+  const handleCheckInChange = (e) => {
+    const dateValue = e.target.value;
+    if (!dateValue) {
+      setCheckIn(null);
+      setCheckOut(null);
+      setValidationError('');
+      return;
+    }
+
+    const selectedDate = new Date(dateValue + 'T00:00:00');
+
+    if (isDateBlocked(selectedDate)) {
+      setValidationError('This date is unavailable');
+      return;
+    }
+
+    setCheckIn(selectedDate);
+    setValidationError('');
+
+    // Check if existing checkout is still valid
+    if (checkOut && hasBlockedDatesBetween(selectedDate, checkOut)) {
+      setCheckOut(null);
+      setValidationError('Date range crosses unavailable dates. Please select a new checkout date.');
+    }
+
+    // Emit event for sync
+    window.dispatchEvent(new CustomEvent('booking-dates-selected', {
+      detail: { checkIn: selectedDate, checkOut: checkOut && !hasBlockedDatesBetween(selectedDate, checkOut) ? checkOut : null }
+    }));
+  };
+
+  const handleCheckOutChange = (e) => {
+    const dateValue = e.target.value;
+    if (!dateValue) {
+      setCheckOut(null);
+      setValidationError('');
+      return;
+    }
+
+    const selectedDate = new Date(dateValue + 'T00:00:00');
+
+    if (isDateBlocked(selectedDate)) {
+      setValidationError('This date is unavailable');
+      return;
+    }
+
+    if (checkIn && selectedDate <= checkIn) {
+      setValidationError('Checkout must be after check-in');
+      return;
+    }
+
+    if (checkIn && hasBlockedDatesBetween(checkIn, selectedDate)) {
+      setValidationError('Date range crosses unavailable dates');
+      return;
+    }
+
+    setCheckOut(selectedDate);
+    setValidationError('');
+
+    // Emit event for sync
+    window.dispatchEvent(new CustomEvent('booking-dates-selected', {
+      detail: { checkIn, checkOut: selectedDate }
+    }));
+  };
+
   const formatDate = (date) => {
     if (!date) return '';
     return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
   };
 
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    return ymd(date);
+  };
+
   const calculateTotal = () => {
     if (!nights) return LISTING_CONFIG.nightlyPrice;
     const basePrice = LISTING_CONFIG.nightlyPrice * nights;
-    const cleaningFee = LISTING_CONFIG.cleaningFee;
-    return basePrice + cleaningFee;
+    // Cleaning fee is added at checkout, not displayed on website
+    return basePrice;
   };
 
   const handleReserve = async () => {
@@ -861,62 +1123,109 @@ function BookingSummary() {
   const nightlyPrice = LISTING_CONFIG.nightlyPrice;
 
   return (
-    <div className="border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-2xl bg-white w-80">
-      <div className="mb-6">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-semibold text-[#1E1E1E] underline">
-            ${(total / 100).toLocaleString()}
-          </span>
-          {nights > 0 && (
-            <span className="text-[#1E1E1E]/70">for {nights} {nights === 1 ? 'night' : 'nights'}</span>
-          )}
-        </div>
-        {nights === 0 && (
-          <span className="text-sm text-[#1E1E1E]/70">${(nightlyPrice / 100).toLocaleString()} per night</span>
-        )}
-      </div>
-
-      {/* Date Selection Box */}
-      <div 
-        className="border border-[#CBBBAA]/60 rounded-xl mb-4 overflow-hidden cursor-pointer hover:border-[#3F6F63] transition-colors"
-        onClick={() => document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })}
-      >
-        <div className="grid grid-cols-2">
-          <div className="p-4 border-r border-[#CBBBAA]/60">
-            <div className="text-xs font-semibold text-[#1E1E1E]/70 mb-1">CHECK-IN</div>
-            <div className="text-base font-medium text-[#1E1E1E]">
-              {checkIn ? formatDate(checkIn) : 'Add date'}
-            </div>
+    <>
+      {/* Collapsed: Book Button */}
+      {!isExpanded && (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="group bg-gradient-to-r from-[#E17654] to-[#C65A3A] text-white rounded-full px-6 py-4 shadow-2xl hover:shadow-[#E17654]/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+        >
+          <Calendar size={22} />
+          <div className="text-left">
+            <div className="text-sm font-bold">Book Now</div>
+            <div className="text-xs opacity-90">${(nightlyPrice / 100).toLocaleString()}/night</div>
           </div>
-          <div className="p-4 flex items-end justify-end">
-            <div className="flex-1">
-              <div className="text-xs font-semibold text-[#1E1E1E]/70 mb-1">CHECKOUT</div>
-              <div className="text-base font-medium text-[#1E1E1E]">
-                {checkOut ? formatDate(checkOut) : 'Add date'}
-              </div>
-            </div>
-            <ChevronRight size={20} className="text-[#1E1E1E]/50 ml-2" />
-          </div>
-        </div>
-      </div>
-
-      {/* Reserve Button */}
-      <button
-        onClick={handleReserve}
-        disabled={isBooking}
-        className="w-full rounded-xl bg-gradient-to-r from-[#E17654] via-[#E17654] to-[#E17654]/90 text-white font-semibold py-4 text-lg hover:from-[#C65A3A] hover:via-[#C65A3A] hover:to-[#C65A3A]/90 transition-all shadow-md hover:shadow-lg mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isBooking ? bookingStatus : (checkIn && checkOut ? 'Book Now' : 'Check availability')}
-      </button>
-
-      {bookingStatus && !isBooking && bookingStatus.includes('failed') && (
-        <p className="text-center text-sm text-red-600 mb-2">{bookingStatus}</p>
+        </button>
       )}
 
-      <p className="text-center text-sm text-[#1E1E1E]/70">
-        You won't be charged yet
-      </p>
-    </div>
+      {/* Expanded: Booking Widget */}
+      {isExpanded && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            onClick={() => setIsExpanded(false)}
+          />
+
+          {/* Widget */}
+          <div className="fixed bottom-8 right-8 z-50 border border-[#CBBBAA]/40 rounded-2xl p-6 shadow-2xl bg-white w-80 animate-slide-in">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="absolute top-4 right-4 text-[#1E1E1E]/50 hover:text-[#1E1E1E] transition-colors"
+              aria-label="Close booking menu"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-6">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-semibold text-[#1E1E1E] underline">
+                  ${(total / 100).toLocaleString()}
+                </span>
+                {nights > 0 && (
+                  <span className="text-[#1E1E1E]/70">for {nights} {nights === 1 ? 'night' : 'nights'}</span>
+                )}
+              </div>
+              {nights === 0 && (
+                <span className="text-sm text-[#1E1E1E]/70">${(nightlyPrice / 100).toLocaleString()} per night</span>
+              )}
+            </div>
+
+            {/* Date Selection Inputs */}
+            <div className="border border-[#CBBBAA]/60 rounded-xl mb-4 overflow-hidden">
+              <div className="grid grid-cols-2">
+                <div className="p-4 border-r border-[#CBBBAA]/60">
+                  <label className="text-xs font-semibold text-[#1E1E1E]/70 mb-1 block">CHECK-IN</label>
+                  <input
+                    type="date"
+                    value={formatDateForInput(checkIn)}
+                    onChange={handleCheckInChange}
+                    min={ymd(new Date())}
+                    className="w-full text-base font-medium text-[#1E1E1E] bg-transparent border-none outline-none focus:ring-0 p-0"
+                  />
+                </div>
+                <div className="p-4">
+                  <label className="text-xs font-semibold text-[#1E1E1E]/70 mb-1 block">CHECKOUT</label>
+                  <input
+                    type="date"
+                    value={formatDateForInput(checkOut)}
+                    onChange={handleCheckOutChange}
+                    min={checkIn ? ymd(new Date(checkIn.getTime() + 86400000)) : ymd(new Date())}
+                    disabled={!checkIn}
+                    className="w-full text-base font-medium text-[#1E1E1E] bg-transparent border-none outline-none focus:ring-0 p-0 disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Validation Error */}
+            {validationError && (
+              <div className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {validationError}
+              </div>
+            )}
+
+            {/* Reserve Button */}
+            <button
+              onClick={handleReserve}
+              disabled={isBooking}
+              className="w-full rounded-xl bg-gradient-to-r from-[#E17654] via-[#E17654] to-[#E17654]/90 text-white font-semibold py-4 text-lg hover:from-[#C65A3A] hover:via-[#C65A3A] hover:to-[#C65A3A]/90 transition-all shadow-md hover:shadow-lg mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isBooking ? bookingStatus : (checkIn && checkOut ? 'Book Now' : 'Check availability')}
+            </button>
+
+            {bookingStatus && !isBooking && bookingStatus.includes('failed') && (
+              <p className="text-center text-sm text-red-600 mb-2">{bookingStatus}</p>
+            )}
+
+            <p className="text-center text-sm text-[#1E1E1E]/70">
+              You won't be charged yet
+            </p>
+          </div>
+        </>
+      )}
+    </>
   );
 }
 
@@ -924,9 +1233,9 @@ function BookingSummary() {
 function Amenities() {
   const featuredAmenities = SITE_CONFIG.amenities.slice(0, 6);
   const remainingAmenities = SITE_CONFIG.amenities.slice(6);
-  
+
   return (
-    <div className="bg-[#FAF7F2] py-16 md:py-24">
+    <div id="amenities" className="bg-[#FAF7F2] py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <MotionDiv
           initial={{ opacity: 0, y: 20 }}
@@ -949,21 +1258,21 @@ function Amenities() {
         {/* Featured Amenities Grid - Mobile Optimized */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {featuredAmenities.map((a, i) => (
-          <MotionDiv
-            key={i}
+            <MotionDiv
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 border border-[#CBBBAA]/40 hover:border-[#3F6F63]/40 hover:shadow-xl transition-all group touch-manipulation"
-          >
+            >
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#E17654]/10 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-[#E17654]/20 transition-colors">
                 <a.icon size={24} className="sm:w-7 sm:h-7 text-[#E17654]" />
               </div>
               <h3 className="text-base sm:text-lg font-semibold text-[#1E1E1E]">{a.label}</h3>
-          </MotionDiv>
-        ))}
-      </div>
+            </MotionDiv>
+          ))}
+        </div>
 
         {/* Remaining Amenities - Compact List - Mobile Optimized */}
         {remainingAmenities.length > 0 && (
@@ -984,7 +1293,7 @@ function Amenities() {
 // Luxury Location Section with Storytelling - Mobile Optimized
 function LocationMap() {
   return (
-    <div className="bg-white py-12 sm:py-16 md:py-24">
+    <div id="location" className="bg-white py-12 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           <MotionDiv
@@ -1007,12 +1316,12 @@ function LocationMap() {
                 <div key={i} className="flex items-start gap-2 sm:gap-3">
                   <MapPin size={18} className="sm:w-5 sm:h-5 text-[#3F6F63] flex-shrink-0 mt-0.5 sm:mt-1" />
                   <span className="text-sm sm:text-base text-[#1E1E1E]/80">{detail}</span>
-          </div>
+                </div>
               ))}
-          </div>
+            </div>
           </MotionDiv>
 
-        {SITE_CONFIG.location.mapEmbed && (
+          {SITE_CONFIG.location.mapEmbed && (
             <MotionDiv
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -1021,18 +1330,18 @@ function LocationMap() {
               className="rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#CBBBAA]/40 shadow-2xl"
             >
               <div className="relative w-full pb-[66.6%] sm:pb-[75%] h-0">
-              <iframe
-                title={`${SITE_CONFIG.brand.name} Location Map`}
-                src={SITE_CONFIG.location.mapEmbed}
-                className="absolute top-0 left-0 w-full h-full border-0"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
-            </div>
+                <iframe
+                  title={`${SITE_CONFIG.brand.name} Location Map`}
+                  src={SITE_CONFIG.location.mapEmbed}
+                  className="absolute top-0 left-0 w-full h-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
             </MotionDiv>
-        )}
-      </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1043,20 +1352,20 @@ function Reviews() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviewsToShow, setReviewsToShow] = useState(5); // Show 5 reviews at a time in modal
   if (!SITE_CONFIG.reviews || SITE_CONFIG.reviews.length === 0) return null;
-  
+
   const hasMoreThanThree = SITE_CONFIG.reviews.length > 3;
   const visibleReviews = SITE_CONFIG.reviews.slice(0, 3); // Always show 3 on page
   const featuredReview = SITE_CONFIG.reviews[0];
   const modalReviews = SITE_CONFIG.reviews.slice(0, reviewsToShow);
   const hasMoreInModal = reviewsToShow < SITE_CONFIG.reviews.length;
-  
+
   return (
-    <div className="bg-[#FAF7F2] py-12 sm:py-16 md:py-24">
+    <div id="reviews" className="bg-[#FAF7F2] py-12 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <MotionDiv
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+        <MotionDiv
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="text-center mb-8 sm:mb-12 md:mb-16"
         >
@@ -1092,8 +1401,8 @@ function Reviews() {
               <div className="flex items-center gap-1 mb-3 sm:mb-4">
                 {Array.from({ length: featuredReview.rating }).map((_, j) => (
                   <Star key={j} size={18} className="sm:w-5 sm:h-5 fill-[#D7A44E] text-[#D7A44E]" />
-              ))}
-            </div>
+                ))}
+              </div>
               <p className="text-base sm:text-lg md:text-xl text-[#1E1E1E]/80 leading-relaxed">"{featuredReview.text}"</p>
             </div>
           </MotionDiv>
@@ -1103,11 +1412,11 @@ function Reviews() {
         {visibleReviews.length > 1 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {visibleReviews.slice(1, 3).map((r, i) => (
-          <MotionDiv
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+              <MotionDiv
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 border border-[#CBBBAA]/40 hover:shadow-lg transition-all"
               >
@@ -1117,20 +1426,20 @@ function Reviews() {
                   </div>
                   <div className="min-w-0">
                     <div className="font-semibold text-sm sm:text-base text-[#1E1E1E]">{r.name}</div>
-              {r.date && (
-                <div className="text-xs text-[#1E1E1E]/60">{r.date}</div>
-              )}
-            </div>
+                    {r.date && (
+                      <div className="text-xs text-[#1E1E1E]/60">{r.date}</div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1 mb-2 sm:mb-3">
-              {Array.from({ length: r.rating }).map((_, j) => (
+                  {Array.from({ length: r.rating }).map((_, j) => (
                     <Star key={j} size={14} className="sm:w-4 sm:h-4 fill-[#D7A44E] text-[#D7A44E]" />
-              ))}
-            </div>
+                  ))}
+                </div>
                 <p className="text-sm sm:text-base text-[#1E1E1E]/80 leading-relaxed">"{r.text}"</p>
-          </MotionDiv>
-        ))}
-      </div>
+              </MotionDiv>
+            ))}
+          </div>
         )}
 
         {hasMoreThanThree && (
@@ -1147,11 +1456,11 @@ function Reviews() {
 
         {/* Reviews Modal - Mobile Optimized */}
         {isModalOpen && (
-          <div 
+          <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 overflow-y-auto"
             onClick={() => setIsModalOpen(false)}
           >
-            <div 
+            <div
               className="bg-white rounded-t-3xl sm:rounded-2xl md:rounded-3xl max-w-4xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1165,7 +1474,7 @@ function Reviews() {
                     {SITE_CONFIG.reviews.length} {SITE_CONFIG.reviews.length === 1 ? 'review' : 'reviews'}
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsModalOpen(false)}
                   className="p-2 sm:p-3 hover:bg-[#F4EDE4] active:bg-[#E8DDD0] rounded-full transition-colors touch-manipulation flex-shrink-0 ml-4"
                   aria-label="Close modal"
@@ -1177,7 +1486,7 @@ function Reviews() {
               {/* Modal Content */}
               <div className="p-4 md:p-6 space-y-4 md:space-y-6">
                 {modalReviews.map((r, i) => (
-                  <div 
+                  <div
                     key={i}
                     className="pb-4 md:pb-6 border-b border-[#CBBBAA]/30 last:border-0"
                   >
@@ -1187,7 +1496,7 @@ function Reviews() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-base md:text-lg font-semibold text-[#1E1E1E]">{r.name}</div>
-              {r.date && (
+                        {r.date && (
                           <div className="text-xs md:text-sm text-[#1E1E1E]/60">{r.date}</div>
                         )}
                       </div>
@@ -1228,7 +1537,7 @@ function Reviews() {
 // Luxury Meet Your Host Section - Mobile Optimized
 function MeetYourHost() {
   const { host } = SITE_CONFIG;
-  
+
   return (
     <div className="bg-white py-12 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -1322,52 +1631,52 @@ function ThingsToKnow() {
             </h2>
           </MotionDiv>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
-          {/* House Rules - Mobile Optimized */}
-          <div>
-            <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">House rules</h3>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
-              <li>{thingsToKnow.houseRules.checkIn}</li>
-              <li>{thingsToKnow.houseRules.checkout}</li>
-              <li>{thingsToKnow.houseRules.guests}</li>
-            </ul>
-            <button
-              onClick={() => handleShowMore('houseRules')}
-              className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
-            >
-              Show more
-            </button>
-          </div>
+            {/* House Rules - Mobile Optimized */}
+            <div>
+              <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">House rules</h3>
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
+                <li>{thingsToKnow.houseRules.checkIn}</li>
+                <li>{thingsToKnow.houseRules.checkout}</li>
+                <li>{thingsToKnow.houseRules.guests}</li>
+              </ul>
+              <button
+                onClick={() => handleShowMore('houseRules')}
+                className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
+              >
+                Show more
+              </button>
+            </div>
 
-          {/* Safety & Property - Mobile Optimized */}
-          <div>
-            <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">Safety & property</h3>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
-              <li>{thingsToKnow.safety.carbonMonoxide}</li>
-              <li>{thingsToKnow.safety.smokeAlarm}</li>
-              <li>{thingsToKnow.safety.noise}</li>
-            </ul>
-            <button
-              onClick={() => handleShowMore('safety')}
-              className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
-            >
-              Show more
-            </button>
-          </div>
+            {/* Safety & Property - Mobile Optimized */}
+            <div>
+              <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">Safety & property</h3>
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
+                <li>{thingsToKnow.safety.carbonMonoxide}</li>
+                <li>{thingsToKnow.safety.smokeAlarm}</li>
+                <li>{thingsToKnow.safety.noise}</li>
+              </ul>
+              <button
+                onClick={() => handleShowMore('safety')}
+                className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
+              >
+                Show more
+              </button>
+            </div>
 
-          {/* Cancellation Policy - Mobile Optimized */}
-          <div>
-            <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">Cancellation policy</h3>
-            <p className="text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
-              {thingsToKnow.cancellation.policy}
-            </p>
-            <button
-              onClick={() => handleShowMore('cancellation')}
-              className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
-            >
-              Show more
-            </button>
+            {/* Cancellation Policy - Mobile Optimized */}
+            <div>
+              <h3 className="font-semibold text-sm sm:text-base text-[#1E1E1E] mb-2 sm:mb-3">Cancellation policy</h3>
+              <p className="text-xs sm:text-sm text-[#1E1E1E]/80 mb-2 sm:mb-3">
+                {thingsToKnow.cancellation.policy}
+              </p>
+              <button
+                onClick={() => handleShowMore('cancellation')}
+                className="text-xs sm:text-sm font-semibold text-[#3F6F63] underline hover:text-[#2d5248] transition-colors touch-manipulation min-h-[44px] flex items-center"
+              >
+                Show more
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
@@ -1385,7 +1694,7 @@ function ThingsToKnow() {
               <p className="text-[#1E1E1E]/80">
                 You'll be staying in someone's home, so please treat it with care and respect.
               </p>
-              
+
               <div>
                 <h3 className="font-semibold text-[#1E1E1E] mb-3 flex items-center gap-2">
                   <Clock size={20} className="text-[#3F6F63]" />
@@ -1451,7 +1760,7 @@ function ThingsToKnow() {
                     </li>
                   ))}
                 </ul>
-      </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1558,7 +1867,7 @@ function Contact() {
             Reach out anytime—we're committed to making your stay exceptional
           </p>
         </MotionDiv>
-        
+
         <div className="max-w-4xl mx-auto">
           <div className="bg-[#FAF7F2] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-[#CBBBAA]/40 shadow-xl">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8">
@@ -1600,8 +1909,8 @@ function Contact() {
               </div>
             )}
             <div className="text-center">
-              <a 
-                href="#book" 
+              <a
+                href="#book"
                 className="inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl px-8 sm:px-10 py-4 sm:py-5 bg-[#E17654] text-white font-bold text-base sm:text-lg shadow-lg shadow-[#E17654]/30 hover:bg-[#C65A3A] hover:shadow-xl active:scale-95 transition-all touch-manipulation min-h-[48px]"
               >
                 Reserve Your Stay
@@ -1649,17 +1958,17 @@ export default function PropertySite() {
       <Nav />
       <PhotoGallery />
       <PropertyDetails />
-      
+
       {/* Photo Gallery Section */}
       <PhotoGallerySection />
-      
+
       <Amenities />
       <DirectBooking />
       <LocationMap />
       <Reviews />
       <MeetYourHost />
       <ThingsToKnow />
-      
+
       {/* Floating Booking Widget - Desktop Only */}
       <div className="hidden lg:block fixed bottom-8 right-8 z-40">
         <BookingSummary />
