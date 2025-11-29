@@ -180,7 +180,7 @@ export const SITE_CONFIG = {
 // IMPORTANT: Make sure listingId matches what you create in server/store.js
 export const LISTING_CONFIG = {
   id: "coral-breeze-estate",         // Must match the listing ID in server/store.js
-  nightlyPrice: 45000,                // Price in cents (45000 = $450.00) - matches server/store.js
-  cleaningFee: 9500,                  // Cleaning fee in cents (9500 = $95.00) - matches server/store.js
+  nightlyPrice: 1,                // Price in cents (45000 = $450.00) - matches server/store.js
+  cleaningFee: 0,                  // Cleaning fee in cents (9500 = $95.00) - matches server/store.js
 };
 
