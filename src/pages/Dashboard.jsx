@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Calendar, Users, CalendarX, LogOut, Plus, X, Mail, Phone } from 'lucide-react'
+import {
+  Calendar, Users, CalendarX, LogOut, Plus, X, Mail, Phone,
+  LayoutDashboard, TrendingUp, DollarSign, BedDouble, ChevronRight
+} from 'lucide-react'
+import StatCard from '../components/dashboard/StatCard'
+import RevenueChart from '../components/dashboard/RevenueChart'
 
 const fade = { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 
 const API_URL = '/api'
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('bookings')
+  const [activeTab, setActiveTab] = useState('overview')
   const [bookings, setBookings] = useState([])
   const [customers, setCustomers] = useState([])
   const [blockedDates, setBlockedDates] = useState([])
@@ -32,9 +37,14 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => {
-    if (activeTab === 'bookings') fetchBookings()
-    if (activeTab === 'customers') fetchCustomers()
-    if (activeTab === 'blocked') fetchBlockedDates()
+    // Fetch all data initially for the overview
+    if (activeTab === 'overview') {
+      fetchBookings()
+      fetchCustomers()
+      fetchBlockedDates()
+    } else if (activeTab === 'bookings') fetchBookings()
+    else if (activeTab === 'customers') fetchCustomers()
+    else if (activeTab === 'blocked') fetchBlockedDates()
   }, [activeTab])
 
   const checkAuth = async () => {
@@ -155,299 +165,434 @@ export default function Dashboard() {
     return `${formatDate(start)} → ${formatDate(end)}`
   }
 
+  // --- Metrics Calculation ---
+  const totalRevenue = bookings
+    .filter(b => b.status === 'confirmed' || b.status === 'paid')
+    .reduce((sum, b) => sum + (b.total || 0), 0) / 100;
+
+  const activeBookingsCount = bookings.filter(b => {
+    const end = new Date(b.end);
+    const now = new Date();
+    return end >= now && b.status === 'confirmed';
+  }).length;
+
+  // Mock data for chart (replace with real aggregation later)
+  const revenueData = [
+    { label: 'Jun', value: 12500 },
+    { label: 'Jul', value: 18200 },
+    { label: 'Aug', value: 24500 },
+    { label: 'Sep', value: 15800 },
+    { label: 'Oct', value: 9400 },
+    { label: 'Nov', value: totalRevenue > 0 ? totalRevenue : 12000 } // Use real total if available
+  ];
+
   if (loading && bookings.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <div className="text-zinc-600 dark:text-zinc-400">Loading...</div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+          <div className="text-slate-500 font-medium">Loading Dashboard...</div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] px-4 py-8">
-      <motion.div {...fade} className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
-              Host Dashboard
-              {propertyName && (
-                <span className="text-xl font-normal text-zinc-600 dark:text-zinc-400 ml-3">
-                  — {propertyName}
-                </span>
-              )}
-            </h1>
-            <p className="text-zinc-600 dark:text-zinc-400">Manage your bookings, customers, and calendar</p>
+    <div className="min-h-screen bg-slate-50 pb-12">
+      {/* Top Navigation Bar */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-700 rounded-lg flex items-center justify-center text-white font-bold">
+                H
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-slate-900 leading-none">Host Dashboard</h1>
+                {propertyName && <p className="text-xs text-slate-500 mt-0.5">{propertyName}</p>}
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-          >
-            <LogOut size={16} />
-            Logout
-          </button>
         </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400">
+          <motion.div {...fade} className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-700 flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-red-500"></div>
             {error}
-          </div>
+          </motion.div>
         )}
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-zinc-200 dark:border-zinc-800">
+        {/* Tab Navigation */}
+        <div className="flex overflow-x-auto pb-4 mb-4 gap-2 no-scrollbar">
           {[
+            { id: 'overview', label: 'Overview', icon: LayoutDashboard },
             { id: 'bookings', label: 'Bookings', icon: Calendar },
             { id: 'customers', label: 'Customers', icon: Users },
-            { id: 'blocked', label: 'Blocked Dates', icon: CalendarX }
+            { id: 'blocked', label: 'Calendar', icon: CalendarX }
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 font-medium transition ${
-                activeTab === tab.id
-                  ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
-              }`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id
+                  ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/20'
+                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                }`}
             >
-              <tab.icon size={18} />
+              <tab.icon size={16} />
               {tab.label}
             </button>
           ))}
         </div>
 
-        {/* Content */}
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {/* OVERVIEW TAB */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                  title="Total Revenue"
+                  value={`$${totalRevenue.toLocaleString()}`}
+                  icon={DollarSign}
+                  trend={12.5}
+                  trendLabel="vs last month"
+                  color="green"
+                />
+                <StatCard
+                  title="Active Bookings"
+                  value={activeBookingsCount}
+                  icon={Calendar}
+                  trend={-2}
+                  trendLabel="vs last month"
+                  color="blue"
+                />
+                <StatCard
+                  title="Occupancy Rate"
+                  value="78%"
+                  icon={BedDouble}
+                  trend={5.4}
+                  trendLabel="vs last month"
+                  color="purple"
+                />
+                <StatCard
+                  title="Avg. Nightly Rate"
+                  value="$245"
+                  icon={TrendingUp}
+                  trend={0}
+                  trendLabel="stable"
+                  color="orange"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Revenue Chart */}
+                <div className="lg:col-span-2">
+                  <RevenueChart data={revenueData} />
+                </div>
+
+                {/* Recent Activity / Quick Actions */}
+                <div className="space-y-6">
+                  <div className="bg-white rounded-2xl p-6 border border-zinc-100 shadow-sm">
+                    <h3 className="font-semibold text-zinc-900 mb-4">Quick Actions</h3>
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => { setActiveTab('blocked'); setShowBlockModal(true); }}
+                        className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center">
+                            <CalendarX size={16} />
+                          </div>
+                          <span className="font-medium text-slate-700">Block Dates</span>
+                        </div>
+                        <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-600" />
+                      </button>
+
+                      <button
+                        onClick={() => setActiveTab('bookings')}
+                        className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center">
+                            <Calendar size={16} />
+                          </div>
+                          <span className="font-medium text-slate-700">View Bookings</span>
+                        </div>
+                        <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-600" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-6 border border-zinc-100 shadow-sm">
+                    <h3 className="font-semibold text-zinc-900 mb-4">Recent Bookings</h3>
+                    {bookings.length === 0 ? (
+                      <p className="text-sm text-slate-500">No recent bookings</p>
+                    ) : (
+                      <div className="space-y-4">
+                        {bookings.slice(0, 3).map(booking => (
+                          <div key={booking.id} className="flex items-center gap-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-medium text-sm">
+                              {booking.guestEmail ? booking.guestEmail[0].toUpperCase() : 'G'}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-slate-900 truncate">
+                                {booking.guestEmail || 'Guest'}
+                              </div>
+                              <div className="text-xs text-slate-500">
+                                {formatDate(booking.start)}
+                              </div>
+                            </div>
+                            <div className="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded-md">
+                              {booking.status}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* BOOKINGS TAB */}
           {activeTab === 'bookings' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">All Bookings</h2>
+            <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-slate-900">All Bookings</h2>
+                <span className="text-sm text-slate-500">{bookings.length} total</span>
+              </div>
+
               {bookings.length === 0 ? (
-                <p className="text-zinc-600 dark:text-zinc-400">No bookings yet</p>
+                <div className="p-12 text-center">
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                    <Calendar size={32} />
+                  </div>
+                  <h3 className="text-slate-900 font-medium mb-1">No bookings yet</h3>
+                  <p className="text-slate-500 text-sm">When you get your first booking, it will show up here.</p>
+                </div>
               ) : (
-                <div className="space-y-4">
-                  {bookings.map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="font-medium text-zinc-900 dark:text-zinc-100 mb-1">
-                            {booking.listingTitle}
-                          </div>
-                          <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                            {formatDateRange(booking.start, booking.end)}
-                          </div>
-                          {booking.customerEmail && (
-                            <div className="text-xs text-zinc-500 dark:text-zinc-500 mt-2 flex items-center gap-4">
-                              <span className="flex items-center gap-1">
-                                <Mail size={12} />
-                                {booking.customerEmail}
-                              </span>
-                              {booking.customerPhone && (
-                                <span className="flex items-center gap-1">
-                                  <Phone size={12} />
-                                  {booking.customerPhone}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50 text-slate-500 font-medium">
+                      <tr>
+                        <th className="px-6 py-4">Property</th>
+                        <th className="px-6 py-4">Dates</th>
+                        <th className="px-6 py-4">Guest</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {bookings.map((booking) => (
+                        <tr key={booking.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-6 py-4 font-medium text-slate-900">{booking.listingTitle}</td>
+                          <td className="px-6 py-4 text-slate-600">{formatDateRange(booking.start, booking.end)}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col">
+                              <span className="text-slate-900">{booking.guestEmail || 'Unknown'}</span>
+                              {booking.customerPhone && <span className="text-xs text-slate-400">{booking.customerPhone}</span>}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${booking.status === 'confirmed' || booking.status === 'paid'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                              {booking.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right font-medium text-slate-900">
+                            ${((booking.total || 0) / 100).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* CUSTOMERS TAB */}
+          {activeTab === 'customers' && (
+            <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-100">
+                <h2 className="text-lg font-semibold text-slate-900">Customer Database</h2>
+              </div>
+              {customers.length === 0 ? (
+                <div className="p-12 text-center text-slate-500">No customers yet</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+                  {customers.map((customer, idx) => (
+                    <div key={idx} className="p-4 rounded-xl border border-slate-100 hover:border-teal-100 hover:shadow-md transition-all bg-white group">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
+                          {customer.email[0].toUpperCase()}
+                        </div>
+                        <span className="text-xs font-medium bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
+                          {customer.bookings.length} stays
+                        </span>
+                      </div>
+                      <div className="font-medium text-slate-900 truncate mb-1">{customer.email}</div>
+                      {customer.phone && <div className="text-sm text-slate-500 mb-3">{customer.phone}</div>}
+
+                      <div className="text-xs text-slate-400 border-t border-slate-50 pt-3 mt-2">
+                        Last stay: {formatDate(customer.bookings[0].start)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* BLOCKED DATES TAB */}
+          {activeTab === 'blocked' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-slate-900">Calendar Management</h2>
+                <button
+                  onClick={() => setShowBlockModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 transition shadow-lg shadow-zinc-900/20"
+                >
+                  <Plus size={18} />
+                  Block Dates
+                </button>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+                {blockedDates.length === 0 ? (
+                  <div className="p-12 text-center text-slate-500">No blocked dates found</div>
+                ) : (
+                  <div className="divide-y divide-slate-100">
+                    {blockedDates.map((block) => (
+                      <div key={block.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-2 h-12 rounded-full ${block.isManual ? 'bg-blue-500' : 'bg-slate-300'}`}></div>
+                          <div>
+                            <div className="font-medium text-slate-900">{formatDateRange(block.start, block.end)}</div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs text-slate-500">{block.listingTitle}</span>
+                              {block.note && (
+                                <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                                  {block.note}
                                 </span>
                               )}
                             </div>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <div className="text-xs text-zinc-500 dark:text-zinc-500">
-                            {new Date(booking.createdAt).toLocaleDateString()}
-                          </div>
-                          <div className="mt-1 px-2 py-1 rounded text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                            {booking.status}
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
-          {activeTab === 'customers' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Customers</h2>
-              {customers.length === 0 ? (
-                <p className="text-zinc-600 dark:text-zinc-400">No customers yet</p>
-              ) : (
-                <div className="space-y-4">
-                  {customers.map((customer, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <div className="font-medium text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                            <Mail size={16} />
-                            {customer.email}
-                          </div>
-                          {customer.phone && (
-                            <div className="text-sm text-zinc-600 dark:text-zinc-400 mt-1 flex items-center gap-2">
-                              <Phone size={14} />
-                              {customer.phone}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                          {customer.bookings.length} booking{customer.bookings.length !== 1 ? 's' : ''}
-                        </div>
-                      </div>
-                      <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
-                        <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-2">Bookings:</div>
-                        <div className="space-y-2">
-                          {customer.bookings.map((booking) => (
-                            <div key={booking.id} className="text-xs text-zinc-600 dark:text-zinc-400">
-                              <span className="font-medium">{booking.listingTitle}</span> — {formatDateRange(booking.start, booking.end)}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'blocked' && (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Blocked Dates</h2>
-                <button
-                  onClick={() => setShowBlockModal(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
-                >
-                  <Plus size={16} />
-                  Add Block
-                </button>
-              </div>
-              {blockedDates.length === 0 ? (
-                <p className="text-zinc-600 dark:text-zinc-400">No blocked dates</p>
-              ) : (
-                <div className="space-y-3">
-                  {blockedDates.map((block) => (
-                    <div
-                      key={block.id}
-                      className="flex items-center justify-between p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <div className="font-medium text-zinc-900 dark:text-zinc-100">{block.listingTitle}</div>
-                          {block.isManual ? (
-                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
-                              Manual
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded text-xs font-medium bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400">
-                              {block.source || 'External'}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-                          {formatDateRange(block.start, block.end)}
-                        </div>
-                        {block.note && (
-                          <div className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">{block.note}</div>
+                        {block.isManual ? (
+                          <button
+                            onClick={() => handleRemoveBlock(block.id)}
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Remove block"
+                          >
+                            <X size={18} />
+                          </button>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic px-3">Synced</span>
                         )}
                       </div>
-                      {block.isManual ? (
-                        <button
-                          onClick={() => handleRemoveBlock(block.id)}
-                          className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
-                          title="Remove block"
-                        >
-                          <X size={16} />
-                        </button>
-                      ) : (
-                        <div className="p-2 text-zinc-400 dark:text-zinc-500" title="External blocks cannot be removed from dashboard">
-                          <X size={16} className="opacity-50" />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/* Add Block Modal */}
       {showBlockModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
-            {...fade}
-            className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 w-full max-w-md"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold">Block Dates</h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-slate-900">Block Dates</h3>
               <button
                 onClick={() => setShowBlockModal(false)}
-                className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="p-2 rounded-full hover:bg-slate-100 text-slate-500 transition"
               >
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleAddBlock} className="space-y-4">
+            <form onSubmit={handleAddBlock} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium mb-2">Listing</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Listing</label>
                 <select
                   value={newBlock.listingId}
                   onChange={(e) => setNewBlock({ ...newBlock, listingId: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
                 >
                   <option value="cedar-ridge">Cedar Ridge Retreat</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Start Date</label>
-                <input
-                  type="date"
-                  value={newBlock.start}
-                  onChange={(e) => setNewBlock({ ...newBlock, start: e.target.value })}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Start Date</label>
+                  <input
+                    type="date"
+                    value={newBlock.start}
+                    onChange={(e) => setNewBlock({ ...newBlock, start: e.target.value })}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">End Date</label>
+                  <input
+                    type="date"
+                    value={newBlock.end}
+                    onChange={(e) => setNewBlock({ ...newBlock, end: e.target.value })}
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">End Date</label>
-                <input
-                  type="date"
-                  value={newBlock.end}
-                  onChange={(e) => setNewBlock({ ...newBlock, end: e.target.value })}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Note (optional)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Note (optional)</label>
                 <input
                   type="text"
                   value={newBlock.note}
                   onChange={(e) => setNewBlock({ ...newBlock, note: e.target.value })}
                   placeholder="e.g., Maintenance"
-                  className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowBlockModal(false)}
-                  className="flex-1 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 transition"
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-900 text-white font-medium hover:bg-zinc-800 transition shadow-lg shadow-zinc-900/20"
                 >
-                  Add Block
+                  Block Dates
                 </button>
               </div>
             </form>

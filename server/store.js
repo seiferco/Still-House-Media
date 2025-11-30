@@ -12,8 +12,8 @@ export const LISTINGS = [{
   id: 'coral-breeze-estate',
   title: 'Coral Breeze Estate',
   timezone: 'America/Los_Angeles',
-  nightlyPrice: 50, // cents
-  cleaningFee: 0    // cents
+  nightlyPrice: 25000, // cents
+  cleaningFee: 9500    // cents
 }
 ];
 

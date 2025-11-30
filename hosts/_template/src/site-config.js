@@ -3,7 +3,7 @@
  * Edit this file to customize the property website
  */
 
-import { CalendarDays, MapPin, Star, Wifi, Car, Waves, Snowflake, Flame, Phone, Mail } from "lucide-react";
+import { CalendarDays, MapPin, Star, Wifi, Car, Waves, Snowflake, Flame, Phone, Mail, Coffee, Tv, Utensils } from "lucide-react";
 
 export const SITE_CONFIG = {
   // Branding
@@ -26,7 +26,6 @@ export const SITE_CONFIG = {
   // Hero Section (main banner)
   hero: {
     image: "/photos/hero.jpg",            // Main cover photo (put in public/photos/)
-    // Alternative: "/photos/home-hero.jpg"
   },
 
   // Photo Gallery
@@ -49,17 +48,19 @@ export const SITE_CONFIG = {
 
   // Amenities
   amenities: [
-    { icon: Wifi, label: "Fast Wi-Fi (XXX Mbps)" },
+    { icon: Wifi, label: "Fast Wi-Fi" },
     { icon: Car, label: "Free parking" },
     { icon: Waves, label: "Hot tub" },
     { icon: Snowflake, label: "A/C" },
     { icon: Flame, label: "Fireplace" },
+    { icon: Coffee, label: "Coffee Maker" },
+    { icon: Tv, label: "Smart TV" },
+    { icon: Utensils, label: "Full Kitchen" },
     // Add/remove amenities as needed
-    // Available icons: Wifi, Car, Waves, Snowflake, Flame, Phone, Mail
   ],
 
   // Property Description
-  description: "Write a compelling description of your property here. Mention what makes it special, nearby attractions, and what guests will love about staying here.",
+  description: "Write a compelling description of your property here. Mention what makes it special, nearby attractions, and what guests will love about staying here. This text will appear in the main 'About' section of the website.",
 
   // Check-in Details
   checkin: {
@@ -92,19 +93,15 @@ export const SITE_CONFIG = {
     email: "host@yourproperty.com",
   },
 
+  // Booking Configuration (Hostex)
+  booking: {
+    // Replace this with your Hostex Booking Widget URL
+    // Go to Hostex -> Channels -> Direct Booking -> Copy Link
+    hostexUrl: "https://hostex.io/booking/your-property-id",
+  },
+
   // SEO/Meta
   seo: {
     coverAlt: "Your property description for accessibility",
   },
 };
-
-// Listing Configuration (matches backend)
-// IMPORTANT: Make sure listingId matches what you create in server/store.js
-export const LISTING_CONFIG = {
-  id: "your-listing-id",              // Must match the listing ID in server/store.js
-  nightlyPrice: 25000,                // Price in cents (25000 = $250.00)
-  cleaningFee: 9500,                  // Cleaning fee in cents (9500 = $95.00)
-};
-
-
-

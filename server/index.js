@@ -409,10 +409,34 @@ app.get('/api/booking-session/:sessionId', async (req, res) => {
     }
 
     // Find the booking in our store
-    const booking = bookings.find(b => b.stripeSessionId === sessionId);
+    let booking = bookings.find(b => b.stripeSessionId === sessionId);
+
+    // DEV MODE FALLBACK: If webhook didn't fire (no CLI), confirm it now if paid
+    if (!booking && session.payment_status === 'paid') {
+      console.log('Dev fallback: Confirming booking via frontend check (webhook missing)');
+      const { listingId, start, end, holdId } = session.metadata || {};
+
+      // Need to find host to get ID for confirmation
+      const host = findHostByListingId(listingId);
+
+      if (listingId && start && end) {
+        // Try to consume hold if it exists, otherwise just proceed
+        try { consumeHold(String(holdId)); } catch (e) { }
+
+        booking = confirmBooking(
+          host ? host.id : 'host_default', // Use found host ID or default
+          String(listingId),
+          String(start),
+          String(end),
+          session.customer_details?.email,
+          session.customer_details?.phone,
+          session.id
+        );
+      }
+    }
 
     if (!booking) {
-      // Booking might not exist yet if webhook hasn't processed
+      // Booking might not exist yet if webhook hasn't processed AND fallback failed
       // Return session data anyway for confirmation display
       return res.json({
         booking: {
@@ -713,7 +737,7 @@ if (process.env.NODE_ENV !== 'production') {
   })();
 }
 
-// HOST 1 LOGIN CREDENTIALS
+// HOST 1 LOGIN CREDENTIALS (coral breeze estate)
 (async () => {
   const hostEmail = 'stillhousemedia@outlook.com';
   const hostPassword = 'OregonSpain2025!!'; // Generate a secure password

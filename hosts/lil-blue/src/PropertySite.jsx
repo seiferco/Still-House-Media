@@ -73,9 +73,7 @@ function Nav() {
     <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2 sm:gap-3 group">
-          <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-2xl bg-[#E17654] text-white grid place-items-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform shadow-lg shadow-[#E17654]/40">
-            {SITE_CONFIG.brand.logoText}
-          </div>
+          <img src="/favicon.png" alt="Logo" className="h-9 w-9 sm:h-11 sm:w-11 rounded-2xl object-cover shadow-lg shadow-[#E17654]/40 group-hover:scale-110 transition-transform" />
           <span className="font-semibold text-base sm:text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
         </a>
 
