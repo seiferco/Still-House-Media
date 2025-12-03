@@ -120,7 +120,11 @@ export const SITE_CONFIG = {
         },
       ],
       booking: {
-        hostexUrl: "https://hostex.io/booking/your-property-id",
+        hostexWidget: {
+          listingId: "114722",
+          widgetId: "eyJob3N0X2lkIjoiMTAzNjM5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0=",
+          scriptUrl: "https://hostex.io/app/assets/js/hostex-widget.js?version=20251201120438",
+        },
       },
       seo: {
         coverAlt: "Lil' Blue waterfront home in Crystal River",

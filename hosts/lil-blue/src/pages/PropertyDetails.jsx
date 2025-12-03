@@ -12,6 +12,21 @@ const fade = {
 const MotionDiv = motion.div;
 const MotionImg = motion.img;
 
+function ScriptLoader({ url }) {
+    useEffect(() => {
+        if (!url) return;
+        const existingScript = document.querySelector(`script[src="${url}"]`);
+        if (!existingScript) {
+            const script = document.createElement("script");
+            script.src = url;
+            script.type = "module";
+            script.async = true;
+            document.body.appendChild(script);
+        }
+    }, [url]);
+    return null;
+}
+
 function Section({ id, title, children, eyebrow }) {
     return (
         <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
@@ -105,8 +120,18 @@ export default function PropertyDetails() {
 
             {/* Booking */}
             <Section id="book" title="Book Your Stay">
-                <div className="w-full rounded-2xl overflow-hidden shadow-lg border border-[#CBBBAA]/60 bg-white">
-                    {property.booking?.hostexUrl ? (
+                <div className="w-full rounded-2xl overflow-hidden shadow-lg border border-[#CBBBAA]/60 bg-white min-h-[600px]">
+                    {property.booking?.hostexWidget ? (
+                        <>
+                            {/* Script Loader */}
+                            <ScriptLoader url={property.booking.hostexWidget.scriptUrl} />
+                            <hostex-booking-widget
+                                listing-id={property.booking.hostexWidget.listingId}
+                                id={property.booking.hostexWidget.widgetId}
+                                style={{ width: "100%", height: "100%", minHeight: "800px", display: "block" }}
+                            ></hostex-booking-widget>
+                        </>
+                    ) : property.booking?.hostexUrl ? (
                         <iframe
                             src={property.booking.hostexUrl}
                             className="w-full h-[800px] border-0"
@@ -133,13 +158,18 @@ export default function PropertyDetails() {
 
             {/* Location */}
             <Section id="location" title="Location">
-                <div className="rounded-2xl overflow-hidden shadow-lg h-[400px]">
-                    <iframe
-                        src={property.location.mapEmbed}
-                        className="w-full h-full border-0"
-                        allowFullScreen
-                        loading="lazy"
-                    />
+                <div>
+                    <div className="rounded-2xl overflow-hidden shadow-lg h-[400px]">
+                        <iframe
+                            src={property.location.mapEmbed}
+                            className="w-full h-full border-0"
+                            allowFullScreen
+                            loading="lazy"
+                        />
+                    </div>
+                    <p className="text-xs text-[#1E1E1E]/60 text-center italic mt-2">
+                        Location is approximate until booked
+                    </p>
                 </div>
             </Section>
 
