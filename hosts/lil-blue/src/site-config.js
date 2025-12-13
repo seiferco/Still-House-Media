@@ -28,7 +28,7 @@ export const SITE_CONFIG = {
       name: "Lil' Blue",
       slug: "lil-blue", // URL path: /properties/lil-blue
       tagline: "Waterfront Serenity in Crystal River",
-      description: "Welcome to Lil' Blue, a single level, newly remodeled 3BR/2BA waterfront home with new appliances & thoughtful decor. Enjoy direct water access, a private dock, and a peaceful atmosphere perfect for families and nature lovers.",
+      description: "TODO: Paste AirBnb description here",
       location: {
         city: "Crystal River",
         region: "Florida",
@@ -78,12 +78,6 @@ export const SITE_CONFIG = {
         "/photos/gallery-39.jpg",
         "/photos/gallery-40.jpg",
         "/photos/gallery-41.jpg",
-        "/photos/gallery-42.jpg",
-        "/photos/gallery-43.jpg",
-        "/photos/gallery-44.jpg",
-        "/photos/gallery-45.jpg",
-        "/photos/gallery-46.jpg",
-        "/photos/gallery-47.jpg",
       ],
       highlights: [
         { icon: CalendarDays, label: "Sleeps 8" },

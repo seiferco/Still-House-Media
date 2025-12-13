@@ -133,7 +133,7 @@ function PhotoGallery({ property }) {
                                         <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-3">
                                             {property.tagline}
                                         </div>
-                                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-0 md:mb-12 lg:mb-16 leading-tight">
+                                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-0 md:mb-12 lg:mb-50 leading-tight">
                                             {property.name}
                                         </h1>
                                     </div>
