@@ -6,7 +6,7 @@
 import {
   CalendarDays, MapPin, Star, Wifi, Car, Waves, Snowflake, Flame, Phone, Mail, Coffee, Tv, Utensils,
   ArrowRight, Bath, Wind, Sparkles, Droplets, Shirt, Bed, Moon, Sun, Anchor, Trees,
-  Gamepad2, Dumbbell, Book, Baby, Dice5, Fan, Video, ShieldAlert, FireExtinguisher, FirstAid,
+  Gamepad2, Dumbbell, Book, Baby, Dice5, Fan, Video, ShieldAlert, FireExtinguisher, BriefcaseMedical,
   Briefcase, Refrigerator, Microwave, ChefHat, Wine, Joystick, UtensilsCrossed, Monitor,
   Thermometer, Accessibility, PawPrint, Clock, Key, Lock, Home
 } from "lucide-react";
@@ -210,7 +210,7 @@ export const SITE_CONFIG = {
             { icon: ShieldAlert, label: "Smoke alarm" },
             { icon: ShieldAlert, label: "Carbon monoxide alarm" },
             { icon: FireExtinguisher, label: "Fire extinguisher" },
-            { icon: FirstAid, label: "First aid kit" },
+            { icon: BriefcaseMedical, label: "First aid kit" },
           ]
         },
         {
