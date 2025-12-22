@@ -151,16 +151,16 @@ app.post('/api/stripe-webhook',
 app.use(cors({
   credentials: true,
   origin: (origin, callback) => {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL,
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:5175'
-    ].filter(Boolean);
+    // In development, allow localhost and local network IPs
+    const isLocalhost = !origin ||
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:') ||
+      origin.startsWith('http://192.168.');
 
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (isLocalhost || origin === process.env.FRONTEND_URL) {
       callback(null, true);
     } else {
+      console.error(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   }
@@ -530,6 +530,72 @@ app.get('/api/blocked', (req, res) => {
   if (!from || !to) return res.status(400).json({ error: 'from and to (YYYY-MM-DD) required' });
   const blocked = getBlockedDates(listing, from, to);
   res.json({ listing, from, to, blocked });
+});
+
+/** Hostex Reviews API Proxy */
+// Simple in-memory cache for reviews (5 minute TTL)
+const reviewsCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+app.get('/api/hostex/reviews/:propertyId', async (req, res) => {
+  const { propertyId } = req.params;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const hostexToken = process.env.HOSTEX_ACCESS_TOKEN;
+  if (!hostexToken) {
+    console.error('HOSTEX_ACCESS_TOKEN not configured');
+    return res.status(500).json({ error: 'Hostex API not configured' });
+  }
+
+  // Check cache first
+  const cacheKey = `${propertyId}-${limit}`;
+  const cached = reviewsCache.get(cacheKey);
+  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+    return res.json(cached.data);
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.hostex.io/v3/reviews?property_id=${propertyId}&limit=${limit}`,
+      {
+        headers: {
+          'Hostex-Access-Token': hostexToken
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Hostex API error:', response.status);
+      return res.status(response.status).json({ error: 'Failed to fetch reviews from Hostex' });
+    }
+
+    const data = await response.json();
+
+    // Transform reviews to a simpler format for the frontend
+    const reviews = (data.data?.reviews || [])
+      .filter(r => r.guest_review && r.guest_review.content) // Only include reviews with guest content
+      .map(r => ({
+        id: r.reservation_code,
+        guestName: r.guest_review?.content ? 'Guest' : null, // Hostex doesn't expose guest names
+        score: r.guest_review?.score || 5,
+        content: r.guest_review?.content,
+        date: r.guest_review?.created_at,
+        checkIn: r.check_in_date,
+        checkOut: r.check_out_date,
+        channel: r.channel_type,
+        photos: r.guest_review?.photos || null
+      }));
+
+    const result = { reviews, total: reviews.length };
+
+    // Cache the result
+    reviewsCache.set(cacheKey, { data: result, timestamp: Date.now() });
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching Hostex reviews:', error);
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
 });
 
 /** Authentication endpoints */

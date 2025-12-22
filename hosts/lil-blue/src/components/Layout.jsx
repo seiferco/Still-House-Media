@@ -10,8 +10,7 @@ export default function Layout({ children }) {
     const navLinks = [
         { path: "/", label: "Home" },
         { path: "/properties", label: "Properties" },
-        // { path: "/about", label: "About" }, // Add later if needed
-        // { path: "/contact", label: "Contact" }, // Add later if needed
+        { path: "#contact", label: "Contact" },
     ];
 
     return (

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, ArrowRight } from "lucide-react";
+import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Menu, Users, Bed, Bath, ArrowRight } from "lucide-react";
+import ContactSection from "../components/ContactSection";
+import ThingsToKnow from "../components/ThingsToKnow";
 import { SITE_CONFIG } from "../site-config";
 
 const fade = {
@@ -45,6 +47,337 @@ function Section({ id, title, children, eyebrow }) {
                 {children}
             </MotionDiv>
         </section>
+    );
+}
+
+function ExpandableDescription({ description, maxLength = 500, propertyName = "About this space" }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const shouldTruncate = description.length > maxLength;
+
+    // Find a good breaking point (end of line or sentence) near maxLength
+    const getTruncatedText = () => {
+        if (!shouldTruncate) return description;
+
+        // Look for a line break near maxLength
+        const nearMaxLength = description.substring(0, maxLength);
+        const lastNewline = nearMaxLength.lastIndexOf('\n');
+
+        if (lastNewline > maxLength * 0.6) {
+            return description.substring(0, lastNewline);
+        }
+
+        // Otherwise, break at the last space before maxLength
+        const lastSpace = nearMaxLength.lastIndexOf(' ');
+        return description.substring(0, lastSpace > 0 ? lastSpace : maxLength);
+    };
+
+    const displayText = getTruncatedText();
+
+    // Handle escape key and body scroll lock
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isModalOpen) {
+                setIsModalOpen(false);
+            }
+        };
+
+        if (isModalOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isModalOpen]);
+
+    return (
+        <>
+            <div className="relative">
+                <div className="text-base md:text-lg text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
+                    {displayText}
+                    {shouldTruncate && '...'}
+                </div>
+
+                {shouldTruncate && (
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="mt-4 inline-flex items-center gap-2 text-[#3F6F63] hover:text-[#335b52] font-semibold transition-colors group underline underline-offset-4"
+                    >
+                        <span>Show More</span>
+                        <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+                    </button>
+                )}
+            </div>
+
+            {/* Description Modal */}
+            {isModalOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                    onClick={() => setIsModalOpen(false)}
+                >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="relative w-full max-w-2xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-[#CBBBAA]/30">
+                            <h3 className="text-xl font-semibold text-[#1E1E1E]">{propertyName}</h3>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="p-2 -mr-2 rounded-full hover:bg-[#FAF7F2] transition-colors"
+                            >
+                                <X size={24} className="text-[#1E1E1E]" />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="px-6 py-6 overflow-y-auto max-h-[calc(85vh-80px)]">
+                            <div className="text-base md:text-lg text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
+                                {description}
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </>
+    );
+}
+
+function Reviews({ property }) {
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            const propertyId = property.booking?.hostexPropertyId;
+            if (!propertyId) {
+                // Fall back to static reviews
+                setReviews(property.reviews || []);
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/hostex/reviews/${propertyId}?limit=50`);
+                if (!response.ok) throw new Error('Failed to fetch reviews');
+
+                const data = await response.json();
+                if (data.reviews && data.reviews.length > 0) {
+                    setReviews(data.reviews);
+                } else {
+                    // Fall back to static reviews if API returns empty
+                    setReviews(property.reviews || []);
+                }
+            } catch (err) {
+                console.error('Error fetching reviews:', err);
+                setError(err.message);
+                // Fall back to static reviews on error
+                setReviews(property.reviews || []);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReviews();
+    }, [property]);
+
+    // Handle escape key and body scroll lock
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isModalOpen) {
+                setIsModalOpen(false);
+            }
+        };
+
+        if (isModalOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isModalOpen]);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    };
+
+    const renderStars = (score) => {
+        const fullStars = Math.floor(score);
+        const stars = [];
+        for (let i = 0; i < 5; i++) {
+            stars.push(
+                <Star
+                    key={i}
+                    size={16}
+                    className={i < fullStars ? 'text-[#E17654] fill-current' : 'text-[#CBBBAA]'}
+                />
+            );
+        }
+        return stars;
+    };
+
+    if (loading) {
+        return (
+            <Section id="reviews" title="Guest Reviews">
+                <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="animate-pulse bg-white rounded-xl p-6 border border-[#CBBBAA]/40">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 bg-[#CBBBAA]/30 rounded-full"></div>
+                                <div className="h-4 bg-[#CBBBAA]/30 rounded w-24"></div>
+                            </div>
+                            <div className="h-4 bg-[#CBBBAA]/30 rounded w-full mb-2"></div>
+                            <div className="h-4 bg-[#CBBBAA]/30 rounded w-3/4"></div>
+                        </div>
+                    ))}
+                </div>
+            </Section>
+        );
+    }
+
+    if (!reviews || reviews.length === 0) {
+        return null; // Don't render section if no reviews
+    }
+
+    // Check if these are API reviews (have 'content' field) or static reviews (have 'text' field)
+    const isApiReviews = reviews[0]?.content !== undefined;
+
+    return (
+        <Section id="reviews" eyebrow="What guests say" title="Guest Reviews">
+            <div className="grid md:grid-cols-2 gap-6">
+                {reviews.slice(0, 6).map((review, idx) => (
+                    <div
+                        key={review.id || idx}
+                        className="bg-white rounded-xl p-6 border border-[#CBBBAA]/40 hover:shadow-md transition-shadow"
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-[#3F6F63] to-[#5A8F83] rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                    {isApiReviews ? 'G' : (review.name?.[0] || 'G')}
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-[#1E1E1E]">
+                                        {isApiReviews ? 'Verified Guest' : review.name}
+                                    </p>
+                                    {isApiReviews && review.date && (
+                                        <p className="text-xs text-[#1E1E1E]/60">
+                                            {formatDate(review.date)}
+                                            {review.channel && (
+                                                <span className="ml-2 capitalize">via {review.channel}</span>
+                                            )}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex gap-0.5">
+                                {renderStars(isApiReviews ? review.score : review.rating)}
+                            </div>
+                        </div>
+                        <p className="text-[#1E1E1E]/80 leading-relaxed line-clamp-4">
+                            {isApiReviews ? review.content : review.text}
+                        </p>
+                    </div>
+                ))}
+            </div>
+            {reviews.length > 6 && (
+                <div className="text-center mt-6">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="text-[#3F6F63] font-semibold hover:underline"
+                    >
+                        View all {reviews.length} reviews
+                    </button>
+                </div>
+            )}
+
+            {/* Reviews Modal */}
+            {isModalOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                    onClick={() => setIsModalOpen(false)}
+                >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Modal Header */}
+                        <div className="flex-none flex items-center justify-between px-6 py-4 bg-white border-b border-[#CBBBAA]/30">
+                            <div>
+                                <h3 className="text-xl font-semibold text-[#1E1E1E]">Guest Reviews</h3>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <div className="flex gap-0.5">
+                                        <Star size={16} className="text-[#E17654] fill-current" />
+                                    </div>
+                                    <span className="text-sm text-[#1E1E1E]/70 font-medium">
+                                        {reviews.length} reviews
+                                    </span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="p-2 -mr-2 rounded-full hover:bg-[#FAF7F2] transition-colors"
+                            >
+                                <X size={24} className="text-[#1E1E1E]" />
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {reviews.map((review, idx) => (
+                                    <div
+                                        key={review.id || idx}
+                                        className="bg-[#FAF7F2] rounded-xl p-6 border border-[#CBBBAA]/20"
+                                    >
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#3F6F63] font-bold text-sm shadow-sm">
+                                                    {isApiReviews ? 'G' : (review.name?.[0] || 'G')}
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-[#1E1E1E]">
+                                                        {isApiReviews ? 'Verified Guest' : review.name}
+                                                    </p>
+                                                    {isApiReviews && review.date && (
+                                                        <p className="text-xs text-[#1E1E1E]/60">
+                                                            {formatDate(review.date)}
+                                                            {review.channel && (
+                                                                <span className="ml-2 capitalize">via {review.channel}</span>
+                                                            )}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-0.5">
+                                                {renderStars(isApiReviews ? review.score : review.rating)}
+                                            </div>
+                                        </div>
+                                        <p className="text-[#1E1E1E]/80 leading-relaxed text-sm">
+                                            {isApiReviews ? review.content : review.text}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </Section>
     );
 }
 
@@ -366,7 +699,7 @@ export default function PropertyDetails() {
                             <span className="flex items-center gap-2"><Bed size={18} className="text-[#3F6F63]" /><span className="font-medium">3 bedrooms</span></span>
                             <span className="flex items-center gap-2"><Bath size={18} className="text-[#3F6F63]" /><span className="font-medium">2 baths</span></span>
                         </div>
-                        <p className="text-lg md:text-xl text-[#1E1E1E]/80 leading-relaxed">{property.description}</p>
+                        <ExpandableDescription description={property.description} maxLength={500} propertyName={`About ${property.name}`} />
                     </div>
                 </div>
             </div>
@@ -388,7 +721,7 @@ export default function PropertyDetails() {
 
             {/* Booking */}
             <Section id="book" title="Book Your Stay">
-                <div className="w-full rounded-2xl overflow-hidden shadow-lg border border-[#CBBBAA]/60 bg-white min-h-[600px]">
+                <div className="mt-12 w-full rounded-3xl overflow-hidden shadow-lg border border-[#CBBBAA]/60 bg-white min-h-[500px] flex flex-col items-center justify-center p-4 sm:p-8">
                     {property.booking?.hostexWidget ? (
                         <>
                             {/* Script Loader */}
@@ -396,7 +729,7 @@ export default function PropertyDetails() {
                             <hostex-booking-widget
                                 listing-id={property.booking.hostexWidget.listingId}
                                 id={property.booking.hostexWidget.widgetId}
-                                style={{ width: "100%", height: "100%", minHeight: "800px", display: "block" }}
+                                style={{ width: "100%", height: "100%", minHeight: "600px", display: "block" }}
                             ></hostex-booking-widget>
                         </>
                     ) : property.booking?.hostexUrl ? (
@@ -413,16 +746,43 @@ export default function PropertyDetails() {
             </Section>
 
             {/* Amenities */}
+
             <Section id="amenities" title="Amenities">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {property.amenities.map((a, i) => (
-                        <div key={i} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-[#CBBBAA]/40">
-                            <a.icon className="text-[#3F6F63]" size={20} />
-                            <span className="text-[#1E1E1E] font-medium">{a.label}</span>
-                        </div>
-                    ))}
-                </div>
+                {property.amenities[0]?.category ? (
+                    <div className="space-y-10">
+                        {property.amenities.map((category, idx) => (
+                            <div key={idx}>
+                                <h3 className="text-xl font-medium text-[#1E1E1E] mb-4 border-b border-[#CBBBAA]/30 pb-2 inline-block pr-8">
+                                    {category.category}
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    {category.items.map((item, i) => (
+                                        <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/50 transition-colors">
+                                            <item.icon className="text-[#3F6F63] flex-shrink-0 mt-0.5" size={20} />
+                                            <span className="text-[#1E1E1E]/90 text-sm sm:text-base leading-snug">{item.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {property.amenities.map((a, i) => (
+                            <div key={i} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-[#CBBBAA]/40 text-[#1E1E1E] font-medium">
+                                <a.icon className="text-[#3F6F63]" size={20} />
+                                <span>{a.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Section>
+
+            {/* Reviews */}
+            <Reviews property={property} />
+
+            {/* Things to Know */}
+            <ThingsToKnow property={property} />
 
             {/* Location */}
             <Section id="location" title="Location">
@@ -440,6 +800,9 @@ export default function PropertyDetails() {
                     </p>
                 </div>
             </Section>
+
+            {/* Contact */}
+            <ContactSection />
 
         </div>
     );

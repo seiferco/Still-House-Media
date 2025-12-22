@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Star } from "lucide-react";
+import ContactSection from "../components/ContactSection";
 import { SITE_CONFIG } from "../site-config";
 
 const fade = {
@@ -85,6 +86,9 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* Contact Section */}
+            <ContactSection />
         </div>
     );
 }
