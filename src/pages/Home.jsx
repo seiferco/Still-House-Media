@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { motion as Motion } from 'framer-motion'
-import { 
-  ShieldCheck, CreditCard, CalendarDays, Clock, CheckCircle2, Phone, Mail, 
-  TrendingUp, Users, DollarSign, Smartphone, ArrowRight, Sparkles, Quote, 
+import {
+  ShieldCheck, CreditCard, CalendarDays, Clock, CheckCircle2, Phone, Mail,
+  TrendingUp, Users, DollarSign, Smartphone, ArrowRight, Sparkles, Quote,
   ChevronDown, Star, Zap, Award, Globe
 } from 'lucide-react'
 
-const fadeIn = { 
-  initial: { opacity: 0, y: 20 }, 
-  animate: { opacity: 1, y: 0 }, 
-  transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } 
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
 }
 
 const stagger = {
@@ -130,21 +130,21 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/photos/home/home-hero.jpg" 
-            alt="Luxury vacation rental" 
+          <img
+            src="/photos/home/home-hero.jpg"
+            alt="Luxury vacation rental"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 hero-overlay" />
         </div>
-        
+
         <div className="relative z-10 w-full">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-            <Motion.div 
+            <Motion.div
               {...fadeIn}
               className="max-w-4xl mx-auto text-center"
             >
-              <Motion.div 
+              <Motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -153,7 +153,7 @@ export default function Home() {
                 <Sparkles size={14} />
                 <span>Direct bookings refined</span>
               </Motion.div>
-              
+
               <h1 className="text-display text-white mb-6">
                 Build a high-converting direct-booking site that feels as{' '}
                 <span className="text-gradient" style={{ WebkitTextFillColor: 'white' }}>
@@ -161,34 +161,34 @@ export default function Home() {
                 </span>{' '}
                 as your property
               </h1>
-              
+
               <p className="text-xl lg:text-2xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed">
-                Stillhouse Media crafts mid-century inspired, conversion-focused landing pages that elevate your brand, 
+                Stillhouse Media crafts mid-century inspired, conversion-focused landing pages that elevate your brand,
                 capture more direct revenue, and keep payments in your pocket.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
                 <a href="#packages" className="btn-primary">
                   View packages
                   <ArrowRight size={20} />
                 </a>
-                <a href="/demo-template" target="_blank" rel="noopener noreferrer" className="btn-secondary">
+                <a href="https://www.staycoralbreeze.com" target="_blank" rel="noopener noreferrer" className="btn-secondary">
                   View live demo
                 </a>
               </div>
-              
+
               {/* Stats */}
-              <Motion.div 
+              <Motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto"
               >
                 {stats.map((stat, idx) => (
-                  <div 
+                  <div
                     key={idx}
                     className="card-soft text-center"
-                    style={{ 
+                    style={{
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
                       backdropFilter: 'blur(10px)'
                     }}
@@ -225,7 +225,7 @@ export default function Home() {
               Stop losing 15–20% to platform fees. Own your guest relationships and keep more revenue.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, idx) => (
               <Motion.div
@@ -234,9 +234,9 @@ export default function Home() {
                 transition={{ delay: idx * 0.1 }}
                 className="card group"
               >
-                <div 
+                <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ 
+                  style={{
                     backgroundColor: 'rgba(13, 148, 136, 0.1)',
                     color: 'var(--color-accent)'
                   }}
@@ -268,11 +268,11 @@ export default function Home() {
               Hospitality brands that went direct—and never looked back
             </h2>
             <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-              Hosts across coastal retreats, desert escapes, and urban lofts use Stillhouse Media to present 
+              Hosts across coastal retreats, desert escapes, and urban lofts use Stillhouse Media to present
               their property with poise—and keep guests booking directly.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, idx) => (
               <Motion.div
@@ -283,9 +283,9 @@ export default function Home() {
                 transition={{ delay: idx * 0.1 }}
                 className="card-elevated relative"
               >
-                <div 
+                <div
                   className="absolute -top-4 left-6 w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ 
+                  style={{
                     backgroundColor: 'var(--color-accent)',
                     color: 'white'
                   }}
@@ -327,11 +327,11 @@ export default function Home() {
               Launch your direct-booking presence in a single engagement
             </h2>
             <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-              You'll leave with a brand-caliber website, refined messaging, bulletproof payment flows, 
+              You'll leave with a brand-caliber website, refined messaging, bulletproof payment flows,
               and the confidence to scale bookings on your terms.
             </p>
           </div>
-          
+
           <div className="flex justify-center">
             <div className="w-full max-w-md">
               <Motion.div
@@ -352,7 +352,7 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -366,12 +366,12 @@ export default function Home() {
                     Launch in 7 days • Optional retainers available
                   </p>
                 </div>
-                
+
                 <ul className="space-y-3 mb-8">
                   {packageFeatures.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
-                      <CheckCircle2 
-                        size={20} 
+                      <CheckCircle2
+                        size={20}
                         className="flex-shrink-0 mt-0.5"
                         style={{ color: 'var(--color-accent)' }}
                       />
@@ -381,9 +381,9 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                
-                <a 
-                  href="#contact" 
+
+                <a
+                  href="#contact"
                   className="btn-primary w-full justify-center"
                   onClick={(e) => {
                     e.preventDefault()
@@ -393,7 +393,7 @@ export default function Home() {
                   Book a discovery call
                   <ArrowRight size={20} />
                 </a>
-                
+
                 <p className="text-xs text-center mt-4" style={{ color: 'var(--color-text-muted)' }}>
                   Custom proposal within 24 hours
                 </p>
@@ -416,7 +416,7 @@ export default function Home() {
               Frequently asked questions
             </h2>
           </div>
-          
+
           <div className="max-w-3xl mx-auto space-y-4">
             {faqs.map((faq, idx) => {
               const isOpen = activeFaq === idx
@@ -439,9 +439,8 @@ export default function Home() {
                     </span>
                     <ChevronDown
                       size={20}
-                      className={`transition-transform flex-shrink-0 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
+                      className={`transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''
+                        }`}
                       style={{ color: 'var(--color-accent)' }}
                     />
                   </button>
@@ -477,18 +476,18 @@ export default function Home() {
               Ready to craft a boutique-grade direct-booking site?
             </h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-              Share a link to your listing, and we'll design a strategy-forward, Stripe-powered site 
+              Share a link to your listing, and we'll design a strategy-forward, Stripe-powered site
               that feels like a 5-star stay.
             </p>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
               <a
                 href="tel:15412943114"
                 className="card group hover:scale-105 transition-transform"
               >
-                <div 
+                <div
                   className="w-14 h-14 rounded-full flex items-center justify-center mb-4 mx-auto"
-                  style={{ 
+                  style={{
                     backgroundColor: 'rgba(13, 148, 136, 0.1)',
                     color: 'var(--color-accent)'
                   }}
@@ -502,14 +501,14 @@ export default function Home() {
                   541-294-3114
                 </div>
               </a>
-              
+
               <a
                 href="mailto:stillhousemedia@outlook.com"
                 className="card group hover:scale-105 transition-transform"
               >
-                <div 
+                <div
                   className="w-14 h-14 rounded-full flex items-center justify-center mb-4 mx-auto"
-                  style={{ 
+                  style={{
                     backgroundColor: 'rgba(198, 93, 46, 0.1)',
                     color: 'var(--color-secondary)'
                   }}
@@ -524,9 +523,9 @@ export default function Home() {
                 </div>
               </a>
             </div>
-            
+
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Share your Airbnb link, desired launch date, and any special experiences you offer. 
+              Share your Airbnb link, desired launch date, and any special experiences you offer.
               I'll send a tailored concept and project outline within one business day.
             </p>
           </div>

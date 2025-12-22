@@ -24,7 +24,7 @@ function SiteNav() {
 
           {/* OPEN DEMO IN NEW TAB */}
           <a
-            href="/demo-template"
+            href="https://www.staycoralbreeze.com"
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 py-2 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50"

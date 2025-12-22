@@ -265,11 +265,11 @@ function Reviews({ property }) {
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-[#3F6F63] to-[#5A8F83] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                    {isApiReviews ? 'G' : (review.name?.[0] || 'G')}
+                                    {review.name?.[0] || 'G'}
                                 </div>
                                 <div>
                                     <p className="font-semibold text-[#1E1E1E]">
-                                        {isApiReviews ? 'Verified Guest' : review.name}
+                                        {review.name || 'Verified Guest'}
                                     </p>
                                     {isApiReviews && review.date && (
                                         <p className="text-xs text-[#1E1E1E]/60">
@@ -347,11 +347,11 @@ function Reviews({ property }) {
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#3F6F63] font-bold text-sm shadow-sm">
-                                                    {isApiReviews ? 'G' : (review.name?.[0] || 'G')}
+                                                    {review.name?.[0] || 'G'}
                                                 </div>
                                                 <div>
                                                     <p className="font-semibold text-[#1E1E1E]">
-                                                        {isApiReviews ? 'Verified Guest' : review.name}
+                                                        {review.name || 'Verified Guest'}
                                                     </p>
                                                     {isApiReviews && review.date && (
                                                         <p className="text-xs text-[#1E1E1E]/60">

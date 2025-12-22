@@ -349,12 +349,12 @@ export const SITE_CONFIG = {
       // Static reviews as fallback (used if API fails)
       reviews: [
         {
-          name: "Guest Name",
+          name: "Sarah M.",
           text: "Amazing stay! The property was perfect and exactly as described.",
           rating: 5,
         },
         {
-          name: "Guest Name 2",
+          name: "James R.",
           text: "Great location and very clean. Would definitely stay again!",
           rating: 5,
         },

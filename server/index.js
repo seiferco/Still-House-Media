@@ -570,21 +570,30 @@ app.get('/api/hostex/reviews/:propertyId', async (req, res) => {
     }
 
     const data = await response.json();
-
     // Transform reviews to a simpler format for the frontend
     const reviews = (data.data?.reviews || [])
       .filter(r => r.guest_review && r.guest_review.content) // Only include reviews with guest content
-      .map(r => ({
-        id: r.reservation_code,
-        guestName: r.guest_review?.content ? 'Guest' : null, // Hostex doesn't expose guest names
-        score: r.guest_review?.score || 5,
-        content: r.guest_review?.content,
-        date: r.guest_review?.created_at,
-        checkIn: r.check_in_date,
-        checkOut: r.check_out_date,
-        channel: r.channel_type,
-        photos: r.guest_review?.photos || null
-      }));
+      .map(r => {
+        // Try to extract name from host review if available
+        let extractedName = null;
+        if (r.host_review?.content) {
+          // Look for "Name was..." pattern
+          const match = r.host_review.content.match(/^([A-Z][a-z]+) was/);
+          if (match) extractedName = match[1];
+        }
+
+        return {
+          id: r.reservation_code,
+          guestName: r.guest_name || extractedName || (r.guest_review?.content ? 'Guest' : null),
+          score: r.guest_review?.score || 5,
+          content: r.guest_review?.content,
+          date: r.guest_review?.created_at,
+          checkIn: r.check_in_date,
+          checkOut: r.check_out_date,
+          channel: r.channel_type,
+          photos: r.guest_review?.photos || null
+        };
+      });
 
     const result = { reviews, total: reviews.length };
 
