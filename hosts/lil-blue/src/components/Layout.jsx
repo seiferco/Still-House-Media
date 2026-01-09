@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, ExternalLink } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, ExternalLink, Phone } from "lucide-react";
 import { SITE_CONFIG } from "../site-config";
+import Footer from "./Footer";
 
 export default function Layout({ children }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,79 +12,119 @@ export default function Layout({ children }) {
     const navLinks = [
         { path: "/", label: "Home" },
         { path: "/properties", label: "Properties" },
+        { path: "/#attractions", label: "Things To Do" },
         { path: "#contact", label: "Contact" },
     ];
 
+    const isActive = (path) => {
+        if (path.startsWith("#") || path.includes("/#")) return false;
+        return location.pathname === path;
+    };
+
     return (
-        <div className="min-h-screen bg-[#FAF7F2] text-[#1E1E1E] font-sans selection:bg-[#E17654]/20 flex flex-col">
-            <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
-                        <img src="/favicon.png" alt="Logo" className="h-9 w-9 sm:h-11 sm:w-11 rounded-2xl object-cover shadow-lg shadow-[#E17654]/40 group-hover:scale-110 transition-transform" />
-                        <span className="font-semibold text-base sm:text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
-                    </Link>
-
-                    {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`transition-colors ${location.pathname === link.path ? "text-[#E17654]" : "text-[#3F6F63]/80 hover:text-[#3F6F63]"
-                                    }`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                        <Link
-                            to="/properties"
-                            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 bg-[#E17654] text-white shadow-sm shadow-[#E17654]/40 hover:bg-[#C65A3A] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D7A44E]/70"
-                        >
-                            Book Now <ExternalLink size={16} />
+        <div className="min-h-screen bg-[#FAFAFA] text-[#1A365D] font-sans selection:bg-[#0077B6]/20 flex flex-col">
+            {/* Header */}
+            <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-[#E2E8F0] shadow-sm">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16 md:h-20">
+                        {/* Logo */}
+                        <Link to="/" className="flex items-center gap-3 group">
+                            <img
+                                src="/favicon.png"
+                                alt="Logo"
+                                className="h-10 w-10 md:h-12 md:w-12 rounded-xl object-cover shadow-md group-hover:shadow-lg transition-all group-hover:scale-105"
+                            />
+                            <div className="hidden sm:block">
+                                <span className="font-semibold text-lg text-[#1A365D] block leading-tight">
+                                    {SITE_CONFIG.brand.name}
+                                </span>
+                                <span className="text-xs text-[#64748B]">
+                                    Florida Vacation Rentals
+                                </span>
+                            </div>
                         </Link>
-                    </nav>
 
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-3 rounded-lg text-[#3F6F63] hover:bg-[#F4EDE4] active:bg-[#E8DDD0] transition-colors touch-manipulation"
-                    >
-                        <Menu size={24} />
-                    </button>
-                </div>
-
-                {/* Mobile Menu */}
-                {isMenuOpen && (
-                    <div className="md:hidden border-t border-[#CBBBAA]/60 bg-[#FAF7F2] shadow-lg">
-                        <nav className="mx-auto max-w-7xl px-4 py-2 space-y-1">
+                        {/* Desktop Navigation */}
+                        <nav className="hidden md:flex items-center gap-1">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.path}
                                     to={link.path}
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className={`block px-4 py-3.5 rounded-lg font-semibold text-base transition-colors touch-manipulation min-h-[44px] flex items-center ${location.pathname === link.path
-                                        ? "bg-[#F4EDE4] text-[#E17654]"
-                                        : "text-[#3F6F63] hover:bg-[#F4EDE4]"
+                                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${isActive(link.path)
+                                            ? "bg-[#0077B6]/10 text-[#0077B6]"
+                                            : "text-[#64748B] hover:text-[#1A365D] hover:bg-[#F1F5F9]"
                                         }`}
                                 >
                                     {link.label}
                                 </Link>
                             ))}
+
+                            {/* CTA Button */}
+                            <Link
+                                to="/properties"
+                                className="ml-4 inline-flex items-center gap-2 px-5 py-2.5 bg-[#0077B6] text-white font-semibold rounded-xl hover:bg-[#005F92] transition-all shadow-md hover:shadow-lg"
+                            >
+                                Book Now
+                                <ExternalLink size={16} />
+                            </Link>
                         </nav>
+
+                        {/* Mobile Menu Button */}
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="md:hidden p-2.5 rounded-lg text-[#64748B] hover:bg-[#F1F5F9] active:bg-[#E2E8F0] transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
                     </div>
-                )}
+                </div>
+
+                {/* Mobile Menu */}
+                <AnimatePresence>
+                    {isMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="md:hidden border-t border-[#E2E8F0] bg-white overflow-hidden"
+                        >
+                            <nav className="px-4 py-4 space-y-1">
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.path}
+                                        to={link.path}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className={`block px-4 py-3.5 rounded-xl font-medium text-base transition-colors ${isActive(link.path)
+                                                ? "bg-[#0077B6]/10 text-[#0077B6]"
+                                                : "text-[#64748B] hover:bg-[#F1F5F9]"
+                                            }`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+
+                                {/* Mobile CTA */}
+                                <Link
+                                    to="/properties"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="block px-4 py-3.5 mt-2 bg-[#0077B6] text-white font-semibold rounded-xl text-center"
+                                >
+                                    Book Now
+                                </Link>
+                            </nav>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </header>
 
+            {/* Main Content */}
             <main className="flex-grow">
                 {children}
             </main>
 
-            <footer className="border-t border-[#CBBBAA]/40 bg-[#FAF7F2]">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-[#1E1E1E]/60">
-                    <div>© {new Date().getFullYear()} {SITE_CONFIG.brand.name}.</div>
-                    <div className="opacity-80">Powered by Still House Media</div>
-                </div>
-            </footer>
+            {/* Footer */}
+            <Footer />
         </div>
     );
 }

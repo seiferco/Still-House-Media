@@ -34,15 +34,15 @@ function Section({ id, title, children, eyebrow }) {
         <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
             <MotionDiv
                 {...fade}
-                className="rounded-3xl bg-[#FAF7F2] border border-[#CBBBAA]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-4 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-10 md:py-12"
+                className="rounded-3xl bg-[#F8F9FA] border border-[#E2E8F0]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-4 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-10 md:py-12"
             >
                 {eyebrow && (
-                    <div className="text-xs font-semibold tracking-[0.35em] uppercase text-[#3F6F63]/80 mb-4">
+                    <div className="text-xs font-semibold tracking-[0.35em] uppercase text-[#0077B6]/80 mb-4">
                         {eyebrow}
                     </div>
                 )}
                 {title && (
-                    <h2 className="text-3xl md:text-4xl font-semibold text-[#1E1E1E] mb-6">{title}</h2>
+                    <h2 className="text-3xl md:text-4xl font-semibold text-[#1A365D] mb-6">{title}</h2>
                 )}
                 {children}
             </MotionDiv>
@@ -95,7 +95,7 @@ function ExpandableDescription({ description, maxLength = 500, propertyName = "A
     return (
         <>
             <div className="relative">
-                <div className="text-base md:text-lg text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
+                <div className="text-base md:text-lg text-[#1A365D]/80 leading-relaxed whitespace-pre-line">
                     {displayText}
                     {shouldTruncate && '...'}
                 </div>
@@ -103,7 +103,7 @@ function ExpandableDescription({ description, maxLength = 500, propertyName = "A
                 {shouldTruncate && (
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="mt-4 inline-flex items-center gap-2 text-[#3F6F63] hover:text-[#335b52] font-semibold transition-colors group underline underline-offset-4"
+                        className="mt-4 inline-flex items-center gap-2 text-[#0077B6] hover:text-[#335b52] font-semibold transition-colors group underline underline-offset-4"
                     >
                         <span>Show More</span>
                         <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" />
@@ -125,19 +125,19 @@ function ExpandableDescription({ description, maxLength = 500, propertyName = "A
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Modal Header */}
-                        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-[#CBBBAA]/30">
-                            <h3 className="text-xl font-semibold text-[#1E1E1E]">{propertyName}</h3>
+                        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-[#E2E8F0]/30">
+                            <h3 className="text-xl font-semibold text-[#1A365D]">{propertyName}</h3>
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="p-2 -mr-2 rounded-full hover:bg-[#FAF7F2] transition-colors"
+                                className="p-2 -mr-2 rounded-full hover:bg-[#F8F9FA] transition-colors"
                             >
-                                <X size={24} className="text-[#1E1E1E]" />
+                                <X size={24} className="text-[#1A365D]" />
                             </button>
                         </div>
 
                         {/* Modal Content */}
                         <div className="px-6 py-6 overflow-y-auto max-h-[calc(85vh-80px)]">
-                            <div className="text-base md:text-lg text-[#1E1E1E]/80 leading-relaxed whitespace-pre-line">
+                            <div className="text-base md:text-lg text-[#1A365D]/80 leading-relaxed whitespace-pre-line">
                                 {description}
                             </div>
                         </div>
@@ -221,7 +221,7 @@ function Reviews({ property }) {
                 <Star
                     key={i}
                     size={16}
-                    className={i < fullStars ? 'text-[#E17654] fill-current' : 'text-[#CBBBAA]'}
+                    className={i < fullStars ? 'text-[#0077B6] fill-current' : 'text-[#E2E8F0]'}
                 />
             );
         }
@@ -233,13 +233,13 @@ function Reviews({ property }) {
             <Section id="reviews" title="Guest Reviews">
                 <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="animate-pulse bg-white rounded-xl p-6 border border-[#CBBBAA]/40">
+                        <div key={i} className="animate-pulse bg-white rounded-xl p-6 border border-[#E2E8F0]/40">
                             <div className="flex items-center gap-3 mb-3">
-                                <div className="w-10 h-10 bg-[#CBBBAA]/30 rounded-full"></div>
-                                <div className="h-4 bg-[#CBBBAA]/30 rounded w-24"></div>
+                                <div className="w-10 h-10 bg-[#E2E8F0]/30 rounded-full"></div>
+                                <div className="h-4 bg-[#E2E8F0]/30 rounded w-24"></div>
                             </div>
-                            <div className="h-4 bg-[#CBBBAA]/30 rounded w-full mb-2"></div>
-                            <div className="h-4 bg-[#CBBBAA]/30 rounded w-3/4"></div>
+                            <div className="h-4 bg-[#E2E8F0]/30 rounded w-full mb-2"></div>
+                            <div className="h-4 bg-[#E2E8F0]/30 rounded w-3/4"></div>
                         </div>
                     ))}
                 </div>
@@ -260,19 +260,19 @@ function Reviews({ property }) {
                 {reviews.slice(0, 6).map((review, idx) => (
                     <div
                         key={review.id || idx}
-                        className="bg-white rounded-xl p-6 border border-[#CBBBAA]/40 hover:shadow-md transition-shadow"
+                        className="bg-white rounded-xl p-6 border border-[#E2E8F0]/40 hover:shadow-md transition-shadow"
                     >
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-[#3F6F63] to-[#5A8F83] rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                <div className="w-10 h-10 bg-gradient-to-br from-[#0077B6] to-[#5A8F83] rounded-full flex items-center justify-center text-white font-semibold text-sm">
                                     {review.name?.[0] || 'G'}
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-[#1E1E1E]">
+                                    <p className="font-semibold text-[#1A365D]">
                                         {review.name || 'Verified Guest'}
                                     </p>
                                     {isApiReviews && review.date && (
-                                        <p className="text-xs text-[#1E1E1E]/60">
+                                        <p className="text-xs text-[#1A365D]/60">
                                             {formatDate(review.date)}
                                             {review.channel && (
                                                 <span className="ml-2 capitalize">via {review.channel}</span>
@@ -285,7 +285,7 @@ function Reviews({ property }) {
                                 {renderStars(isApiReviews ? review.score : review.rating)}
                             </div>
                         </div>
-                        <p className="text-[#1E1E1E]/80 leading-relaxed line-clamp-4">
+                        <p className="text-[#1A365D]/80 leading-relaxed line-clamp-4">
                             {isApiReviews ? review.content : review.text}
                         </p>
                     </div>
@@ -295,7 +295,7 @@ function Reviews({ property }) {
                 <div className="text-center mt-6">
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="text-[#3F6F63] font-semibold hover:underline"
+                        className="text-[#0077B6] font-semibold hover:underline"
                     >
                         View all {reviews.length} reviews
                     </button>
@@ -316,23 +316,23 @@ function Reviews({ property }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Modal Header */}
-                        <div className="flex-none flex items-center justify-between px-6 py-4 bg-white border-b border-[#CBBBAA]/30">
+                        <div className="flex-none flex items-center justify-between px-6 py-4 bg-white border-b border-[#E2E8F0]/30">
                             <div>
-                                <h3 className="text-xl font-semibold text-[#1E1E1E]">Guest Reviews</h3>
+                                <h3 className="text-xl font-semibold text-[#1A365D]">Guest Reviews</h3>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="flex gap-0.5">
-                                        <Star size={16} className="text-[#E17654] fill-current" />
+                                        <Star size={16} className="text-[#0077B6] fill-current" />
                                     </div>
-                                    <span className="text-sm text-[#1E1E1E]/70 font-medium">
+                                    <span className="text-sm text-[#1A365D]/70 font-medium">
                                         {reviews.length} reviews
                                     </span>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setIsModalOpen(false)}
-                                className="p-2 -mr-2 rounded-full hover:bg-[#FAF7F2] transition-colors"
+                                className="p-2 -mr-2 rounded-full hover:bg-[#F8F9FA] transition-colors"
                             >
-                                <X size={24} className="text-[#1E1E1E]" />
+                                <X size={24} className="text-[#1A365D]" />
                             </button>
                         </div>
 
@@ -342,19 +342,19 @@ function Reviews({ property }) {
                                 {reviews.map((review, idx) => (
                                     <div
                                         key={review.id || idx}
-                                        className="bg-[#FAF7F2] rounded-xl p-6 border border-[#CBBBAA]/20"
+                                        className="bg-[#F8F9FA] rounded-xl p-6 border border-[#E2E8F0]/20"
                                     >
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#3F6F63] font-bold text-sm shadow-sm">
+                                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0077B6] font-bold text-sm shadow-sm">
                                                     {review.name?.[0] || 'G'}
                                                 </div>
                                                 <div>
-                                                    <p className="font-semibold text-[#1E1E1E]">
+                                                    <p className="font-semibold text-[#1A365D]">
                                                         {review.name || 'Verified Guest'}
                                                     </p>
                                                     {isApiReviews && review.date && (
-                                                        <p className="text-xs text-[#1E1E1E]/60">
+                                                        <p className="text-xs text-[#1A365D]/60">
                                                             {formatDate(review.date)}
                                                             {review.channel && (
                                                                 <span className="ml-2 capitalize">via {review.channel}</span>
@@ -367,7 +367,7 @@ function Reviews({ property }) {
                                                 {renderStars(isApiReviews ? review.score : review.rating)}
                                             </div>
                                         </div>
-                                        <p className="text-[#1E1E1E]/80 leading-relaxed text-sm">
+                                        <p className="text-[#1A365D]/80 leading-relaxed text-sm">
                                             {isApiReviews ? review.content : review.text}
                                         </p>
                                     </div>
@@ -484,7 +484,7 @@ function PhotoGallery({ property }) {
                                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                         <button
                                             onClick={() => document.getElementById('book').scrollIntoView({ behavior: 'smooth' })}
-                                            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#E17654] text-white font-semibold rounded-xl hover:bg-[#C65A3A] active:scale-95 transition-all shadow-lg shadow-[#E17654]/30 text-sm sm:text-base touch-manipulation min-h-[48px]"
+                                            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#0077B6] text-white font-semibold rounded-xl hover:bg-[#C65A3A] active:scale-95 transition-all shadow-lg shadow-[#0077B6]/30 text-sm sm:text-base touch-manipulation min-h-[48px]"
                                         >
                                             Reserve Your Stay
                                             <ArrowRight size={18} className="sm:w-5 sm:h-5" />
@@ -510,13 +510,13 @@ function PhotoGallery({ property }) {
                             onClick={() => navigateMobile('prev')}
                             className="absolute left-3 top-[35%] -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
                         >
-                            <ChevronLeft size={20} className="text-[#1E1E1E]" />
+                            <ChevronLeft size={20} className="text-[#1A365D]" />
                         </button>
                         <button
                             onClick={() => navigateMobile('next')}
                             className="absolute right-3 top-[35%] -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xl hover:bg-white active:scale-95 transition-all z-20 touch-manipulation"
                         >
-                            <ChevronRight size={20} className="text-[#1E1E1E]" />
+                            <ChevronRight size={20} className="text-[#1A365D]" />
                         </button>
                         <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-semibold z-20">
                             {currentMobileIndex + 1} / {photos.length}
@@ -529,13 +529,13 @@ function PhotoGallery({ property }) {
                             onClick={() => navigateMobile('prev')}
                             className="absolute left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
                         >
-                            <ChevronLeft size={22} className="text-[#1E1E1E]" />
+                            <ChevronLeft size={22} className="text-[#1A365D]" />
                         </button>
                         <button
                             onClick={() => navigateMobile('next')}
                             className="absolute right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-all z-20 hover:scale-110"
                         >
-                            <ChevronRight size={22} className="text-[#1E1E1E]" />
+                            <ChevronRight size={22} className="text-[#1A365D]" />
                         </button>
                         <div className="absolute top-8 right-8 bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold z-20">
                             {currentMobileIndex + 1} / {photos.length}
@@ -626,13 +626,13 @@ function Gallery({ property }) {
                             key={idx}
                             src={src}
                             alt={`${property.name} photo ${idx + 1}`}
-                            className="rounded-2xl h-52 w-full object-cover ring-1 ring-[#CBBBAA]/60 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
+                            className="rounded-2xl h-52 w-full object-cover ring-1 ring-[#E2E8F0]/60 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
                             onClick={() => setSelectedImage(idx + 1)} // +1 because index 0 is hero
                         />
                     ))}
                     {remainingCount > 0 && (
                         <div
-                            className="rounded-2xl h-52 w-full bg-[#3F6F63] flex items-center justify-center cursor-pointer hover:bg-[#335b52] transition-colors ring-1 ring-[#3F6F63]/40 shadow-lg shadow-[#3F6F63]/30"
+                            className="rounded-2xl h-52 w-full bg-[#0077B6] flex items-center justify-center cursor-pointer hover:bg-[#335b52] transition-colors ring-1 ring-[#0077B6]/40 shadow-lg shadow-[#0077B6]/30"
                             onClick={() => setShowAllPhotos(true)}
                         >
                             <div className="text-center text-white">
@@ -662,13 +662,13 @@ function Gallery({ property }) {
             {showAllPhotos && (
                 <div className="fixed inset-0 z-50 bg-[#0F1514]/95 backdrop-blur-sm p-4 overflow-y-auto" onClick={() => setShowAllPhotos(false)}>
                     <div className="max-w-7xl mx-auto">
-                        <div className="flex items-center justify-between mb-6 sticky top-4 bg-[#0F1514]/60 backdrop-blur rounded-lg p-4 z-10 text-[#FAF7F2]">
+                        <div className="flex items-center justify-between mb-6 sticky top-4 bg-[#0F1514]/60 backdrop-blur rounded-lg p-4 z-10 text-[#F8F9FA]">
                             <h3 className="text-xl font-semibold text-white">All Photos ({allPhotos.length})</h3>
                             <button onClick={() => setShowAllPhotos(false)} className="text-white hover:text-zinc-300 transition-colors p-2"><X size={32} /></button>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                             {allPhotos.map((src, idx) => (
-                                <img key={idx} src={src} alt={`${property.name} photo ${idx + 1}`} className="rounded-lg w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity ring-1 ring-[#CBBBAA]/60" onClick={(e) => { e.stopPropagation(); setShowAllPhotos(false); setSelectedImage(idx); }} />
+                                <img key={idx} src={src} alt={`${property.name} photo ${idx + 1}`} className="rounded-lg w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity ring-1 ring-[#E2E8F0]/60" onClick={(e) => { e.stopPropagation(); setShowAllPhotos(false); setSelectedImage(idx); }} />
                             ))}
                         </div>
                     </div>
@@ -691,13 +691,13 @@ export default function PropertyDetails() {
             <PhotoGallery property={property} />
 
             {/* Property Details Section */}
-            <div className="bg-white border-b border-[#CBBBAA]/30">
+            <div className="bg-white border-b border-[#E2E8F0]/30">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
                     <div className="max-w-4xl">
-                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-6 text-sm sm:text-base text-[#1E1E1E]/70 mb-8">
-                            <span className="flex items-center gap-2"><Users size={18} className="text-[#3F6F63]" /><span className="font-medium">8 guests</span></span>
-                            <span className="flex items-center gap-2"><Bed size={18} className="text-[#3F6F63]" /><span className="font-medium">3 bedrooms</span></span>
-                            <span className="flex items-center gap-2"><Bath size={18} className="text-[#3F6F63]" /><span className="font-medium">2 baths</span></span>
+                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-6 text-sm sm:text-base text-[#1A365D]/70 mb-8">
+                            <span className="flex items-center gap-2"><Users size={18} className="text-[#0077B6]" /><span className="font-medium">8 guests</span></span>
+                            <span className="flex items-center gap-2"><Bed size={18} className="text-[#0077B6]" /><span className="font-medium">3 bedrooms</span></span>
+                            <span className="flex items-center gap-2"><Bath size={18} className="text-[#0077B6]" /><span className="font-medium">2 baths</span></span>
                         </div>
                         <ExpandableDescription description={property.description} maxLength={500} propertyName={`About ${property.name}`} />
                     </div>
@@ -708,9 +708,9 @@ export default function PropertyDetails() {
             <Section id="highlights" eyebrow="Why you'll love it" title="Highlights">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     {property.highlights.map((h, i) => (
-                        <div key={i} className="rounded-2xl border border-[#CBBBAA]/70 p-6 bg-white flex items-center gap-4">
-                            <div className="p-3 bg-[#E17654]/10 rounded-xl text-[#E17654]"><h.icon size={24} /></div>
-                            <span className="font-semibold text-[#1E1E1E]">{h.label}</span>
+                        <div key={i} className="rounded-2xl border border-[#E2E8F0]/70 p-6 bg-white flex items-center gap-4">
+                            <div className="p-3 bg-[#0077B6]/10 rounded-xl text-[#0077B6]"><h.icon size={24} /></div>
+                            <span className="font-semibold text-[#1A365D]">{h.label}</span>
                         </div>
                     ))}
                 </div>
@@ -721,7 +721,7 @@ export default function PropertyDetails() {
 
             {/* Booking */}
             <Section id="book" title="Book Your Stay">
-                <div className="mt-12 w-full rounded-3xl overflow-hidden shadow-lg border border-[#CBBBAA]/60 bg-white min-h-[500px] flex flex-col items-center justify-center p-4 sm:p-8">
+                <div className="mt-12 w-full rounded-3xl overflow-hidden shadow-lg border border-[#E2E8F0]/60 bg-white min-h-[500px] flex flex-col items-center justify-center p-4 sm:p-8">
                     {property.booking?.hostexWidget ? (
                         <>
                             {/* Script Loader */}
@@ -752,14 +752,14 @@ export default function PropertyDetails() {
                     <div className="space-y-10">
                         {property.amenities.map((category, idx) => (
                             <div key={idx}>
-                                <h3 className="text-xl font-medium text-[#1E1E1E] mb-4 border-b border-[#CBBBAA]/30 pb-2 inline-block pr-8">
+                                <h3 className="text-xl font-medium text-[#1A365D] mb-4 border-b border-[#E2E8F0]/30 pb-2 inline-block pr-8">
                                     {category.category}
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                     {category.items.map((item, i) => (
                                         <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/50 transition-colors">
-                                            <item.icon className="text-[#3F6F63] flex-shrink-0 mt-0.5" size={20} />
-                                            <span className="text-[#1E1E1E]/90 text-sm sm:text-base leading-snug">{item.label}</span>
+                                            <item.icon className="text-[#0077B6] flex-shrink-0 mt-0.5" size={20} />
+                                            <span className="text-[#1A365D]/90 text-sm sm:text-base leading-snug">{item.label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -769,8 +769,8 @@ export default function PropertyDetails() {
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {property.amenities.map((a, i) => (
-                            <div key={i} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-[#CBBBAA]/40 text-[#1E1E1E] font-medium">
-                                <a.icon className="text-[#3F6F63]" size={20} />
+                            <div key={i} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-[#E2E8F0]/40 text-[#1A365D] font-medium">
+                                <a.icon className="text-[#0077B6]" size={20} />
                                 <span>{a.label}</span>
                             </div>
                         ))}
@@ -795,7 +795,7 @@ export default function PropertyDetails() {
                             loading="lazy"
                         />
                     </div>
-                    <p className="text-xs text-[#1E1E1E]/60 text-center italic mt-2">
+                    <p className="text-xs text-[#1A365D]/60 text-center italic mt-2">
                         Location is approximate until booked
                     </p>
                 </div>
