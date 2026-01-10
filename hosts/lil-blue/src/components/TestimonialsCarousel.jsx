@@ -177,8 +177,8 @@ export default function TestimonialsCarousel() {
                             key={index}
                             onClick={() => setCurrentIndex(index)}
                             className={`w-2.5 h-2.5 rounded-full transition-all ${index === currentIndex
-                                    ? "bg-[#00B4D8] w-8"
-                                    : "bg-white/30 hover:bg-white/50"
+                                ? "bg-[#00B4D8] w-8"
+                                : "bg-white/30 hover:bg-white/50"
                                 }`}
                             aria-label={`Go to testimonial ${index + 1}`}
                         />
