@@ -75,7 +75,7 @@ export const SITE_CONFIG = {
     tagline: "Your Premier Vacation Rental Experience",
     logoText: "TRG",
     description: "Experience the ultimate getaway with Tide Ridge. We offer a curated selection of premier vacation rentals designed for comfort, relaxation, and unforgettable memories.",
-    heroImage: "/photos/landing-hero.jpg", // Using Lil Blue's hero for now, or a generic one
+    heroImage: "/photos/gallery-4.jpg", // Using Lil Blue's hero for now, or a generic one
   },
 
   // Global Contact Info
@@ -91,6 +91,9 @@ export const SITE_CONFIG = {
       name: "Lil' Blue",
       slug: "lil-blue", // URL path: /properties/lil-blue
       tagline: "Waterfront Serenity in Crystal River",
+      guests: 8,
+      bedrooms: 3,
+      bathrooms: 2,
       description: lil_blue_description,
       location: {
         city: "Crystal River",

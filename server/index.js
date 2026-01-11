@@ -607,6 +607,67 @@ app.get('/api/hostex/reviews/:propertyId', async (req, res) => {
   }
 });
 
+// Simple in-memory cache for availabilities (5 minute TTL)
+const availabilityCache = new Map();
+
+app.get('/api/hostex/availability/:propertyId', async (req, res) => {
+  const { propertyId } = req.params;
+  const hostexToken = process.env.HOSTEX_ACCESS_TOKEN;
+
+  if (!hostexToken) {
+    console.error('HOSTEX_ACCESS_TOKEN not configured');
+    return res.status(500).json({ error: 'Hostex API not configured' });
+  }
+
+  // Check cache first
+  const cached = availabilityCache.get(propertyId);
+  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+    return res.json(cached.data);
+  }
+
+  try {
+    // We fetch a wide range to cover possible user selections (e.g., next 2 years)
+    const startDate = new Date().toISOString().split('T')[0];
+    const endDate = new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0];
+
+    const response = await fetch(
+      `https://api.hostex.io/v3/availabilities?property_ids=${propertyId}&start_date=${startDate}&end_date=${endDate}`,
+      {
+        headers: {
+          'Hostex-Access-Token': hostexToken
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Hostex Availability API error:', response.status);
+      return res.status(response.status).json({ error: 'Failed to fetch availability from Hostex' });
+    }
+
+    const data = await response.json();
+
+    // Extract only the unavailable/blocked dates for easier consumption
+    const propertyData = data.data?.properties?.find(p => String(p.id) === String(propertyId));
+    if (!propertyData) {
+      return res.json({ blockedDates: [] });
+    }
+
+    const blockedDates = propertyData.availabilities
+      .filter(a => a.available === false)
+      .map(a => a.date);
+
+    const result = { blockedDates };
+
+    // Cache the result
+    availabilityCache.set(propertyId, { data: result, timestamp: Date.now() });
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching Hostex availability:', error);
+    res.status(500).json({ error: 'Failed to fetch availability' });
+  }
+});
+
 /** Authentication endpoints */
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;

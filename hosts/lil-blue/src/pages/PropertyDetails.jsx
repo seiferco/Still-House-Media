@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Menu, Users, Bed, Bath, ArrowRight } from "lucide-react";
+import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Menu, Users, Bed, Bath, ArrowRight, Calendar } from "lucide-react";
 import ContactSection from "../components/ContactSection";
 import ThingsToKnow from "../components/ThingsToKnow";
 import { SITE_CONFIG } from "../site-config";
@@ -148,6 +148,122 @@ function ExpandableDescription({ description, maxLength = 500, propertyName = "A
     );
 }
 
+/* Amenities Modal Component */
+function AmenitiesModal({ isOpen, onClose, property }) {
+    // Handle escape key and body scroll lock
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isOpen) onClose();
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen, onClose]);
+
+    if (!isOpen) return null;
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={onClose}
+        >
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Modal Header */}
+                <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 bg-white border-b border-[#E2E8F0]/30">
+                    <h3 className="text-xl font-semibold text-[#1A365D]">Amenities</h3>
+                    <button
+                        onClick={onClose}
+                        className="p-2 -mr-2 rounded-full hover:bg-[#F8F9FA] transition-colors"
+                    >
+                        <X size={24} className="text-[#1A365D]" />
+                    </button>
+                </div>
+
+                {/* Modal Content */}
+                <div className="px-6 py-8 overflow-y-auto max-h-[calc(85vh-80px)]">
+                    <div className="space-y-12">
+                        {property.amenities.map((category, idx) => (
+                            <div key={idx}>
+                                <h4 className="text-lg font-bold text-[#1A365D] mb-6 flex items-center gap-3">
+                                    <span className="w-1 h-6 bg-[#0077B6] rounded-full" />
+                                    {category.category}
+                                </h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
+                                    {category.items.map((item, i) => (
+                                        <div key={i} className="flex items-center gap-4 py-1">
+                                            <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#0077B6]">
+                                                <item.icon size={20} />
+                                            </div>
+                                            <span className="text-[#1A365D]/80 font-medium">{item.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+
+function AmenitiesSection({ property }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Flatten all amenities to get a preview list
+    const allAmenities = property.amenities.flatMap(cat => cat.items);
+    const previewAmenities = allAmenities.slice(0, 8);
+    const totalCount = allAmenities.length;
+
+    return (
+        <Section id="amenities" title="Amenities">
+            <div className="relative">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    {previewAmenities.map((item, i) => (
+                        <div key={i} className="flex items-center gap-4 p-5 rounded-2xl border border-[#E2E8F0]/50 bg-white hover:border-[#0077B6]/30 hover:shadow-md transition-all group">
+                            <div className="p-3 bg-gradient-to-br from-[#CAF0F8] to-white rounded-xl text-[#0077B6] group-hover:scale-110 transition-transform">
+                                <item.icon size={24} />
+                            </div>
+                            <span className="font-semibold text-[#1A365D]">{item.label}</span>
+                        </div>
+                    ))}
+                </div>
+
+                {totalCount > 8 && (
+                    <div className="flex justify-center">
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="px-8 py-4 bg-white border-2 border-[#1A365D] text-[#1A365D] font-bold rounded-xl hover:bg-[#1A365D] hover:text-white transition-all shadow-sm flex items-center gap-2"
+                        >
+                            Show all {totalCount} amenities
+                        </button>
+                    </div>
+                )}
+
+                <AmenitiesModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    property={property}
+                />
+            </div>
+        </Section>
+    );
+}
+
+
 function Reviews({ property }) {
     return (
         <Section id="reviews" eyebrow="What guests say" title="Guest Reviews">
@@ -240,10 +356,10 @@ function PhotoGallery({ property }) {
                                     className="text-white"
                                 >
                                     <div className="md:mb-0">
-                                        <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-3">
+                                        <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-3 drop-shadow-md">
                                             {property.tagline}
                                         </div>
-                                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-0 md:mb-12 lg:mb-50 leading-tight">
+                                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-lg mb-0 md:mb-12 lg:mb-50 leading-tight">
                                             {property.name}
                                         </h1>
                                     </div>
@@ -455,9 +571,232 @@ function Gallery({ property }) {
     );
 }
 
+/* Booking Inputs Component */
+function BookingInputs({ property, blockedDates = [] }) {
+    const today = new Date().toISOString().split('T')[0];
+    const [checkIn, setCheckIn] = useState("");
+    const [checkOut, setCheckOut] = useState("");
+    const [guests, setGuests] = useState(2);
+    const [isGuestOpen, setIsGuestOpen] = useState(false);
+    const [error, setError] = useState("");
+
+    // Auto-adjust checkout if checkin changes
+    const handleCheckInChange = (val) => {
+        setCheckIn(val);
+        setError("");
+        if (checkOut && val >= checkOut) {
+            // Set checkout to next day after checkin
+            const nextDay = new Date(val);
+            nextDay.setDate(nextDay.getDate() + 1);
+            setCheckOut(nextDay.toISOString().split('T')[0]);
+        }
+    };
+
+    const handleSearch = () => {
+        if (!checkIn || !checkOut) {
+            setError("Please select both check-in and check-out dates.");
+            return;
+        }
+
+        // Check availability against blocked dates
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        const selectedDates = [];
+        let curr = new Date(start);
+
+        while (curr < end) {
+            selectedDates.push(curr.toISOString().split('T')[0]);
+            curr.setDate(curr.getDate() + 1);
+        }
+
+        const isUnavailable = selectedDates.some(date => blockedDates.includes(date));
+        if (isUnavailable) {
+            setError("One or more of your selected dates are already booked. Please try different dates.");
+            return;
+        }
+
+        const widgetConfig = property.booking?.hostexWidget;
+        if (!widgetConfig) return;
+
+        // Decode host_id and widget_host from the widgetId (base64)
+        let hostId = "103639"; // Fallback from example
+        let widgetHost = "https://w.hostexbooking.site";
+
+        try {
+            const decoded = JSON.parse(atob(widgetConfig.widgetId));
+            hostId = decoded.host_id || hostId;
+            widgetHost = decoded.widget_host || widgetHost;
+        } catch (e) {
+            console.error("Failed to decode Hostex widgetId", e);
+        }
+
+        const baseUrl = `${widgetHost}/book/${widgetConfig.listingId}`;
+
+        const params = new URLSearchParams();
+        params.append("check_in", checkIn);
+        params.append("check_out", checkOut);
+        params.append("listing_id", widgetConfig.listingId);
+        params.append("host_id", hostId);
+        params.append("site_type", "1");
+        params.append("adults", guests.toString());
+        params.append("children", "0");
+        params.append("infants", "0");
+        params.append("pets", "0");
+        params.append("rate_plan_id", "14470"); // Specific to this listing from working example
+        params.append("origin", window.location.href);
+
+        const fullUrl = `${baseUrl}?${params.toString()}`;
+        window.open(fullUrl, '_blank');
+    };
+
+    return (
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E2E8F0] mb-8 max-w-4xl mx-auto -mt-6 relative z-10">
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                    {error}
+                </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                {/* Check In */}
+                <div className="relative">
+                    <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Check In</label>
+                    <div className="relative">
+                        <input
+                            type="date"
+                            value={checkIn}
+                            min={today}
+                            onChange={(e) => handleCheckInChange(e.target.value)}
+                            className={`w-full pl-10 pr-4 py-3 bg-[#F8F9FA] border ${error && !checkIn ? 'border-red-300' : 'border-[#E2E8F0]'} rounded-xl focus:ring-2 focus:ring-[#0077B6] focus:border-transparent outline-none text-[#1A365D] font-medium transition-colors`}
+                        />
+                        <Calendar size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0077B6]" />
+                    </div>
+                </div>
+
+                {/* Check Out */}
+                <div className="relative">
+                    <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Check Out</label>
+                    <div className="relative">
+                        <input
+                            type="date"
+                            value={checkOut}
+                            min={checkIn || today}
+                            onChange={(e) => { setCheckOut(e.target.value); setError(""); }}
+                            className={`w-full pl-10 pr-4 py-3 bg-[#F8F9FA] border ${error && !checkOut ? 'border-red-300' : 'border-[#E2E8F0]'} rounded-xl focus:ring-2 focus:ring-[#0077B6] focus:border-transparent outline-none text-[#1A365D] font-medium transition-colors`}
+                        />
+                        <Calendar size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0077B6]" />
+                    </div>
+                </div>
+
+                {/* Guests */}
+                <div className="relative">
+                    <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Guests</label>
+                    <button
+                        onClick={() => setIsGuestOpen(!isGuestOpen)}
+                        className="w-full flex items-center justify-between pl-10 pr-4 py-3 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl focus:ring-2 focus:ring-[#0077B6] focus:border-transparent outline-none text-[#1A365D] font-medium text-left"
+                    >
+                        <span>{guests} Guest{guests !== 1 ? 's' : ''}</span>
+                        {isGuestOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </button>
+                    <Users size={18} className="absolute left-3.5 top-10 text-[#0077B6]" />
+
+                    {/* Guest Dropdown */}
+                    {isGuestOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-[#E2E8F0] p-4 z-20">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[#1A365D] font-medium">Adults & Children</span>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => setGuests(Math.max(1, guests - 1))}
+                                        className="w-8 h-8 rounded-full border border-[#E2E8F0] flex items-center justify-center text-[#0077B6] hover:bg-[#F0F9FF] disabled:opacity-50"
+                                        disabled={guests <= 1}
+                                    >
+                                        -
+                                    </button>
+                                    <span className="w-4 text-center font-bold text-[#1A365D]">{guests}</span>
+                                    <button
+                                        onClick={() => setGuests(Math.min(property.guests || 10, guests + 1))}
+                                        className="w-8 h-8 rounded-full border border-[#E2E8F0] flex items-center justify-center text-[#0077B6] hover:bg-[#F0F9FF]"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsGuestOpen(false)}
+                                className="w-full mt-4 py-2 bg-[#F8F9FA] text-[#0077B6] font-semibold rounded-lg hover:bg-[#E0F2FE] transition-colors text-sm"
+                            >
+                                Done
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* CTA Button */}
+                <div className="pt-6">
+                    <button
+                        onClick={handleSearch}
+                        className="w-full py-3 bg-[#0077B6] text-white font-bold rounded-xl hover:bg-[#005F92] transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                    >
+                        Check Availability
+                        <ArrowRight size={18} />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function BookingSection({ property, blockedDates }) {
+    return (
+        <Section id="book" title="Book Your Stay">
+            <div className="relative">
+                <BookingInputs property={property} blockedDates={blockedDates} />
+
+                <div className="w-full rounded-3xl overflow-hidden shadow-lg border border-[#E2E8F0]/60 bg-white min-h-[500px] flex flex-col items-center justify-center p-4 sm:p-8">
+                    {property.booking?.hostexWidget ? (
+                        <>
+                            {/* Script Loader */}
+                            <ScriptLoader url={property.booking.hostexWidget.scriptUrl} />
+                            <hostex-booking-widget
+                                listing-id={property.booking.hostexWidget.listingId}
+                                id={property.booking.hostexWidget.widgetId}
+                                style={{ width: "100%", height: "100%", minHeight: "600px", display: "block" }}
+                            ></hostex-booking-widget>
+                        </>
+                    ) : property.booking?.hostexUrl ? (
+                        <iframe
+                            src={property.booking.hostexUrl}
+                            className="w-full h-[800px] border-0"
+                            title="Book Now"
+                            loading="lazy"
+                        />
+                    ) : (
+                        <div className="p-12 text-center text-zinc-500">Booking widget not configured.</div>
+                    )}
+                </div>
+            </div>
+        </Section>
+    );
+}
+
 export default function PropertyDetails() {
     const { id } = useParams();
     const property = SITE_CONFIG.properties.find(p => p.slug === id);
+    const [blockedDates, setBlockedDates] = useState([]);
+
+    useEffect(() => {
+        if (property?.booking?.hostexPropertyId) {
+            fetch(`/api/hostex/availability/${property.booking.hostexPropertyId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.blockedDates) {
+                        setBlockedDates(data.blockedDates);
+                    }
+                })
+                .catch(err => console.error("Failed to fetch availability:", err));
+        }
+    }, [property]);
 
     if (!property) {
         return <Navigate to="/properties" replace />;
@@ -496,64 +835,9 @@ export default function PropertyDetails() {
             {/* Gallery */}
             <Gallery property={property} />
 
-            {/* Booking */}
-            <Section id="book" title="Book Your Stay">
-                <div className="mt-12 w-full rounded-3xl overflow-hidden shadow-lg border border-[#E2E8F0]/60 bg-white min-h-[500px] flex flex-col items-center justify-center p-4 sm:p-8">
-                    {property.booking?.hostexWidget ? (
-                        <>
-                            {/* Script Loader */}
-                            <ScriptLoader url={property.booking.hostexWidget.scriptUrl} />
-                            <hostex-booking-widget
-                                listing-id={property.booking.hostexWidget.listingId}
-                                id={property.booking.hostexWidget.widgetId}
-                                style={{ width: "100%", height: "100%", minHeight: "600px", display: "block" }}
-                            ></hostex-booking-widget>
-                        </>
-                    ) : property.booking?.hostexUrl ? (
-                        <iframe
-                            src={property.booking.hostexUrl}
-                            className="w-full h-[800px] border-0"
-                            title="Book Now"
-                            loading="lazy"
-                        />
-                    ) : (
-                        <div className="p-12 text-center text-zinc-500">Booking widget not configured.</div>
-                    )}
-                </div>
-            </Section>
+            <BookingSection property={property} blockedDates={blockedDates} />
 
-            {/* Amenities */}
-
-            <Section id="amenities" title="Amenities">
-                {property.amenities[0]?.category ? (
-                    <div className="space-y-10">
-                        {property.amenities.map((category, idx) => (
-                            <div key={idx}>
-                                <h3 className="text-xl font-medium text-[#1A365D] mb-4 border-b border-[#E2E8F0]/30 pb-2 inline-block pr-8">
-                                    {category.category}
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                    {category.items.map((item, i) => (
-                                        <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/50 transition-colors">
-                                            <item.icon className="text-[#0077B6] flex-shrink-0 mt-0.5" size={20} />
-                                            <span className="text-[#1A365D]/90 text-sm sm:text-base leading-snug">{item.label}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {property.amenities.map((a, i) => (
-                            <div key={i} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-[#E2E8F0]/40 text-[#1A365D] font-medium">
-                                <a.icon className="text-[#0077B6]" size={20} />
-                                <span>{a.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </Section>
+            <AmenitiesSection property={property} />
 
             {/* Reviews */}
             <Reviews property={property} />

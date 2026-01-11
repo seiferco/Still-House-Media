@@ -7,64 +7,94 @@ import {
     Map,
     Sun,
     Anchor,
-    Camera
+    Camera,
+    FishSymbol,
+    Binoculars
 } from "lucide-react";
+
 
 const attractions = [
     {
         id: 1,
-        category: "Beaches",
-        icon: Waves,
-        title: "Pristine Gulf Beaches",
-        description: "Crystal clear waters and white sandy beaches just minutes away. Perfect for swimming, sunbathing, and shell collecting.",
+        category: "Swimming",
+        icon: Binoculars,
+        title: "Swim With Manatees",
+        description: "Crystal River is the only place in the U.S. where you can legally swim with manatees. Multiple reputable tour operators are just minutes away.",
         distance: "5 min drive",
-        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+        image: "/photos/attractions/to-do-trg1.jpg",
     },
     {
         id: 2,
-        category: "Dining",
-        icon: UtensilsCrossed,
-        title: "Local Seafood & Dining",
-        description: "Fresh-caught seafood restaurants and waterfront dining experiences. From casual beach bars to upscale oceanfront establishments.",
+        category: "Nature",
+        icon: Waves,
+        title: "Three Sisters Springs",
+        description: "One of the clearest, most beautiful natural spring systems in Florida.",
         distance: "10 min drive",
-        image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80",
+        image: "/photos/attractions/to-do-trg2.jpg",
     },
     {
         id: 3,
         category: "Water Sports",
-        icon: Anchor,
-        title: "Water Adventures",
-        description: "Kayaking, paddleboarding, jet skiing, and boat rentals. Explore the beautiful Florida waterways and discover marine life.",
+        icon: Waves,
+        title: "Kayaking & Paddleboarding",
+        description: "Launch directly from Lil’ Blue’s dock using the included kayaks or explore local launching spots.",
         distance: "15 min drive",
-        image: "https://images.unsplash.com/photo-1530053969600-caed2596d242?auto=format&fit=crop&w=800&q=80",
+        image: "/photos/attractions/to-do-trg3.jpg",
     },
     {
         id: 4,
         category: "Nature",
         icon: Palmtree,
-        title: "State Parks & Nature",
-        description: "Explore stunning nature preserves, hiking trails, and wildlife sanctuaries. Perfect for eco-tours and photography.",
+        title: "Fishing & Boating",
+        description: "The Nature Coast is known for: Redfish, Snook, Trout, Flounder, Blue crabs. Tie up your boat at the house or use one of many local ramps, including the Fort Island Trail Boat Ramp.",
         distance: "20 min drive",
-        image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=800&q=80",
+        image: "/photos/attractions/to-do-trg4.jpg",
     },
     {
         id: 5,
         category: "Shopping",
         icon: ShoppingBag,
-        title: "Shopping & Entertainment",
-        description: "Boutique shopping, outlet malls, and local artisan markets. Find unique souvenirs and Florida treasures.",
+        title: "Gulf Coast Beaches",
+        description: "Enjoy soft sand, sunsets, and calm Gulf waters just a short drive away.",
         distance: "10 min drive",
-        image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
+        image: "/photos/attractions/to-do-trg5.jpg",
     },
     {
         id: 6,
         category: "Day Trips",
         icon: Map,
-        title: "Nearby Attractions",
-        description: "Theme parks, aquariums, and historic sites all within easy reach. Create unforgettable family adventures.",
-        distance: "45 min drive",
-        image: "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?auto=format&fit=crop&w=800&q=80",
+        title: "Wildlife Watching",
+        description: "Explore Crystal River’s charming downtown: Seafood restaurants, Cafes, Bars, Grocery stores, Shopping",
+        distance: "Shortmin drive",
+        image: "/photos/attractions/to-do-trg6.jpg",
     },
+    {
+        id: 7,
+        category: "Day Trips",
+        icon: Map,
+        title: "State Parks & Trails",
+        description: "Explore Crystal River’s charming downtown: Seafood restaurants, Cafes, Bars, Grocery stores, Shopping",
+        distance: "Shortmin drive",
+        image: "/photos/attractions/to-do-trg7.jpg",
+    },
+    {
+        id: 8,
+        category: "Day Trips",
+        icon: Map,
+        title: "Local Dining & Shopping",
+        description: "Explore Crystal River’s charming downtown: Seafood restaurants, Cafes, Bars, Grocery stores, Shopping",
+        distance: "Shortmin drive",
+        image: "/photos/attractions/to-do-trg8.jpg",
+    },
+    {
+        id: 9,
+        category: "Day Trips",
+        icon: Map,
+        title: "Learn The History",
+        description: "Learn Native American history at this 61-acre National Historic Landmark, a ceremonial center active for about 1,600 years. Walk the six-mound complex and plaza, then climb Temple Mound A—the highest point in Crystal River.",
+        distance: "Shortmin drive",
+        image: "/photos/attractions/to-do-trg9.jpg",
+    }
 ];
 
 const containerVariants = {
@@ -88,11 +118,11 @@ const cardVariants = {
 
 export default function AttractionsSection() {
     return (
-        <section className="py-20 px-4 bg-gradient-to-b from-[#CAF0F8]/30 to-white" id="attractions">
+        <section className="py-20 px-4 bg-gradient-to-b from-[#F0F9FF] to-white" id="attractions">
             <div className="max-w-7xl mx-auto">
                 {/* Section Header */}
                 <motion.div
-                    className="text-center mb-14"
+                    className="text-center mb-16"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -106,8 +136,7 @@ export default function AttractionsSection() {
                         Explore the Area
                     </h2>
                     <p className="text-lg text-[#64748B] max-w-2xl mx-auto">
-                        From stunning beaches to exciting adventures, discover everything our
-                        Florida paradise has to offer during your stay.
+                        From stunning springs to charming downtown spots, discover everything Crystal River has to offer.
                     </p>
                 </motion.div>
 
@@ -123,37 +152,56 @@ export default function AttractionsSection() {
                         <motion.div
                             key={attraction.id}
                             variants={cardVariants}
-                            className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-[#E2E8F0]"
+                            className={`group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-[#E2E8F0] flex flex-col ${!attraction.image ? 'justify-between' : ''}`}
                         >
-                            {/* Image */}
-                            <div className="relative h-48 overflow-hidden">
-                                <img
-                                    src={attraction.image}
-                                    alt={attraction.title}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#1A365D]/60 to-transparent" />
+                            {/* Image (if available) */}
+                            {attraction.image ? (
+                                <div className="relative h-48 overflow-hidden flex-shrink-0">
+                                    <img
+                                        src={attraction.image}
+                                        alt={attraction.title}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A365D]/60 to-transparent" />
 
-                                {/* Category Badge */}
-                                <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-[#0077B6] text-xs font-semibold">
-                                    <attraction.icon size={14} />
-                                    {attraction.category}
+                                    {/* Category Badge */}
+                                    <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-[#0077B6] text-xs font-semibold">
+                                        <attraction.icon size={14} />
+                                        {attraction.category}
+                                    </div>
                                 </div>
-
-                                {/* Distance Badge */}
-                                <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-[#0077B6] text-white text-xs font-medium">
-                                    {attraction.distance}
+                            ) : (
+                                /* No Image: Icon Header */
+                                <div className="p-6 pb-0 flex items-center gap-3">
+                                    <div className="p-3 rounded-xl bg-[#CAF0F8] text-[#0077B6]">
+                                        <attraction.icon size={24} />
+                                    </div>
+                                    <div className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+                                        {attraction.category}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Content */}
-                            <div className="p-6">
-                                <h3 className="text-lg font-bold text-[#1A365D] mb-2 group-hover:text-[#0077B6] transition-colors">
+                            <div className="p-6 flex-grow flex flex-col">
+                                <h3 className="text-lg font-bold text-[#1A365D] mb-3 group-hover:text-[#0077B6] transition-colors">
                                     {attraction.title}
                                 </h3>
-                                <p className="text-[#64748B] text-sm leading-relaxed">
+                                <p className="text-[#64748B] text-sm leading-relaxed mb-4">
                                     {attraction.description}
                                 </p>
+
+                                {/* List Items (if available) */}
+                                {attraction.hasList && (
+                                    <ul className="mt-auto space-y-2">
+                                        {attraction.listItems.map((item, idx) => (
+                                            <li key={idx} className="flex items-start gap-2 text-sm text-[#64748B]">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#0077B6] mt-1.5 flex-shrink-0" />
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         </motion.div>
                     ))}

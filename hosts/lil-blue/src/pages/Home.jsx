@@ -82,7 +82,7 @@ export default function Home() {
                             {/* Headline */}
                             <motion.h1
                                 variants={fadeUp}
-                                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
+                                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white drop-shadow-lg leading-tight mb-6"
                                 style={{ fontFamily: "'Playfair Display', serif" }}
                             >
                                 {SITE_CONFIG.brand.name}
@@ -206,24 +206,24 @@ export default function Home() {
                         >
                             <div className="space-y-4">
                                 <img
-                                    src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=400&q=80"
+                                    src="/photos/gallery-4.jpg"
                                     alt="Beach house exterior"
                                     className="w-full h-48 object-cover rounded-2xl shadow-md"
                                 />
                                 <img
-                                    src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=400&q=80"
+                                    src="/photos/gallery-9.jpg"
                                     alt="Living room interior"
                                     className="w-full h-32 object-cover rounded-2xl shadow-md"
                                 />
                             </div>
                             <div className="space-y-4 pt-8">
                                 <img
-                                    src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=400&q=80"
+                                    src="/photos/gallery-17.jpg"
                                     alt="Kitchen"
                                     className="w-full h-32 object-cover rounded-2xl shadow-md"
                                 />
                                 <img
-                                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80"
+                                    src="/photos/gallery-39.jpg"
                                     alt="Beach view"
                                     className="w-full h-48 object-cover rounded-2xl shadow-md"
                                 />
@@ -336,6 +336,67 @@ export default function Home() {
                             <ArrowRight size={18} />
                         </Link>
                     </motion.div>
+                </div>
+            </section>
+
+            {/* About Section */}
+            <section className="py-20 px-4 bg-white overflow-hidden">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        {/* Text Content */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <h2
+                                className="text-3xl md:text-4xl font-bold text-[#1A365D] mb-6"
+                                style={{ fontFamily: "'Playfair Display', serif" }}
+                            >
+                                Why Guests Love Staying With Us
+                            </h2>
+                            <div className="space-y-6 text-lg text-[#64748B] leading-relaxed">
+                                <p>
+                                    At Tide Ridge Getaways, our commitment to you goes beyond providing a place to stay—we’re dedicated to delivering a truly exceptional, 5-star experience every single time.
+                                </p>
+                                <p>
+                                    From the moment you arrive at our charming waterfront home in Crystal River, Florida, we focus on the little details that make your getaway unforgettable. Our cozy, modern retreat is meticulously cleaned, thoughtfully furnished, and ready to welcome you with everything you need for relaxation and adventure: a private dock for sunset views, complimentary kayaks to explore the life rich waters, a fully equipped kitchen, and a game room for indoor fun on rainy days.
+                                </p>
+                                <p>
+                                    We treat every guest like family because we understand that your time away is precious. Our goal is simple: to ensure you leave with memories full of peace, joy, and that rare feeling of being perfectly taken care of.
+                                </p>
+                                <p>
+                                    We’re proud that our guests consistently rate their stays with us 5 stars, praising the spotless cleanliness, serene location, and genuine hospitality. Your satisfaction isn’t just our priority—it’s the heart of everything we do.
+                                </p>
+                            </div>
+                        </motion.div>
+
+                        {/* Image */}
+                        <motion.div
+                            className="relative"
+                            initial={{ opacity: 0, x: 30 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
+                            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                                <div className="aspect-[4/5] md:aspect-[4/3] lg:aspect-[4/5] relative">
+                                    <img
+                                        src="/photos/about-experience.jpg"
+                                        alt="Host at Blue Springs"
+                                        className="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                                    />
+                                </div>
+                                {/* Ornamental overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#1A365D]/40 to-transparent pointer-events-none" />
+                            </div>
+
+                            {/* Decorative element */}
+                            <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-[#CAF0F8] rounded-full -z-10 blur-xl opacity-70" />
+                            <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#FFB347]/20 rounded-full -z-10 blur-xl" />
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
