@@ -203,11 +203,11 @@ function AmenitiesModal({ isOpen, onClose, property }) {
                                 </h4>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
                                     {category.items.map((item, i) => (
-                                        <div key={i} className="flex items-center gap-4 py-1">
-                                            <div className="p-2 bg-[#F8FAFC] rounded-lg text-[#0077B6]">
+                                        <div key={i} className="flex items-center gap-4 py-1 min-w-0">
+                                            <div className="flex-shrink-0 p-2 bg-[#F8FAFC] rounded-lg text-[#0077B6]">
                                                 <item.icon size={20} />
                                             </div>
-                                            <span className="text-[#1A365D]/80 font-medium">{item.label}</span>
+                                            <span className="text-[#1A365D]/80 font-medium break-words min-w-0">{item.label}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -231,13 +231,13 @@ function AmenitiesSection({ property }) {
     return (
         <Section id="amenities" title="Amenities">
             <div className="relative">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-10">
                     {previewAmenities.map((item, i) => (
-                        <div key={i} className="flex items-center gap-4 p-5 rounded-2xl border border-[#E2E8F0]/50 bg-white hover:border-[#0077B6]/30 hover:shadow-md transition-all group">
-                            <div className="p-3 bg-gradient-to-br from-[#CAF0F8] to-white rounded-xl text-[#0077B6] group-hover:scale-110 transition-transform">
-                                <item.icon size={24} />
+                        <div key={i} className="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-2xl border border-[#E2E8F0]/50 bg-white hover:border-[#0077B6]/30 hover:shadow-md transition-all group min-h-[80px] min-w-0">
+                            <div className="flex-shrink-0 p-2.5 md:p-3 bg-gradient-to-br from-[#CAF0F8] to-white rounded-xl text-[#0077B6] group-hover:scale-110 transition-transform">
+                                <item.icon size={20} className="md:w-6 md:h-6" />
                             </div>
-                            <span className="font-semibold text-[#1A365D]">{item.label}</span>
+                            <span className="font-semibold text-[#1A365D] text-sm md:text-base leading-tight break-words min-w-0">{item.label}</span>
                         </div>
                     ))}
                 </div>
@@ -268,7 +268,7 @@ function Reviews({ property }) {
     return (
         <Section id="reviews" eyebrow="What guests say" title="Guest Reviews">
             <div className="bg-white rounded-3xl p-4 md:p-8 shadow-sm border border-[#E2E8F0]/60">
-                <div class="elfsight-app-15e1c5a3-cfb5-42f0-8897-579b6773535e" data-elfsight-app-lazy></div>
+                <div className="elfsight-app-15e1c5a3-cfb5-42f0-8897-579b6773535e" data-elfsight-app-lazy></div>
             </div>
         </Section>
     );
@@ -376,7 +376,7 @@ function PhotoGallery({ property }) {
                                 >
                                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                         <button
-                                            onClick={() => document.getElementById('book').scrollIntoView({ behavior: 'smooth' })}
+                                            onClick={() => document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })}
                                             className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-[#0077B6] text-white font-semibold rounded-xl hover:bg-[#C65A3A] active:scale-95 transition-all shadow-lg shadow-[#0077B6]/30 text-sm sm:text-base touch-manipulation min-h-[48px]"
                                         >
                                             Reserve Your Stay
@@ -571,25 +571,151 @@ function Gallery({ property }) {
     );
 }
 
+/* Custom Calendar Component */
+function CustomCalendar({ selectedDate, onSelect, blockedDates = [], minDate, onClose }) {
+    const [viewDate, setViewDate] = useState(() => {
+        if (selectedDate) {
+            const [y, m, d] = selectedDate.split('-').map(Number);
+            return new Date(y, m - 1, d);
+        }
+        return new Date();
+    });
+
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+
+    const monthName = viewDate.toLocaleString('default', { month: 'long' });
+
+    const handlePrevMonth = (e) => {
+        e.stopPropagation();
+        setViewDate(new Date(year, month - 1, 1));
+    };
+
+    const handleNextMonth = (e) => {
+        e.stopPropagation();
+        setViewDate(new Date(year, month + 1, 1));
+    };
+
+    const isDateBlocked = (dateStr) => blockedDates.includes(dateStr);
+    const isDatePast = (dateStr) => minDate && dateStr < minDate;
+
+    const days = [];
+    // Padding for first day of week
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        days.push(<div key={`empty-${i}`} className="h-10 w-10 md:h-9 md:w-9" />);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const fullDate = new Date(year, month, d);
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+        const isBlocked = isDateBlocked(dateStr);
+        const isPast = isDatePast(dateStr);
+        const isDisabled = isBlocked || isPast;
+        const isSelected = selectedDate === dateStr;
+
+        days.push(
+            <button
+                key={d}
+                disabled={isDisabled}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onSelect(dateStr);
+                }}
+                className={`
+                    h-10 w-10 md:h-9 md:w-9 flex items-center justify-center rounded-xl text-sm font-medium transition-all
+                    ${isSelected ? 'bg-[#0077B6] text-white shadow-md' : ''}
+                    ${!isSelected && !isDisabled ? 'hover:bg-[#F1F5F9] text-[#1A365D]' : ''}
+                    ${isDisabled ? 'text-[#CBD5E1] cursor-not-allowed opacity-50' : ''}
+                    ${isBlocked && !isPast ? 'line-through decoration-[#ef4444]/60' : ''}
+                `}
+            >
+                {d}
+            </button>
+        );
+    }
+
+    return (
+        <div className="bg-white rounded-2xl shadow-2xl border border-[#E2E8F0] p-4 w-[280px] md:w-[300px] absolute top-full left-0 md:left-auto md:right-0 mt-2 z-50 animate-in fade-in zoom-in duration-200 origin-top" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+                <button onClick={handlePrevMonth} className="p-1.5 hover:bg-[#F1F5F9] rounded-lg transition-colors">
+                    <ChevronLeft size={18} className="text-[#1A365D]" />
+                </button>
+                <h4 className="font-bold text-[#1A365D] text-sm">{monthName} {year}</h4>
+                <button onClick={handleNextMonth} className="p-1.5 hover:bg-[#F1F5F9] rounded-lg transition-colors">
+                    <ChevronRight size={18} className="text-[#1A365D]" />
+                </button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 mb-2">
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                    <div key={`${day}-${idx}`} className="h-8 flex items-center justify-center text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider">
+                        {day}
+                    </div>
+                ))}
+                {days}
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-[#F1F5F9] flex items-center justify-end">
+                <button onClick={onClose} className="text-[#0077B6] text-[11px] font-bold hover:underline">Close</button>
+            </div>
+        </div>
+    );
+}
+
 /* Booking Inputs Component */
 function BookingInputs({ property, blockedDates = [] }) {
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const [checkIn, setCheckIn] = useState("");
     const [checkOut, setCheckOut] = useState("");
     const [guests, setGuests] = useState(2);
     const [isGuestOpen, setIsGuestOpen] = useState(false);
+    const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+    const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
     const [error, setError] = useState("");
 
-    // Auto-adjust checkout if checkin changes
-    const handleCheckInChange = (val) => {
+    const minCheckOutDate = (() => {
+        if (!checkIn) return today;
+        const [y, m, d] = checkIn.split('-').map(Number);
+        const next = new Date(y, m - 1, d);
+        next.setDate(next.getDate() + 1);
+        return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-${String(next.getDate()).padStart(2, '0')}`;
+    })();
+
+    // Close picker when clicking outside
+    useEffect(() => {
+        const handleClick = () => {
+            setIsCheckInOpen(false);
+            setIsCheckOutOpen(false);
+            setIsGuestOpen(false);
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, []);
+
+    const handleCheckInSelect = (val) => {
         setCheckIn(val);
+        setIsCheckInOpen(false);
         setError("");
-        if (checkOut && val >= checkOut) {
-            // Set checkout to next day after checkin
-            const nextDay = new Date(val);
+
+        // Auto-suggest checkout if invalid or not set (must be at least 1 night after check-in)
+        if (!checkOut || val >= checkOut) {
+            const [y, m, d] = val.split('-').map(Number);
+            const nextDay = new Date(y, m - 1, d);
             nextDay.setDate(nextDay.getDate() + 1);
-            setCheckOut(nextDay.toISOString().split('T')[0]);
+            const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDay.getDate()).padStart(2, '0')}`;
+            setCheckOut(nextDayStr);
         }
+    };
+
+    const handleCheckOutSelect = (val) => {
+        setCheckOut(val);
+        setIsCheckOutOpen(false);
+        setError("");
     };
 
     const handleSearch = () => {
@@ -599,13 +725,22 @@ function BookingInputs({ property, blockedDates = [] }) {
         }
 
         // Check availability against blocked dates
-        const start = new Date(checkIn);
-        const end = new Date(checkOut);
+        const [sy, sm, sd] = checkIn.split('-').map(Number);
+        const [ey, em, ed] = checkOut.split('-').map(Number);
+        const start = new Date(sy, sm - 1, sd);
+        const end = new Date(ey, em - 1, ed);
+
+        if (start >= end) {
+            setError("Check-out must be at least one night after check-in.");
+            return;
+        }
+
         const selectedDates = [];
         let curr = new Date(start);
 
         while (curr < end) {
-            selectedDates.push(curr.toISOString().split('T')[0]);
+            const dStr = `${curr.getFullYear()}-${String(curr.getMonth() + 1).padStart(2, '0')}-${String(curr.getDate()).padStart(2, '0')}`;
+            selectedDates.push(dStr);
             curr.setDate(curr.getDate() + 1);
         }
 
@@ -649,42 +784,75 @@ function BookingInputs({ property, blockedDates = [] }) {
         window.open(fullUrl, '_blank');
     };
 
+    // Helper for display dates
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "Add date";
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    };
+
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#E2E8F0] mb-8 max-w-4xl mx-auto -mt-6 relative z-10">
+        <div className="bg-white p-6 rounded-2xl shadow-xl border border-[#E2E8F0]">
+            <div className="mb-6">
+                <h3 className="text-2xl font-bold text-[#1A365D] mb-1">Book Your Stay</h3>
+                <p className="text-[#64748B] text-sm">Select dates and guest count to view pricing.</p>
+            </div>
+
             {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                    {error}
+                <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                    <p>{error}</p>
                 </div>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                {/* Check In */}
-                <div className="relative">
-                    <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Check In</label>
+            <div className="space-y-4">
+                {/* Dates Container */}
+                <div className="grid grid-cols-2 gap-2">
+                    {/* Check In */}
                     <div className="relative">
-                        <input
-                            type="date"
-                            value={checkIn}
-                            min={today}
-                            onChange={(e) => handleCheckInChange(e.target.value)}
-                            className={`w-full pl-10 pr-4 py-3 bg-[#F8F9FA] border ${error && !checkIn ? 'border-red-300' : 'border-[#E2E8F0]'} rounded-xl focus:ring-2 focus:ring-[#0077B6] focus:border-transparent outline-none text-[#1A365D] font-medium transition-colors`}
-                        />
-                        <Calendar size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0077B6]" />
-                    </div>
-                </div>
+                        <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Check In</label>
+                        <div className="relative">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setIsCheckInOpen(!isCheckInOpen); setIsCheckOutOpen(false); setIsGuestOpen(false); }}
+                                className={`w-full flex items-center gap-3 pl-10 pr-4 py-3 bg-[#F8F9FA] border ${error && !checkIn ? 'border-red-300' : 'border-[#E2E8F0]'} rounded-xl focus:ring-2 focus:ring-[#0077B6] outline-none text-[#1A365D] font-medium transition-all hover:bg-white text-left shadow-sm`}
+                            >
+                                <span className={checkIn ? "text-[#1A365D]" : "text-[#94A3B8]"}>{formatDate(checkIn)}</span>
+                            </button>
+                            <Calendar size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0077B6]" />
 
-                {/* Check Out */}
-                <div className="relative">
-                    <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Check Out</label>
+                            {isCheckInOpen && (
+                                <CustomCalendar
+                                    selectedDate={checkIn}
+                                    onSelect={handleCheckInSelect}
+                                    blockedDates={blockedDates}
+                                    minDate={today}
+                                    onClose={() => setIsCheckInOpen(false)}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Check Out */}
                     <div className="relative">
-                        <input
-                            type="date"
-                            value={checkOut}
-                            min={checkIn || today}
-                            onChange={(e) => { setCheckOut(e.target.value); setError(""); }}
-                            className={`w-full pl-10 pr-4 py-3 bg-[#F8F9FA] border ${error && !checkOut ? 'border-red-300' : 'border-[#E2E8F0]'} rounded-xl focus:ring-2 focus:ring-[#0077B6] focus:border-transparent outline-none text-[#1A365D] font-medium transition-colors`}
-                        />
-                        <Calendar size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0077B6]" />
+                        <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Check Out</label>
+                        <div className="relative">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setIsCheckOutOpen(!isCheckOutOpen); setIsCheckInOpen(false); setIsGuestOpen(false); }}
+                                className={`w-full flex items-center gap-3 pl-10 pr-4 py-3 bg-[#F8F9FA] border ${error && !checkOut ? 'border-red-300' : 'border-[#E2E8F0]'} rounded-xl focus:ring-2 focus:ring-[#0077B6] outline-none text-[#1A365D] font-medium transition-all hover:bg-white text-left shadow-sm`}
+                            >
+                                <span className={checkOut ? "text-[#1A365D]" : "text-[#94A3B8]"}>{formatDate(checkOut)}</span>
+                            </button>
+                            <Calendar size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0077B6]" />
+
+                            {isCheckOutOpen && (
+                                <CustomCalendar
+                                    selectedDate={checkOut}
+                                    onSelect={handleCheckOutSelect}
+                                    blockedDates={blockedDates}
+                                    minDate={minCheckOutDate}
+                                    onClose={() => setIsCheckOutOpen(false)}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -692,17 +860,17 @@ function BookingInputs({ property, blockedDates = [] }) {
                 <div className="relative">
                     <label className="block text-xs font-bold text-[#64748B] uppercase tracking-wider mb-1.5 ml-1">Guests</label>
                     <button
-                        onClick={() => setIsGuestOpen(!isGuestOpen)}
-                        className="w-full flex items-center justify-between pl-10 pr-4 py-3 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl focus:ring-2 focus:ring-[#0077B6] focus:border-transparent outline-none text-[#1A365D] font-medium text-left"
+                        onClick={(e) => { e.stopPropagation(); setIsGuestOpen(!isGuestOpen); setIsCheckInOpen(false); setIsCheckOutOpen(false); }}
+                        className="w-full flex items-center justify-between pl-10 pr-4 py-3 bg-[#F8F9FA] border border-[#E2E8F0] rounded-xl focus:ring-2 focus:ring-[#0077B6] outline-none text-[#1A365D] font-medium text-left transition-all hover:bg-white shadow-sm"
                     >
                         <span>{guests} Guest{guests !== 1 ? 's' : ''}</span>
                         {isGuestOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </button>
-                    <Users size={18} className="absolute left-3.5 top-10 text-[#0077B6]" />
+                    <Users size={18} className="absolute left-3.5 top-[42px] text-[#0077B6]" />
 
                     {/* Guest Dropdown */}
                     {isGuestOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-[#E2E8F0] p-4 z-20">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-[#E2E8F0] p-4 z-20 animate-in fade-in zoom-in duration-200 origin-top" onClick={e => e.stopPropagation()}>
                             <div className="flex items-center justify-between">
                                 <span className="text-[#1A365D] font-medium">Adults & Children</span>
                                 <div className="flex items-center gap-3">
@@ -732,15 +900,18 @@ function BookingInputs({ property, blockedDates = [] }) {
                     )}
                 </div>
 
-                {/* CTA Button */}
-                <div className="pt-6">
+                {/* Search Button */}
+                <div className="pt-4">
                     <button
                         onClick={handleSearch}
-                        className="w-full py-3 bg-[#0077B6] text-white font-bold rounded-xl hover:bg-[#005F92] transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-[#0077B6] text-white font-bold rounded-xl hover:bg-[#005F92] transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-lg"
                     >
                         Check Availability
-                        <ArrowRight size={18} />
+                        <ArrowRight size={20} />
                     </button>
+                </div>
+                <div className="mt-6 pt-6 border-t border-[#F1F5F9] text-center">
+                    <p className="text-xs text-[#64748B]">You won't be charged yet</p>
                 </div>
             </div>
         </div>
@@ -803,68 +974,125 @@ export default function PropertyDetails() {
     }
 
     return (
-        <div>
+        <div className="bg-[#F8FAFC]">
             <PhotoGallery property={property} />
 
-            {/* Property Details Section */}
-            <div className="bg-white border-b border-[#E2E8F0]/30">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-                    <div className="max-w-4xl">
-                        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-6 text-sm sm:text-base text-[#1A365D]/70 mb-8">
-                            <span className="flex items-center gap-2"><Users size={18} className="text-[#0077B6]" /><span className="font-medium">8 guests</span></span>
-                            <span className="flex items-center gap-2"><Bed size={18} className="text-[#0077B6]" /><span className="font-medium">3 bedrooms</span></span>
-                            <span className="flex items-center gap-2"><Bath size={18} className="text-[#0077B6]" /><span className="font-medium">2 baths</span></span>
+            <div id="book" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 scroll-mt-24">
+                <div className="lg:grid lg:grid-cols-3 lg:gap-12 relative">
+                    {/* Left Column: Content */}
+                    <div className="lg:col-span-2 space-y-12">
+                        {/* Property Details Intro */}
+                        <div className="bg-white rounded-3xl p-8 shadow-sm border border-[#E2E8F0]/50">
+                            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-6 text-sm sm:text-base text-[#1A365D]/70 mb-8 pb-8 border-b border-[#F1F5F9]">
+                                <span className="flex items-center gap-2"><Users size={18} className="text-[#0077B6]" /><span className="font-medium">8 guests</span></span>
+                                <span className="flex items-center gap-2"><Bed size={18} className="text-[#0077B6]" /><span className="font-medium">3 bedrooms</span></span>
+                                <span className="flex items-center gap-2"><Bath size={18} className="text-[#0077B6]" /><span className="font-medium">2 baths</span></span>
+                            </div>
+                            <ExpandableDescription description={property.description} maxLength={500} propertyName={`About ${property.name}`} />
                         </div>
-                        <ExpandableDescription description={property.description} maxLength={500} propertyName={`About ${property.name}`} />
+
+                        {/* Highlights */}
+                        <div id="highlights" className="scroll-mt-24">
+                            <h2 className="text-2xl font-bold text-[#1A365D] mb-6 flex items-center gap-2">
+                                <div className="w-2 h-8 bg-[#0077B6] rounded-full" />
+                                Highlights
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {property.highlights.map((h, i) => (
+                                    <div key={i} className="rounded-2xl border border-[#E2E8F0]/70 p-6 bg-white flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="p-3 bg-[#0077B6]/10 rounded-xl text-[#0077B6]"><h.icon size={24} /></div>
+                                        <span className="font-semibold text-[#1A365D]">{h.label}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Gallery */}
+                        <div className="scroll-mt-24">
+                            <Gallery property={property} />
+                        </div>
+
+                        {/* Amenities */}
+                        <div className="scroll-mt-24">
+                            <AmenitiesSection property={property} />
+                        </div>
+
+                        {/* Hostex Widget Section (Legacy placement but now part of flow) */}
+                        <div id="availability" className="scroll-mt-24">
+                            <h2 className="text-2xl font-bold text-[#1A365D] mb-6 flex items-center gap-2">
+                                <div className="w-2 h-8 bg-[#0077B6] rounded-full" />
+                                Availability
+                            </h2>
+                            <div className="w-full rounded-3xl overflow-hidden shadow-lg border border-[#E2E8F0]/60 bg-white min-h-[500px] flex flex-col items-center justify-center p-4 sm:p-8">
+                                {property.booking?.hostexWidget ? (
+                                    <>
+                                        {/* Script Loader */}
+                                        <ScriptLoader url={property.booking.hostexWidget.scriptUrl} />
+                                        <hostex-booking-widget
+                                            listing-id={property.booking.hostexWidget.listingId}
+                                            id={property.booking.hostexWidget.widgetId}
+                                            style={{ width: "100%", height: "100%", minHeight: "600px", display: "block" }}
+                                        ></hostex-booking-widget>
+                                    </>
+                                ) : property.booking?.hostexUrl ? (
+                                    <iframe
+                                        src={property.booking.hostexUrl}
+                                        className="w-full h-[800px] border-0"
+                                        title="Book Now"
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <div className="p-12 text-center text-zinc-500">Booking widget not configured.</div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Reviews */}
+                        <div className="scroll-mt-24">
+                            <Reviews property={property} />
+                        </div>
+
+                        {/* Things to Know */}
+                        <div className="scroll-mt-24">
+                            <ThingsToKnow property={property} />
+                        </div>
+
+                        {/* Location */}
+                        <div id="location" className="scroll-mt-24">
+                            <h2 className="text-2xl font-bold text-[#1A365D] mb-6 flex items-center gap-2">
+                                <div className="w-2 h-8 bg-[#0077B6] rounded-full" />
+                                Location
+                            </h2>
+                            <div className="rounded-3xl overflow-hidden shadow-lg h-[400px] border border-[#E2E8F0]">
+                                <iframe
+                                    src={property.location.mapEmbed}
+                                    className="w-full h-full border-0"
+                                    allowFullScreen
+                                    loading="lazy"
+                                />
+                            </div>
+                            <p className="text-xs text-[#1A365D]/60 text-center italic mt-4">
+                                Location is approximate until booked
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Sticky Sidebar */}
+                    <div className="hidden lg:block">
+                        <div className="sticky top-24">
+                            <BookingInputs property={property} blockedDates={blockedDates} />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Highlights */}
-            <Section id="highlights" eyebrow="Why you'll love it" title="Highlights">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {property.highlights.map((h, i) => (
-                        <div key={i} className="rounded-2xl border border-[#E2E8F0]/70 p-6 bg-white flex items-center gap-4">
-                            <div className="p-3 bg-[#0077B6]/10 rounded-xl text-[#0077B6]"><h.icon size={24} /></div>
-                            <span className="font-semibold text-[#1A365D]">{h.label}</span>
-                        </div>
-                    ))}
-                </div>
-            </Section>
-
-            {/* Gallery */}
-            <Gallery property={property} />
-
-            <BookingSection property={property} blockedDates={blockedDates} />
-
-            <AmenitiesSection property={property} />
-
-            {/* Reviews */}
-            <Reviews property={property} />
-
-            {/* Things to Know */}
-            <ThingsToKnow property={property} />
-
-            {/* Location */}
-            <Section id="location" title="Location">
-                <div>
-                    <div className="rounded-2xl overflow-hidden shadow-lg h-[400px]">
-                        <iframe
-                            src={property.location.mapEmbed}
-                            className="w-full h-full border-0"
-                            allowFullScreen
-                            loading="lazy"
-                        />
-                    </div>
-                    <p className="text-xs text-[#1A365D]/60 text-center italic mt-2">
-                        Location is approximate until booked
-                    </p>
-                </div>
-            </Section>
+            {/* Mobile Booking Bar / Inputs (Fallback or stay at bottom) */}
+            <div className="lg:hidden px-4 pb-12">
+                <BookingInputs property={property} blockedDates={blockedDates} />
+            </div>
 
             {/* Contact */}
             <ContactSection />
-
         </div>
     );
 }

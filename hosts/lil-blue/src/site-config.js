@@ -377,3 +377,18 @@ export const SITE_CONFIG = {
     // Add more properties here in the future
   ],
 };
+
+// Aliases for easier access in single-property sites
+SITE_CONFIG.reviews = SITE_CONFIG.properties[0].reviews;
+SITE_CONFIG.property = SITE_CONFIG.properties[0];
+SITE_CONFIG.location = SITE_CONFIG.properties[0].location;
+SITE_CONFIG.amenities = SITE_CONFIG.properties[0].amenities;
+SITE_CONFIG.photos = SITE_CONFIG.properties[0].photos;
+SITE_CONFIG.hero = {
+  image: SITE_CONFIG.properties[0].heroImage,
+  tagline: SITE_CONFIG.properties[0].tagline
+};
+SITE_CONFIG.description = SITE_CONFIG.properties[0].description;
+SITE_CONFIG.checkin = SITE_CONFIG.properties[0].checkin;
+SITE_CONFIG.policies = SITE_CONFIG.properties[0].policies;
+SITE_CONFIG.booking = SITE_CONFIG.properties[0].booking;
