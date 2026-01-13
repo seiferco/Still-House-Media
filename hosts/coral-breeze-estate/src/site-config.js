@@ -3,7 +3,7 @@
  * Edit this file to customize the property website
  */
 
-import { CalendarDays, MapPin, Star, Wifi, Car, Droplets, Sun, Coffee, UtensilsCrossed, Trees, Flame, Mountain, Leaf } from "lucide-react";
+import { CalendarDays, Star, Wifi, Car, Droplets, Sun, Coffee, UtensilsCrossed, Trees, Flame, Mountain, Leaf } from "lucide-react";
 
 export const SITE_CONFIG = {
   // Branding

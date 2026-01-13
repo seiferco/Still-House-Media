@@ -5,38 +5,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, Home, Clock, Shield, AlertCircle, FileText, Calendar, Ban, Camera, Cigarette, Volume2, ArrowRight } from "lucide-react";
+import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, Clock, Shield, AlertCircle, FileText, Calendar, Ban, Camera, Cigarette, Volume2, ArrowRight } from "lucide-react";
 import { SITE_CONFIG, LISTING_CONFIG } from "./site-config.js";
 import BookingWidget from "./components/BookingWidget.jsx";
 
-const fade = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.45 } },
-};
-
 const MotionDiv = motion.div;
 const MotionImg = motion.img;
-
-function Section({ id, title, children, eyebrow }) {
-  return (
-    <section id={id} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
-      <MotionDiv
-        {...fade}
-        className="rounded-3xl bg-[#FAF7F2] border border-[#CBBBAA]/60 shadow-[0_25px_60px_-30px_rgba(30,30,30,0.35)] px-4 sm:px-6 md:px-8 lg:px-12 py-8 sm:py-10 md:py-12"
-      >
-        {eyebrow && (
-          <div className="text-xs font-semibold tracking-[0.35em] uppercase text-[#3F6F63]/80 mb-4">
-            {eyebrow}
-          </div>
-        )}
-        {title && (
-          <h2 className="text-3xl md:text-4xl font-semibold text-[#1E1E1E] mb-6">{title}</h2>
-        )}
-        {children}
-      </MotionDiv>
-    </section>
-  );
-}
 
 function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -74,12 +48,13 @@ function Nav() {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2 sm:gap-3 group">
-          <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-2xl bg-[#E17654] text-white grid place-items-center font-bold text-base sm:text-lg group-hover:scale-110 transition-transform shadow-lg shadow-[#E17654]/40">
-            {SITE_CONFIG.brand.logoText}
-          </div>
-          <span className="font-semibold text-base sm:text-lg text-[#1E1E1E]">{SITE_CONFIG.brand.name}</span>
+          <img
+            src="/CBE-full-logo.png"
+            alt="Coral Breeze Estate"
+            className="h-12 w-auto object-contain"
+          />
         </a>
 
         {/* Desktop Navigation */}
@@ -243,7 +218,7 @@ function PhotoGallery() {
 
           {/* Content Overlay */}
           <div className="absolute inset-0 flex flex-col justify-between md:items-end md:justify-end">
-            <div className="w-full px-4 sm:px-6 lg:px-8 pt-8 md:pt-0 md:pb-20">
+            <div className="w-full px-4 sm:px-6 lg:px-8 pt-16 md:pt-0 md:pb-50">
               <div className="max-w-4xl">
                 <MotionDiv
                   initial={{ opacity: 0, y: 20 }}
@@ -252,14 +227,7 @@ function PhotoGallery() {
                   className="text-white"
                 >
                   {/* Tagline and Title - Higher on mobile, normal on desktop */}
-                  <div className="md:mb-0">
-                    <div className="text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-white/90 mb-3">
-                      {SITE_CONFIG.brand.tagline}
-                    </div>
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-0 md:mb-12 lg:mb-16 leading-tight">
-                      {SITE_CONFIG.brand.name}
-                    </h1>
-                  </div>
+
                 </MotionDiv>
               </div>
             </div>
@@ -653,205 +621,6 @@ function PropertyDetails() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Highlights() {
-  return (
-    <Section id="highlights" eyebrow="Why you'll love it" title="Your Sedona Escape Awaits">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {SITE_CONFIG.highlights.map((h, i) => (
-          <MotionDiv
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="rounded-2xl border border-[#CBBBAA]/70 p-6 bg-gradient-to-br from-[#FAF7F2] to-[#F4EDE4] hover:shadow-[0_25px_45px_-35px_rgba(30,30,30,0.45)] transition-all group"
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#E17654]/15 text-[#E17654] flex items-center justify-center group-hover:scale-110 transition-transform">
-                <h.icon size={24} />
-              </div>
-              <div className="flex-1">
-                <div className="text-[#1E1E1E] font-semibold text-base leading-tight">{h.label}</div>
-              </div>
-            </div>
-          </MotionDiv>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function Gallery() {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [showAllPhotos, setShowAllPhotos] = useState(false);
-  const photos = SITE_CONFIG.photos;
-  const maxVisible = 6;
-  const visiblePhotos = photos.slice(0, maxVisible);
-  const remainingCount = photos.length > maxVisible ? photos.length - maxVisible : 0;
-
-  // Handle keyboard navigation and ESC key
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (selectedImage === null && !showAllPhotos) return;
-
-      if (e.key === 'Escape') {
-        setSelectedImage(null);
-        setShowAllPhotos(false);
-      } else if (selectedImage !== null) {
-        if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          setSelectedImage((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
-        } else if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          setSelectedImage((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
-        }
-      }
-    };
-
-    if (selectedImage !== null || showAllPhotos) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [selectedImage, showAllPhotos, photos.length]);
-
-  const navigateImage = (direction) => {
-    if (direction === 'prev') {
-      setSelectedImage((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
-    } else {
-      setSelectedImage((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
-    }
-  };
-
-  return (
-    <>
-      <Section id="gallery" title="Gallery">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 relative">
-          {visiblePhotos.map((src, idx) => (
-            <MotionImg
-              {...fade}
-              key={idx}
-              src={src}
-              alt={`${SITE_CONFIG.brand.name} photo ${idx + 1}`}
-              className="rounded-2xl h-52 w-full object-cover ring-1 ring-[#CBBBAA]/60 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
-              onClick={() => setSelectedImage(idx)}
-            />
-          ))}
-          {remainingCount > 0 && (
-            <div
-              className="rounded-2xl h-52 w-full bg-[#3F6F63] flex items-center justify-center cursor-pointer hover:bg-[#335b52] transition-colors ring-1 ring-[#3F6F63]/40 shadow-lg shadow-[#3F6F63]/30"
-              onClick={() => setShowAllPhotos(true)}
-            >
-              <div className="text-center text-white">
-                <div className="text-3xl font-semibold tracking-wide">{remainingCount}+</div>
-                <div className="text-sm opacity-90 mt-1">More Photos</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Section>
-
-      {/* Single Image Modal */}
-      {selectedImage !== null && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-7xl max-h-full w-full">
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-white hover:text-zinc-300 transition-colors p-2 z-10"
-              aria-label="Close modal"
-            >
-              <X size={32} />
-            </button>
-
-            {/* Previous button */}
-            {photos.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigateImage('prev');
-                }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-zinc-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70 z-10"
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={32} />
-              </button>
-            )}
-
-            {/* Next button */}
-            {photos.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigateImage('next');
-                }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-zinc-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70 z-10"
-                aria-label="Next image"
-              >
-                <ChevronRight size={32} />
-              </button>
-            )}
-
-            <img
-              src={photos[selectedImage]}
-              alt={`${SITE_CONFIG.brand.name} photo ${selectedImage + 1}`}
-              className="max-w-full max-h-[90vh] object-contain rounded-lg mx-auto"
-              onClick={(e) => e.stopPropagation()}
-            />
-            <div className="absolute -bottom-12 left-0 right-0 flex justify-center gap-2 text-white text-sm">
-              <span>{selectedImage + 1} / {photos.length}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* All Photos Grid Modal */}
-      {showAllPhotos && (
-        <div
-          className="fixed inset-0 z-50 bg-[#0F1514]/95 backdrop-blur-sm p-4 overflow-y-auto"
-          onClick={() => setShowAllPhotos(false)}
-        >
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6 sticky top-4 bg-[#0F1514]/60 backdrop-blur rounded-lg p-4 z-10 text-[#FAF7F2]">
-              <h3 className="text-xl font-semibold text-white">
-                All Photos ({photos.length})
-              </h3>
-              <button
-                onClick={() => setShowAllPhotos(false)}
-                className="text-white hover:text-zinc-300 transition-colors p-2"
-                aria-label="Close modal"
-              >
-                <X size={32} />
-              </button>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {photos.map((src, idx) => (
-                <img
-                  key={idx}
-                  src={src}
-                  alt={`${SITE_CONFIG.brand.name} photo ${idx + 1}`}
-                  className="rounded-lg w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity ring-1 ring-[#CBBBAA]/60"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowAllPhotos(false);
-                    setSelectedImage(idx);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
   );
 }
 
@@ -2022,7 +1791,7 @@ export default function PropertySite() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#1E1E1E]">
+    <div id="property-site" className="min-h-screen bg-white text-[#1E1E1E]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Nav />
       <PhotoGallery />

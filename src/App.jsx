@@ -3,9 +3,6 @@ import { Link, Route, Routes, NavLink, useLocation, Navigate } from 'react-route
 import { Menu, X, ArrowRight } from 'lucide-react'
 import Home from './pages/Home.jsx'
 import DemoTemplate from './pages/DemoTemplate.jsx'
-import Login from './pages/Login.jsx'
-import Dashboard from './pages/Dashboard.jsx'
-import BookingConfirmation from './components/BookingConfirmation.jsx'
 
 function SiteNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -228,13 +225,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/demo-template" element={<DemoTemplate />} />
-        <Route path="/booking/confirmation" element={<BookingConfirmation />} />
-        <Route path="/login" element={
-          localStorage.getItem('token') ? <Navigate to="/dashboard" replace /> : <Login />
-        } />
-        <Route path="/dashboard" element={
-          localStorage.getItem('token') ? <Dashboard /> : <Navigate to="/login" replace />
-        } />
         <Route path="*" element={<Home />} />
       </Routes>
 
