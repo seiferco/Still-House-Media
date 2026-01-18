@@ -44,7 +44,7 @@ export const SITE_CONFIG = {
 
   // Hero Section (main banner)
   hero: {
-    image: "/photos/hero.jpg",            // Main cover photo (put in public/photos/)
+    image: "/photos/gallery-2.jpg",            // Main cover photo (put in public/photos/)
     // Alternative: "/photos/home-hero.jpg"
   },
 
