@@ -80,7 +80,7 @@ export const SITE_CONFIG = {
 
   // Global Contact Info
   contact: {
-    phone: "+1 (555) 123-4567",
+    // Phone removed for privacy as requested
     email: "reservations@tideridgegetaways.com",
   },
 
@@ -99,7 +99,10 @@ export const SITE_CONFIG = {
         city: "Crystal River",
         region: "Florida",
         country: "USA",
-        mapEmbed: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d55807.99454496727!2d-82.67928117610934!3d28.881127061444158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1764521994414!5m2!1sen!2sus",
+        // Using Mapbox coordinates for fuzzy privacy circle instead of exact address
+        latitude: 28.8824, 
+        longitude: -82.6309, // Crystal River coordinates
+        mapboxToken: "pk.eyJ1Ijoic2VpZmVyY28iLCJhIjoiY21rbHZqNnBoMDk1dzNmb2poZ2d4dzd2bCJ9.4z8xm8LMxjiOD7ULpIfL0w"
       },
       heroImage: "/photos/hero.jpg",
       photos: [

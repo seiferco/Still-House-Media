@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -10,7 +11,12 @@ import {
   TrendingUp,
   DollarSign,
   Shield,
-  Zap
+  Zap,
+  MessageCircle,
+  AlertTriangle,
+  ThumbsUp,
+  CreditCard,
+  X
 } from "lucide-react";
 
 const fade = {
@@ -19,7 +25,259 @@ const fade = {
   transition: { duration: 0.6 }
 };
 
-export default function Home() {
+function SocialProofCarousel() {
+  const proofs = [
+    { img: "/social-proof/social-proof01.png", link: "https://northlaketahoecleaning.com/airbnb-vs-vrbo-vs-direct-bookings/" },
+    { img: "/social-proof/social-proof02.png", link: "https://bio.site/north_cascades_haven?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnDBZXLum80vuf7aeHg-wCuBG_RPR2uxloTy97Ja28PtWr79DnHw_Pt__XdKg_aem_90axaWI0JQVchExx9TNHIw" },
+    { img: "/social-proof/social-proof03.png", link: "https://www.boredpanda.com/airbnb-screenshots-ridiculous-fees-checkout-rules/" },
+    { img: "/social-proof/social-proof04.png", link: "https://www.onthesandvacations.com/blog/why-you-should-book-direct-instead-of-using-airbnb-or-vrbo" },
+    { img: "/social-proof/social-proof05.png", link: "https://www.reddit.com/r/airbnb_hosts/comments/1pawf9r/guests_are_being_charged_way_more_than_my_actual/" },
+    { img: "/social-proof/social-proof06.png", link: "https://www.boredpanda.com/airbnb-screenshots-ridiculous-fees-checkout-rules/" },
+  ];
+
+  return (
+    <section className="py-20 bg-gray-50 border-b border-gray-200 overflow-hidden">
+      <div className="text-center mb-12">
+        <h3 className="text-3xl font-bold text-[#2D3142] mb-4">See What Other Hosts Are Saying</h3>
+        <p className="text-xl text-[#4F5D75] max-w-3xl mx-auto px-4">
+          Real stories from hosts dealing with platform fees and policies
+        </p>
+      </div>
+
+      {/* Marquee Container */}
+      <div className="relative w-full">
+        {/* Gradient Masks */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
+
+        <div className="flex overflow-hidden">
+          <motion.div
+            className="flex gap-8 px-4"
+            animate={{ x: "-50%" }}
+            transition={{
+              duration: 30,
+              ease: "linear",
+              repeat: Infinity
+            }}
+            style={{ width: "fit-content" }}
+          >
+            {/* Double the array for seamless loop */}
+            {[...proofs, ...proofs].map((proof, i) => (
+              <a
+                key={i}
+                href={proof.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 w-[400px] bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer overflow-hidden group"
+              >
+                <img
+                  src={proof.img}
+                  alt="Host testimonial"
+                  className="w-full h-auto object-contain"
+                />
+                <div className="p-4 bg-gray-50 text-center border-t border-gray-100 group-hover:bg-[#FFEEE8] transition-colors">
+                  <span className="text-sm font-semibold text-gray-600 group-hover:text-[#FF6B35] flex items-center justify-center gap-2">
+                    View Original Post <ArrowRight size={16} />
+                  </span>
+                </div>
+              </a>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WallOfPain() {
+  const posts = [
+    {
+      source: "reddit",
+      icon: <MessageCircle size={18} className="text-[#FF4500]" />,
+      author: "u/HostLife_101",
+      community: "r/Airbnb_hosts",
+      title: "Guest complained about service fee...",
+      content: "I had a guest cancel because the service fee was $400. I moved them to direct booking and we both saved money. It's ridiculous that we lose bookings because of fees we don't even see.",
+      engagement: "245 upvotes · 58 comments",
+      link: "https://www.reddit.com/r/airbnb_hosts/comments/1pawf9r/guests_are_being_charged_way_more_than_my_actual/"
+    },
+    {
+      source: "twitter",
+      icon: <Users size={18} className="text-[#1DA1F2]" />,
+      author: "@TravelSmart",
+      handle: "Guest",
+      content: "Just looked at the breakdown for my vacation rental. $1,200 for the stay, but $350 in 'service fees'? This is why I always look for a direct booking site first. #BookDirect",
+      engagement: "1.2k likes · 400 retweets"
+    },
+    {
+      source: "facebook",
+      icon: <ThumbsUp size={18} className="text-[#4267B2]" />,
+      author: "Vacation Rental Hosts Group",
+      content: "Another payout delayed by 'technical glitches'. This is why you can't build your business on rented land. When the platform glitches, my direct site stays open and I get paid instantly via Stripe.",
+      engagement: "89 likes · 34 comments"
+    }
+  ];
+
+  return (
+    <section className="py-20 bg-gray-50 border-y border-gray-200">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-100 text-red-600 font-semibold text-sm mb-6">
+            <AlertTriangle size={16} />
+            The Problem
+          </div>
+          <h2 className="text-4xl font-bold text-[#2D3142] mb-4">
+            Don't Let Platform Fees Kill Your Bookings
+          </h2>
+          <p className="text-xl text-[#4F5D75] max-w-3xl mx-auto">
+            Guests are tired of fees. Hosts are tired of losing control. The solution is your own brand.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {posts.map((post, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-white p-6 rounded-xl shadow-md border border-gray-200"
+            >
+              {/* Header - Interactive if link exists */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  {post.icon}
+                </div>
+                <div>
+                  <div className="font-bold text-sm text-gray-900">{post.author}</div>
+                  <div className="text-xs text-gray-500">{post.community || post.handle}</div>
+                </div>
+              </div>
+
+              {/* Content Section - Conditionally wrapped in link */}
+              {post.link ? (
+                <a
+                  href={post.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block group cursor-pointer"
+                >
+                  {post.image ? (
+                    <div className="mb-4">
+                      <img src={post.image} alt="Social proof" className="rounded-lg w-full border border-gray-100 group-hover:opacity-90 transition-opacity" />
+                    </div>
+                  ) : (
+                    <>
+                      {post.title && (
+                        <div className="font-bold text-gray-800 mb-2 text-sm group-hover:text-[#FF6B35] transition-colors">
+                          {post.title}
+                        </div>
+                      )}
+                      <p className="text-gray-600 text-sm leading-relaxed mb-4 group-hover:text-gray-900 transition-colors">
+                        "{post.content}"
+                      </p>
+                    </>
+                  )}
+                </a>
+              ) : (
+                <>
+                  {post.image ? (
+                    <div className="mb-4">
+                      <img src={post.image} alt="Social proof" className="rounded-lg w-full border border-gray-100" />
+                    </div>
+                  ) : (
+                    <>
+                      {post.title && <div className="font-bold text-gray-800 mb-2 text-sm">{post.title}</div>}
+                      <p className="text-gray-600 text-sm leading-relaxed mb-4">"{post.content}"</p>
+                    </>
+                  )}
+                </>
+              )}
+
+              <div className="text-xs text-gray-400 font-medium pt-4 border-t border-gray-100">
+                {post.engagement}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <p className="text-lg font-medium text-gray-600 mb-2">Stop renting your business. Start owning it.</p>
+          <div className="text-[#FF6B35] font-bold text-xl">Build your Direct Booking engine today.</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RevenueCalculator() {
+  const [revenue, setRevenue] = useState(50000);
+
+  const hostFeeRate = 0.03; // 3% Standard Split-Fee Model
+  const guestFeeRate = 0.14; // ~14% Guest Service Fee
+
+  const hostLoss = Math.round(revenue * hostFeeRate);
+  const guestFriction = Math.round(revenue * guestFeeRate);
+  const totalLoss = hostLoss + guestFriction;
+
+  return (
+    <div className="bg-[#2D3142] rounded-3xl p-8 md:p-12 text-white shadow-2xl overflow-hidden relative">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF6B35] opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+      <div className="relative z-10">
+        <div className="text-center mb-10">
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">The "Middleman Tax" Calculator</h3>
+          <p className="text-gray-300">See how much you and your guests are really paying to platforms (Split-Fee Model).</p>
+        </div>
+
+        <div className="max-w-xl mx-auto">
+          <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Annual Revenue: <span className="text-white font-bold text-lg">${revenue.toLocaleString()}</span></label>
+            <input
+              type="range"
+              min="10000"
+              max="200000"
+              step="5000"
+              value={revenue}
+              onChange={(e) => setRevenue(parseInt(e.target.value))}
+              className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-[#FF6B35]"
+            />
+            <div className="flex justify-between text-xs text-gray-400 mt-2">
+              <span>$10k</span>
+              <span>$200k+</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="bg-white/10 rounded-xl p-4 border border-white/10">
+              <div className="text-xs text-gray-400 mb-1">Host Fees (3%)</div>
+              <div className="text-xl font-bold text-red-400">-${hostLoss.toLocaleString()}</div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4 border border-white/10">
+              <div className="text-xs text-gray-400 mb-1">Guest Fees (~14%)</div>
+              <div className="text-xl font-bold text-red-400">-${guestFriction.toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div className="bg-white text-[#2D3142] rounded-xl p-6 text-center shadow-lg">
+            <div className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Platform Cost</div>
+            <div className="text-4xl font-black text-[#FF6B35] mb-2">${totalLoss.toLocaleString()}</div>
+            <p className="text-sm text-gray-600">
+              Money leaving your ecosystem every year.
+            </p>
+            <div className="mt-4 text-sm font-bold text-[#2D3142]">
+              A Still House Media website starts at just $199/mo
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Home({ onOpenSignUp }) {
   return (
     <div className="bg-white">
       {/* Hero Section */}
@@ -62,13 +320,13 @@ export default function Home() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="#pricing"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FF6B35] text-white font-semibold rounded-lg hover:bg-[#E85D2A] active:scale-95 transition-all shadow-lg hover:shadow-xl text-lg"
+                <button
+                  onClick={onOpenSignUp}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FF6B35] text-white font-semibold rounded-lg hover:bg-[#E85D2A] active:scale-95 transition-all shadow-lg hover:shadow-xl text-lg cursor-pointer"
                 >
                   Start Free Trial
                   <ArrowRight size={20} />
-                </a>
+                </button>
                 <a
                   href="#how-it-works"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#FF6B35] font-semibold rounded-lg border-2 border-[#FF6B35] hover:bg-[#FFEEE8] transition-all text-lg"
@@ -95,24 +353,24 @@ export default function Home() {
                       <div className="w-3 h-3 rounded-full bg-green-400" />
                     </div>
                     <div className="flex-1 mx-4 bg-gray-100 rounded-md px-4 py-2 text-xs text-gray-500">
-                      www.staycoralbreeze.com
+                      www.coralbreezeestate.com/
                     </div>
                   </div>
 
-                  <div className="h-64 bg-gradient-to-br from-[#5FA8A3] to-[#FF6B35] rounded-lg flex items-center justify-center text-white">
+                  <div className="h-70 bg-gradient-to-br from-[#5FA8A3] to-[#FF6B35] rounded-lg flex items-center justify-center text-white">
                     <div className="text-center">
-                      <Globe size={48} className="mx-auto mb-4" />
-                      <p className="text-lg font-semibold">Your Custom Website</p>
-                      <p className="text-sm opacity-90">Professional • Mobile-Ready • SEO-Optimized</p>
+                      <img src="/social-proof/example01.png" alt="Hero proof 1" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-gray-100 rounded h-20">
-                      <img src="/demo-shot-1.png" alt="A description of the image" />
+                    <div className="text-center">
                     </div>
-                    <div className="bg-gray-100 rounded h-20" />
-                    <div className="bg-gray-100 rounded h-20" />
+                    <div className="text-center">
+                      <img src="/social-proof/example03.png" alt="Hero proof 3" />
+                    </div>
+                    <div className="text-center">
+                    </div>
                   </div>
                 </div>
               </div>
@@ -134,6 +392,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Wall of Pain Section */}
+      <WallOfPain />
+
+      {/* Social Proof Carousel */}
+      <SocialProofCarousel />
+
       {/* Problem/Solution Section */}
       <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -145,6 +409,11 @@ export default function Home() {
               Airbnb, Vrbo, and Booking.com charge up to 15% in commission fees.
               That's thousands of dollars leaving your pocket every month.
             </p>
+          </div>
+
+          {/* Insert Calculator Here */}
+          <div className="mb-20 max-w-4xl mx-auto">
+            <RevenueCalculator />
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -411,8 +680,15 @@ export default function Home() {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl border-2 border-[#FF6B35] p-10 md:p-12">
+            <div className="bg-white rounded-3xl shadow-2xl border-2 border-[#FF6B35] p-10 md:p-12 relative overflow-hidden">
+              <div className="absolute top-6 right-0 bg-[#FF6B35] text-white py-1 px-8 rotate-45 translate-x-8 font-bold text-sm shadow-md">
+                POPULAR
+              </div>
+
               <div className="text-center mb-10">
+                <div className="inline-block px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+                  Starting at $199
+                </div>
                 <h3 className="text-3xl font-bold text-[#2D3142] mb-2">Complete Build Package</h3>
                 <p className="text-gray-600">Launch your direct booking business with confidence</p>
               </div>
@@ -449,7 +725,7 @@ export default function Home() {
                       { icon: Users, text: "Build your own guest database" },
                       { icon: Shield, text: "Full control over your business" },
                       { icon: TrendingUp, text: "Increase repeat bookings" },
-                      { icon: Zap, text: "Launch in under 24 hours" }
+                      { icon: Zap, text: "Launch in under 1 week" }
                     ].map((benefit, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <div className="w-8 h-8 bg-[#FFEEE8] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -463,13 +739,13 @@ export default function Home() {
               </div>
 
               <div className="text-center pt-8 border-t border-gray-200">
-                <a
-                  href="mailto:stillhousemedia@outlook.com"
-                  className="inline-flex items-center gap-2 px-10 py-5 bg-[#FF6B35] text-white font-bold rounded-lg hover:bg-[#E85D2A] transition-all shadow-lg hover:shadow-xl text-xl"
+                <button
+                  onClick={onOpenSignUp}
+                  className="inline-flex items-center gap-2 px-10 py-5 bg-[#FF6B35] text-white font-bold rounded-lg hover:bg-[#E85D2A] transition-all shadow-lg hover:shadow-xl text-xl cursor-pointer"
                 >
                   Get Your Custom Quote
                   <ArrowRight size={24} />
-                </a>
+                </button>
                 <p className="text-sm text-gray-500 mt-4">No long-term contracts • Cancel anytime</p>
               </div>
             </div>
@@ -507,19 +783,13 @@ export default function Home() {
             Join hundreds of hosts who are keeping 100% of their revenue with Still House Media
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#pricing"
-              className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-[#FF6B35] font-bold rounded-lg hover:bg-gray-100 transition-all shadow-xl text-xl"
+            <button
+              onClick={onOpenSignUp}
+              className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-[#FF6B35] font-bold rounded-lg hover:bg-gray-100 transition-all shadow-xl text-xl cursor-pointer"
             >
               Get Started Today
               <ArrowRight size={24} />
-            </a>
-            <a
-              href="mailto:stillhousemedia@outlook.com"
-              className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all text-xl"
-            >
-              Schedule a Demo
-            </a>
+            </button>
           </div>
         </div>
       </section>

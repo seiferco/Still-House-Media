@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, Menu, Users, Bed, Bath, Home, Clock, Shield, AlertCircle, FileText, Calendar, Ban, Camera, Cigarette, Volume2, ArrowRight } from "lucide-react";
 import { SITE_CONFIG } from "./site-config.js";
+import MapboxMap from "./components/MapboxMap";
 
 const fade = {
   initial: { opacity: 0, y: 8 },
@@ -549,10 +550,16 @@ function LocationMap() {
             {SITE_CONFIG.checkin.details.map((d, i) => <li key={i}>{d}</li>)}
           </ul>
         </div>
-        {SITE_CONFIG.location.mapEmbed && (
+        {SITE_CONFIG.location.latitude && SITE_CONFIG.location.longitude && (
           <div className="rounded-2xl overflow-hidden border border-[#CBBBAA]/60 shadow-lg bg-[#FAF7F2]">
             <div className="relative w-full pb-[66.6%] h-0">
-              <iframe title={`${SITE_CONFIG.brand.name} Location Map`} src={SITE_CONFIG.location.mapEmbed} className="absolute top-0 left-0 w-full h-full border-0" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+               <div className="absolute top-0 left-0 w-full h-full">
+                  <MapboxMap 
+                    latitude={SITE_CONFIG.location.latitude}
+                    longitude={SITE_CONFIG.location.longitude}
+                    token={SITE_CONFIG.location.mapboxToken}
+                  />
+               </div>
             </div>
           </div>
         )}
@@ -584,12 +591,18 @@ function Contact() {
   return (
     <Section id="contact" title="Contact the Host">
       <div className="rounded-2xl border border-[#CBBBAA]/60 p-8 bg-white shadow-lg max-w-md">
-        <div className="flex items-center gap-3 text-[#1E1E1E] mb-4 text-lg">
-          <Phone size={20} className="text-[#E17654]" /> {SITE_CONFIG.contact.phone}
+        <div className="text-[#1E1E1E] mb-6 text-lg">
+            Have questions before you book? Send us an email and we'll get back to you shortly.
         </div>
-        <div className="flex items-center gap-3 text-[#1E1E1E] mb-6 text-lg">
-          <Mail size={20} className="text-[#E17654]" /> {SITE_CONFIG.contact.email}
-        </div>
+        
+        <a 
+          href={`mailto:${SITE_CONFIG.contact.email}`}
+          className="flex items-center gap-3 text-[#1E1E1E] mb-8 text-lg hover:text-[#E17654] transition-colors p-3 bg-gray-50 rounded-lg border border-gray-100"
+        >
+          <Mail size={24} className="text-[#E17654]" /> 
+          <span className="font-medium">{SITE_CONFIG.contact.email}</span>
+        </a>
+
         <a href="#book" className="inline-flex items-center gap-2 rounded-xl px-6 py-3 bg-[#1E1E1E] text-white hover:bg-[#333] transition shadow-lg w-full justify-center font-semibold">
           Book Now <ExternalLink size={18} />
         </a>

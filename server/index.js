@@ -13,8 +13,8 @@ import {
   LISTINGS, bookings, isFree, createHold,
   consumeHold, confirmBooking, getBlockedDates,
   findHostByEmail, findHostById, createHost, findHostByListingId,
-  getBookingsForHost, addBlockedDate, removeBlockedDateByHost,
-  getAllBlockedDatesForHost, hosts
+  getBookingsForHost, addBlockedDate,   removeBlockedDateByHost,
+  getAllBlockedDatesForHost, hosts, createLead
 } from './store.js';
 
 // Helper function to get Stripe instance for a specific host
@@ -851,6 +851,22 @@ app.delete('/api/dashboard/blocked-dates/:blockId', authenticateToken, (req, res
   }
 
   res.json({ success: true, blockedDate: removed });
+});
+
+/** Lead Capture Endpoint */
+app.post('/api/leads', (req, res) => {
+  const { email, name } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+  
+  // Create and save lead
+  const lead = createLead(email, name);
+  
+  // Log for now (since SMTP is disabled)
+  console.log(`[LEAD CAPTURE] New sign up: ${email} (${name || 'No name'})`);
+  
+  res.json({ success: true, message: 'Welcome to the waitlist!', lead });
 });
 
 // Initialize a default host for demo (password: 'password')

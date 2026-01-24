@@ -14,6 +14,7 @@ const MotionImg = motion.img;
 
 function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const navLinks = [
     { id: "gallery", label: "Gallery" },
@@ -37,23 +38,30 @@ function Nav() {
     }
   };
 
-  // Close menu on scroll
+  // Handle scroll effect
   useEffect(() => {
-    if (isMenuOpen) {
-      const handleScroll = () => setIsMenuOpen(false);
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+      if (isMenuOpen) setIsMenuOpen(false);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)]">
+    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      isScrolled 
+        ? "backdrop-blur-lg bg-[#FAF7F2]/90 border-b border-[#CBBBAA]/60 shadow-[0_20px_45px_-30px_rgba(30,30,30,0.45)] py-0" 
+        : "bg-transparent border-transparent py-4"
+    }`}>
       <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2 sm:gap-3 group">
           <img
             src="/CBE-full-logo.png"
             alt="Coral Breeze Estate"
-            className="h-12 w-auto object-contain"
+            className={`h-12 w-auto object-contain transition-all ${
+              !isScrolled ? "brightness-0 invert drop-shadow-md" : ""
+            }`} 
           />
         </a>
 
@@ -62,7 +70,11 @@ function Nav() {
           {["gallery", "amenities", "location", "reviews", "contact"].map((link) => (
             <a
               key={link}
-              className="text-[#3F6F63]/80 hover:text-[#3F6F63] transition-colors"
+              className={`transition-colors ${
+                isScrolled 
+                  ? "text-[#3F6F63]/80 hover:text-[#3F6F63]" 
+                  : "text-white/90 hover:text-white drop-shadow-sm"
+              }`}
               href={`#${link}`}
               onClick={(e) => {
                 const element = document.querySelector(`#${link}`);
@@ -84,7 +96,11 @@ function Nav() {
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }
             }}
-            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 bg-[#E17654] text-white shadow-sm shadow-[#E17654]/40 hover:bg-[#C65A3A] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D7A44E]/70"
+            className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 font-semibold transition-all shadow-md hover:shadow-lg ${
+              isScrolled
+                ? "bg-[#E17654] text-white hover:bg-[#C65A3A] shadow-[#E17654]/40"
+                : "bg-white text-[#E17654] hover:bg-[#FFF5EE]"
+            }`}
           >
             Book <ExternalLink size={16} />
           </a>
@@ -93,7 +109,11 @@ function Nav() {
         {/* Mobile Hamburger Button - Touch-friendly */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden p-3 rounded-lg text-[#3F6F63] hover:bg-[#F4EDE4] active:bg-[#E8DDD0] transition-colors touch-manipulation"
+          className={`md:hidden p-3 rounded-lg transition-colors touch-manipulation ${
+            isScrolled 
+              ? "text-[#3F6F63] hover:bg-[#F4EDE4] active:bg-[#E8DDD0]" 
+              : "text-white hover:bg-white/10 active:bg-white/20"
+          }`}
           aria-label="Toggle menu"
           aria-expanded={isMenuOpen}
         >
@@ -128,7 +148,7 @@ function PhotoGallery() {
   const [currentMobileIndex, setCurrentMobileIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const photos = [SITE_CONFIG.hero.image, ...SITE_CONFIG.photos];
+  const photos = [...SITE_CONFIG.photos];
 
   // Minimum swipe distance (in pixels)
   const minSwipeDistance = 50;
@@ -377,7 +397,7 @@ function PhotoGallery() {
 function PhotoGallerySection() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
-  const allPhotos = [SITE_CONFIG.hero.image, ...SITE_CONFIG.photos];
+  const allPhotos = [...SITE_CONFIG.photos];
   const displayPhotos = SITE_CONFIG.photos.slice(0, 6); // Show first 6 photos
 
   // Handle keyboard navigation and ESC key

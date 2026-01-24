@@ -21,6 +21,7 @@ export const bookings = [];      // {id, hostId, listingId, start, end, status, 
 export const holds = [];         // {id, listingId, start, end, expiresAt, createdAt}
 export const externalBlocks = []; // mock external (Airbnb) blocks
 export const hosts = [];         // {id, email, passwordHash, listingIds, websiteId, sitePath, stripeAccountId, stripeSecretKeyId, createdAt}
+export const leads = [];         // {id, email, name, createdAt}
 
 function shift(dateStr, days) {
   const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + days);
@@ -161,6 +162,17 @@ export function createHost(email, passwordHash, listingIds = [LISTINGS[0].id], w
   };
   hosts.push(host);
   return host;
+}
+
+export function createLead(email, name = '') {
+  const lead = {
+    id: uid('lead_'),
+    email,
+    name,
+    createdAt: new Date().toISOString()
+  };
+  leads.push(lead);
+  return lead;
 }
 
 // Blocked dates management (manual blocks)

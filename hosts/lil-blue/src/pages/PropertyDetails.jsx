@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { MapPin, Star, Phone, Mail, ExternalLink, X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Menu, Users, Bed, Bath, ArrowRight, Calendar } from "lucide-react";
 import ContactSection from "../components/ContactSection";
 import ThingsToKnow from "../components/ThingsToKnow";
+import MapboxMap from "../components/MapboxMap";
 import { SITE_CONFIG } from "../site-config";
 
 const fade = {
@@ -1064,11 +1065,10 @@ export default function PropertyDetails() {
                                 Location
                             </h2>
                             <div className="rounded-3xl overflow-hidden shadow-lg h-[400px] border border-[#E2E8F0]">
-                                <iframe
-                                    src={property.location.mapEmbed}
-                                    className="w-full h-full border-0"
-                                    allowFullScreen
-                                    loading="lazy"
+                                <MapboxMap 
+                                    latitude={property.location.latitude} 
+                                    longitude={property.location.longitude} 
+                                    token={property.location.mapboxToken} 
                                 />
                             </div>
                             <p className="text-xs text-[#1A365D]/60 text-center italic mt-4">
