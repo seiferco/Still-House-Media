@@ -1,28 +1,27 @@
 @import "tailwindcss";
 
-/* Still House Media Design System - Mid-Century Modern */
+/* Still House Media Design System - Cinematic & Architectural */
 
 :root {
-  /* Color Palette */
-  --color-white: #FFFFFF;
-  --color-cool-white: #FAFBFC;
-  --color-light-gray: #EEF1F6;
+  /* Color Palette - Deep & Moody */
+  --color-dark-bg: #0f172a;      /* Slate 900 - Main Background */
+  --color-dark-surface: #1e293b; /* Slate 800 - Cards/Sections */
+  --color-accent-amber: #fbbf24; /* Amber 400 - Warm Light/Action */
+  --color-rain-blue: #334155;    /* Slate 700 - Muted Accents */
+  
+  --color-text-white: #f8fafc;   /* Slate 50 - Primary Text */
+  --color-text-muted: #94a3b8;   /* Slate 400 - Secondary Text */
 
-  --color-primary-orange: #FF6B35;
-  --color-burnt-orange: #E85D2A;
-  --color-soft-peach: #FFEEE8;
-
-  --color-charcoal: #2D3142;
-  --color-slate: #4F5D75;
-  --color-teal: #5FA8A3;
+  /* Gradients */
+  --gradient-overlay: linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 1));
+  --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 
   /* Typography */
   --font-primary: 'DM Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 
   /* Spacing */
-  --section-padding: 5rem;
-  --container-max: 1280px;
+  --section-padding: 6rem;
 }
 
 html,
@@ -35,73 +34,89 @@ body,
 
 body {
   font-family: var(--font-primary);
-  color: var(--color-charcoal);
-  background-color: var(--color-cool-white);
+  color: var(--color-text-white);
+  background-color: var(--color-dark-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Typography System */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-charcoal);
+  line-height: 1.1;
+  color: var(--color-text-white);
+  letter-spacing: -0.02em;
 }
 
-h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+h1 { font-size: clamp(3rem, 6vw, 5rem); }
+h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
+
+/* Utility Classes */
+.glass-panel {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
+  border-radius: 2rem;
 }
 
-h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
+.text-gradient-amber {
+  background: linear-gradient(to right, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-h3 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+/* Background Animations */
+@keyframes float {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-20px, 20px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.bg-mesh-amber {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.bg-mesh-blue {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  filter: blur(100px);
+  animation: float 15s ease-in-out infinite reverse;
+  pointer-events: none;
 }
 
 /* Smooth Scrolling */
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-light-gray);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-slate);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-charcoal);
-}
+::-webkit-scrollbar { width: 10px; background: var(--color-dark-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-rain-blue); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent-amber); }
 
 /* Selection */
-::selection {
-  background-color: var(--color-primary-orange);
-  color: white;
-}
+::selection { background-color: var(--color-accent-amber); color: var(--color-dark-bg); }
 
 /* Focus States */
-*:focus-visible {
-  outline: 2px solid var(--color-primary-orange);
-  outline-offset: 2px;
-}
+*:focus-visible { outline: 2px solid var(--color-accent-amber); outline-offset: 2px; }
 
-/* Button Base Styles */
-button {
-  font-family: var(--font-primary);
-}
+button { font-family: var(--font-primary); }

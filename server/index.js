@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import Stripe from 'stripe';
+import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -40,6 +41,13 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
+
+// Configure SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+} else {
+  console.warn('SENDGRID_API_KEY not found in environment variables. Email sending disabled.');
+}
 
 // Default Stripe instance (for backwards compatibility and webhook verification)
 const stripe = process.env.STRIPE_SECRET_KEY
@@ -854,19 +862,73 @@ app.delete('/api/dashboard/blocked-dates/:blockId', authenticateToken, (req, res
 });
 
 /** Lead Capture Endpoint */
-app.post('/api/leads', (req, res) => {
-  const { email, name } = req.body;
+app.post('/api/leads', async (req, res) => {
+  const { email, name, experience, propertyCount, goal, listingUrl } = req.body;
+  
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
   
   // Create and save lead
-  const lead = createLead(email, name);
+  const leadData = { 
+    email, 
+    name, 
+    experience, 
+    propertyCount, 
+    goal, 
+    listingUrl,
+    createdAt: new Date().toISOString() 
+  };
   
-  // Log for now (since SMTP is disabled)
+  // In a real app, you would save to database here
+  // const lead = createLead(leadData); 
   console.log(`[LEAD CAPTURE] New sign up: ${email} (${name || 'No name'})`);
+  console.log('Lead Details:', leadData);
+
+  // Send Welcome Email via SendGrid
+  if (process.env.SENDGRID_API_KEY) {
+    const msg = {
+      to: email,
+      from: process.env.SENDGRID_FROM_EMAIL || 'stillhousemedia@outlook.com',
+      subject: 'Welcome to Still House Media',
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #0f172a;">Welcome to the Future of Hosting</h1>
+          <p>Hi ${name || 'there'},</p>
+          <p>Thanks for starting your direct booking journey with Still House Media. We've received your strategy assessment.</p>
+          
+          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Your Profile Summary:</h3>
+            <ul style="padding-left: 20px;">
+              <li><strong>Experience:</strong> ${experience || 'N/A'}</li>
+              <li><strong>Portfolio Size:</strong> ${propertyCount || 'N/A'} properties</li>
+              <li><strong>Primary Goal:</strong> ${goal === 'fees' ? 'Eliminate Fees' : goal === 'data' ? 'Own Guest Data' : 'Automation'}</li>
+            </ul>
+          </div>
+
+          <p>One of our direct booking strategists is reviewing your details (and your listing at ${listingUrl || 'your link'}) right now.</p>
+          <p>We will reach out shortly with a custom ROI analysis showing exactly how much you could save.</p>
+          
+          <p>Talk soon,<br/>The Still House Media Team</p>
+        </div>
+      `,
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log(`[EMAIL] Welcome email sent to ${email}`);
+    } catch (error) {
+      console.error('[EMAIL ERROR]', error);
+      if (error.response) {
+        console.error(error.response.body);
+      }
+      // Don't fail the request if email fails, just log it
+    }
+  } else {
+    console.log('[EMAIL] Skipping email send (API key missing)');
+  }
   
-  res.json({ success: true, message: 'Welcome to the waitlist!', lead });
+  res.json({ success: true, message: 'Welcome to the waitlist!', lead: leadData });
 });
 
 // Initialize a default host for demo (password: 'password')
